@@ -117,10 +117,12 @@
   .howto{display:flex;flex-direction:column;gap:4px;font-size:16px;text-align:start}
   .howto b{color:var(--blue)}
   .goal{font-size:15px;font-weight:700;color:var(--amber)}
-  .overCard.trophy{border-color:var(--amber);box-shadow:0 0 60px #fbbf2466}
-  .overCard.trophy .big{font-size:90px;animation:bounce 1.2s infinite}
-  .overCard.trophy h2{font-size:30px;color:var(--amber)}
-  @keyframes bounce{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-10px) rotate(6deg)}}
+  .aim{display:flex;flex-direction:column;gap:2px;font-size:17px;font-weight:900;line-height:1.3;text-align:start;background:#0b0d13;border:1px solid var(--line);border-radius:14px;padding:6px 12px}
+  .aim .a1{color:var(--amber)}.aim .a2{color:var(--ink)}.aim .a3{color:var(--green)}
+  .dist{display:flex;flex-direction:column;align-items:center;line-height:1}
+  .dist small{font-size:14px;font-weight:700;color:var(--muted)}
+  .dist b{font-size:58px;font-weight:900;color:var(--blue);text-shadow:0 0 24px #4fc3ff66;font-variant-numeric:tabular-nums}
+  .dist b i{font-style:normal;font-size:24px;margin-inline-start:4px}
   [hidden]{display:none!important}
   /* ---- driving-rule alerts (top of the road, never over the jeep) ---- */
   .alert{position:absolute;left:50%;top:86px;transform:translateX(-50%);z-index:3;direction:rtl;max-width:calc(100% - 16px);text-align:center;
@@ -138,6 +140,10 @@
     box-shadow:0 0 16px #f43f5e;opacity:0}
   .hud .timer.pen-hit{color:#fff;background:#e11d48;border-color:#fff}
   .pen.go{animation:penUp 1.6s ease-out}
+  .plus{position:absolute;top:44px;right:8px;z-index:4;color:#06210f;background:var(--green);border:2px solid #fff;border-radius:12px;padding:2px 10px;font-size:20px;font-weight:900;direction:rtl;pointer-events:none;
+    box-shadow:0 0 16px #4ade80;opacity:0}
+  .plus.go{animation:penUp 1.6s ease-out}
+  .hud .timer.plus-hit{color:#06210f;background:var(--green);border-color:#fff}
   @keyframes penUp{0%{opacity:0;transform:translateY(-6px) scale(.7)}15%{opacity:1;transform:translateY(0) scale(1.25)}70%{opacity:1;transform:translateY(14px) scale(1)}100%{opacity:0;transform:translateY(26px)}}
   .habits{font-size:14px;color:var(--ink);background:#0b0d13;border:1px solid var(--line);border-radius:12px;padding:5px 10px;line-height:1.5}
   .habits b{color:var(--amber)}
@@ -157,7 +163,6 @@
   .avs button.on{background:#25304a;border-color:var(--amber);box-shadow:0 0 12px #fbbf2488}
   .overCard.adding > :not(.who){display:none}
   .overCard.adding .whoList{display:none}
-  .prize{font-size:17px;font-weight:900;color:#06210f;background:var(--amber);border-radius:12px;padding:4px 12px}
   .overCard.board{border-color:var(--amber);box-shadow:0 0 40px #fbbf2444;width:min(560px,100%)}
   .lb{border-collapse:collapse;width:100%;font-size:15px;direction:rtl}
   .lb th{font-size:12px;color:var(--muted);font-weight:700;padding:2px 4px}
@@ -275,14 +280,14 @@
     .alert{top:62px;font-size:17px;padding:5px 12px}
     .alert.good,.alert.info{font-size:13px}
     .alert small{font-size:11px}
-    .pen{top:32px;font-size:14px;padding:1px 8px}
+    .pen,.plus{top:32px;font-size:14px;padding:1px 8px}
+    .aim{font-size:13px;padding:4px 10px;gap:0}
+    .dist b{font-size:40px}
     .habits,.tip{font-size:11px}
     .whoT{font-size:14px}
     .pBtn{font-size:13px;padding:4px 9px}
     .lb{font-size:12px}
     .lb td{padding:2px 4px}
-    .prize{font-size:13px}
-    .overCard.trophy .big{font-size:56px}
     .overCard h2{font-size:19px}
     .again{font-size:16px;padding:7px 16px}
   }
@@ -297,6 +302,7 @@
     .overCard .big{font-size:28px}
     .overCard h2{font-size:19px}
     .howto{font-size:13px;gap:1px}
+    .aim{font-size:14px}
     .goal{display:none}
     .again{font-size:16px;padding:7px 16px}
   }
@@ -317,7 +323,7 @@
 <body>
 <div class="app">
   <header>
-    <h1>🚙 נהג <span>צעיר</span><small>גרסה 0.6</small></h1>
+    <h1>🚙 נהג <span>צעיר</span><small>גרסה 0.7</small></h1>
     <div class="hdrEnd">
       <button class="mute" id="mute" title="צלילים">🔊</button>
       <div class="gear" id="gear">
@@ -344,13 +350,14 @@
       <canvas id="cv"></canvas>
       <div class="hud" id="hud">
         <span class="timer" id="timer">⏱️ 3:00</span>
-        <span id="levelTag">שלב 1</span>
+        <span id="levelTag">רמה 1</span>
         <span>🪙 <b id="coins">0</b></span>
         <span>📏 <b id="meters">0</b> מ׳</span>
       </div>
       <div class="hint hide" id="hint"></div>
       <div class="alert hide" id="alert"></div>
       <div class="pen" id="pen"><bdi dir="ltr">−10</bdi> שניות</div>
+      <div class="plus" id="plus"><bdi dir="ltr">+5</bdi></div>
       <div class="over show" id="over">
         <div class="overCard" id="card">
           <div class="who" id="who" hidden>
@@ -364,24 +371,26 @@
           </div>
           <div class="big" id="cBig">🚙</div>
           <h2 id="cTitle">איך משחקים?</h2>
+          <div class="aim" id="cAim">
+            <div class="a1">🎯 המטרה: לנסוע כמה שיותר רחוק!</div>
+            <div class="a2" id="cAim2">⏱️ יש לך 3 דקות. כל טעות נהיגה = מינוס 10 שניות</div>
+          </div>
+          <div class="dist" id="cDist" hidden><small>📏 נסעת</small><b><span id="cDistN">0</span><i>מ׳</i></b></div>
           <div class="howto" id="cHow">
             <div><b>⚡ גז</b> = נוסעים · <b>🛑 ברקס</b> = עוצרים</div>
             <div><b>🎡 הגה</b> = ימינה ושמאלה</div>
-            <div><b>⏱️ 3 דקות</b> בלי להתנגש = עוברים שלב!</div>
-            <div><b>🪙 מטבעות</b> = עוד נקודות</div>
             <div><b>⬅️ ➡️ איתות</b> = לפני שעוברים נתיב</div>
-            <div><b>🚗↔️ מרחק</b> = לא נוסעים צמוד לרכב שלפניך</div>
-            <div><b>🚫 50</b> = לא נוסעים מהר יותר מהשלט</div>
-            <div><b>↪️ שלט כחול</b> = מאותתים ופונים לאן שהוא מראה</div>
-            <div><b>🚦 אדום</b> = עוצרים לפני הקו · <b>ירוק</b> = נוסעים</div>
-            <div><b>🚀 ☀️ 🎵</b> = כפתורים של ג׳יפ, נסו הכל!</div>
+            <div><b>🚗↔️ מרחק</b> = לא צמוד לרכב שלפניך</div>
+            <div><b>🚫 50</b> = לא מהר יותר מהשלט</div>
+            <div><b>↪️ שלט כחול</b> = פונים לאן שהוא מראה</div>
+            <div><b>🚦 אדום</b> = עוצרים לפני הקו</div>
+            <div><b>🪙 מטבעות</b> = אוספים בדרך</div>
           </div>
           <div class="goal" id="cGoal">משחק לילדים מגיל 5-6 ומעלה 🚙</div>
           <div class="stats" id="cStats"></div>
           <div class="habits" id="cHabits" hidden></div>
           <div class="tip" id="cTip" hidden></div>
-          <div class="prize" id="cPrize" hidden>🎁 פרס: 10 שניות מתנה! השלב הבא מתחיל ב-2:50</div>
-          <div class="newBest" id="cBest">⭐ שיא חדש!</div>
+          <div class="newBest" id="cBest">🏆 שיא חדש!</div>
           <div class="cardBtns">
             <button class="again alt" id="cBtn2"></button>
             <button class="again" id="cBtn">🚦 יאללה, נוסעים!</button>
@@ -398,7 +407,7 @@
           </div>
           <div id="devBox" style="display:contents">
           <table class="lb">
-            <thead><tr><th></th><th></th><th>שחקן</th><th>📏 הכי רחוק</th><th>❌ טעויות</th><th>🏁 שלבים</th></tr></thead>
+            <thead><tr><th></th><th></th><th>שחקן</th><th>📏 הכי רחוק</th><th>❌ טעויות</th><th>🔁 נסיעות</th></tr></thead>
             <tbody id="lbBody"></tbody>
           </table>
           <div class="lbNote" id="lbEmpty" hidden>עוד אין שחקנים. לוחצים על ➕ שחקן חדש!</div>
@@ -471,6 +480,20 @@
 
 <script>
 "use strict";
+/* ================= Game rules: all the numbers in one place (easy to tune) ================= */
+// A drive (נסיעה) starts with START_TIME seconds. The goal: go as far as possible before the clock hits 0:00.
+// Every driving mistake (no signal, too close, too fast, wrong/missed turn, red light, crash) takes PENALTY seconds.
+// Bonus time (positive reinforcement): a value of 0 turns that bonus OFF completely (no "+N", no banner).
+const RULES = {
+  START_TIME: 180,          // 3:00 on the clock
+  PENALTY: 10,              // seconds off for every driving mistake
+  BONUS_CLEAN_DIST: 400,    // meters in a row with no mistake for the clean-driving bonus
+  BONUS_CLEAN: 0,           // seconds for that (0 = off; e.g. 5)
+  BONUS_TURN: 0,            // seconds for each correct turn at a junction (0 = off; e.g. 3)
+  BONUS_LIGHT: 0,           // seconds for each correct stop at a red light (0 = off; e.g. 3)
+  LEVEL_DIST: 300,          // every 300 m the road gets a little harder ("רמה" in the HUD)
+  MAX_LEVEL: 30
+};
 const $ = id => document.getElementById(id);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const rand = (a, b) => a + Math.random() * (b - a);
@@ -584,10 +607,8 @@ function vibrate(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } cat
 /* ================= Progress (localStorage) ================= */
 const SAVE_KEY = "youngDriverProgress";     // the guest's progress (same save as v0.3)
 const PLAYERS_KEY = "youngDriverPlayers";   // players + their records, only on this device
-const LEVEL_TIME = 180;            // every level lasts exactly 3 minutes
-const LEVELS_PER_SEASON = 10, LAST_SEASON = 3, LAST_LEVEL = LEVELS_PER_SEASON * LAST_SEASON;   // 30 levels
 const AVATARS = ["🚙", "🏎️", "🦁", "🐯", "🐶", "🐱", "🦄", "🐸", "🐼", "🦖", "🚀", "⭐"];
-const PRIZE = 10, MAX_PLAYERS = 12;
+const MAX_PLAYERS = 12;
 const num = (v, lo, hi) => clamp(parseInt(v, 10) || 0, lo, hi);
 // family board score: farther is better, fewer mistakes breaks a tie (same order as the device table)
 const runScore = (m, mist) => clamp(Math.round(m) * 10 + Math.max(0, 9 - mist), 0, 1e7);
@@ -597,13 +618,15 @@ function cleanPlayer(p, i) {
     id: String(p.id || "p" + (i + 1)).slice(0, 40),
     name: String(p.name || "").trim().slice(0, 14) || "?",
     av: AVATARS.includes(p.av) ? p.av : "🚙",
-    level: num(p.level, 1, LAST_LEVEL) || 1,
+    // older versions' level/season fields: kept as they are so nothing breaks, not used any more
+    level: num(p.level, 1, 30) || 1,
     trophy: !!p.trophy,
     best: num(p.best, 0, 1e9),
-    bestM: num(p.bestM, 0, 1e9),         // farthest distance in one level (meters)
-    bestMist: num(p.bestMist, 0, 999),   // mistakes in that run
-    passed: num(p.passed, 0, LAST_LEVEL),
-    prize: !!p.prize,                    // 10 free seconds waiting for the next level
+    passed: num(p.passed, 0, 30),
+    prize: !!p.prize,
+    bestM: num(p.bestM, 0, 1e9),         // the score: farthest distance in one drive (meters)
+    bestMist: num(p.bestMist, 0, 999),   // mistakes in that drive
+    runs: num(p.runs, 0, 1e6),           // how many drives were finished
     bestSc: Math.max(num(p.bestSc, 0, 1e7), p.bestM > 0 ? runScore(num(p.bestM, 0, 1e6), num(p.bestMist, 0, 999)) : 0),
     posted: num(p.posted, 0, 1e7)        // the best score already sent to the family board
   };
@@ -621,7 +644,8 @@ function loadGuest() {
   let old = null;
   try { old = JSON.parse(localStorage.getItem(SAVE_KEY) || "null"); } catch (e) { old = null; }
   old = old && typeof old === "object" ? old : {};
-  const g = cleanPlayer({ id: "guest", name: "אורח", av: "🚙", level: old.level, trophy: old.trophy, best: old.best }, 0);
+  const g = cleanPlayer({ id: "guest", name: "אורח", av: "🚙", level: old.level, trophy: old.trophy, best: old.best,
+    bestM: old.bestM, bestMist: old.bestMist, runs: old.runs }, 0);
   g.guest = true;
   return g;
 }
@@ -630,11 +654,13 @@ const guest = loadGuest();
 let progress = players.list.find(p => p.id === players.cur) || guest;
 function saveProgress() {
   try {
-    if (progress.guest) localStorage.setItem(SAVE_KEY, JSON.stringify({ level: guest.level, trophy: guest.trophy, best: guest.best }));
+    if (progress.guest) localStorage.setItem(SAVE_KEY, JSON.stringify({ level: guest.level, trophy: guest.trophy, best: guest.best,
+      bestM: guest.bestM, bestMist: guest.bestMist, runs: guest.runs }));
     localStorage.setItem(PLAYERS_KEY, JSON.stringify(players));
   } catch (e) {}
 }
-const seasonOf = level => Math.min(LAST_SEASON, Math.ceil(level / LEVELS_PER_SEASON));
+// difficulty grows with the distance of this drive: every LEVEL_DIST meters = the next level (1..30)
+const levelAt = m => clamp(1 + Math.floor(Math.max(0, m) / RULES.LEVEL_DIST), 1, RULES.MAX_LEVEL);
 
 /* ================= State ================= */
 let gear = "D", fuel = 100, steer = 0;
@@ -648,7 +674,6 @@ let toastText = "", toastT = 0;
 function toast(text, secs = 1.6) { toastText = text; toastT = secs; }
 
 /* ================= Driving rules: signal + keep distance ================= */
-const PENALTY = 10;          // seconds of progress lost (the clock goes back up)
 const SIG_GRACE = 1.5;       // a signal switched off up to 1.5 s ago still counts
 const WOBBLE = 1.5;          // crossing straight back within 1.5 s = same lane change
 const SIG_PEN_GAP = 1.5;     // one quick swerve over two lanes = one mistake
@@ -683,13 +708,36 @@ function tickAlerts(dt) {
 }
 function clearAlerts() { alertQ.length = 0; alertCur = null; $("alert").classList.add("hide"); }
 function penalty() {
-  G.timeLeft = Math.min(LEVEL_TIME, G.timeLeft + PENALTY);   // lose 10 s of progress, never more than 3:00
+  G.timeLeft = Math.max(0, G.timeLeft - RULES.PENALTY);   // every mistake takes 10 s off the clock
+  G.cleanM = 0;                                           // the clean-driving counter starts again
+  $("pen").firstElementChild.textContent = "−" + RULES.PENALTY;
   const p = $("pen");
   p.classList.remove("go"); void p.offsetWidth; p.classList.add("go");
   $("timer").classList.add("pen-hit"); clearTimeout(penalty.t);
   penalty.t = setTimeout(() => $("timer").classList.remove("pen-hit"), 900);
   sfx.dingDong(); vibrate([90, 60, 90]);
   updateHud(true);
+}
+// bonus time for good driving; a bonus of 0 is OFF: nothing is added and nothing is shown
+function addTime(secs) {
+  if (!(secs > 0) || G.mode !== "play") return false;
+  G.timeLeft += secs; G.bonusT = (G.bonusT || 0) + secs;
+  const p = $("plus");
+  p.firstElementChild.textContent = "+" + secs;
+  p.classList.remove("go"); void p.offsetWidth; p.classList.add("go");
+  $("timer").classList.add("plus-hit"); clearTimeout(addTime.t);
+  addTime.t = setTimeout(() => $("timer").classList.remove("plus-hit"), 900);
+  updateHud(true);
+  return true;
+}
+function cleanBonus(fwd) {
+  G.cleanM += fwd;
+  if (G.cleanM < RULES.BONUS_CLEAN_DIST) return;
+  G.cleanM -= RULES.BONUS_CLEAN_DIST;
+  if (addTime(RULES.BONUS_CLEAN)) {
+    G.cleanBonus++; sfx.best();
+    showAlert(`⏱️ +${RULES.BONUS_CLEAN} שניות! נהיגה מצוינת`, true);
+  }
 }
 function onLaneChange(from, to) {
   const dir = to > from ? "R" : "L";
@@ -759,7 +807,7 @@ function updateRules(dt) {
 
 // how hard each level is: 1 = very easy (slow, few cars), 30 = still friendly
 function levelSettings(level) {
-  const t = (level - 1) / (LAST_LEVEL - 1);           // 0 .. 1
+  const t = (level - 1) / (RULES.MAX_LEVEL - 1);      // 0 .. 1
   return {
     topSpeed: Math.round(40 + t * 45),                 // player's top speed, km/h
     gap: 150 - t * 100,                                // meters between traffic cars
@@ -768,21 +816,20 @@ function levelSettings(level) {
   };
 }
 
-// G.mode: "menu" (card shown before driving), "play", "crash", "win"
+// G.mode: "menu" (card shown before driving), "play", "end" (the clock reached 0:00)
 const G = {
-  mode: "menu", over: true, level: progress.level, set: levelSettings(progress.level),
-  v: 0, x: 1.5, meters: 0, coins: 0, timeLeft: LEVEL_TIME, bonus: 0, shake: 0, flash: 0, time: 0,
+  mode: "menu", over: true, level: 1, set: levelSettings(1),
+  v: 0, x: 1.5, meters: 0, coins: 0, timeLeft: RULES.START_TIME, shake: 0, flash: 0, time: 0,
   cars: [], items: [], laneOffset: 0, grassOffset: 0,
   world: null, secKind: "country", limit: 50, turn: null
 };
-function startLevel(level) {
-  // a prize from a level with no mistakes: the next level starts at 2:50
-  const bonus = progress.prize ? PRIZE : 0;
-  if (bonus) { progress.prize = false; saveProgress(); }
+function startRun() {
+  const level = 1;
   Object.assign(G, {
     mode: "play", over: false, level, set: levelSettings(level),
-    v: 0, x: 1.5, meters: 0, coins: 0, timeLeft: LEVEL_TIME - bonus, bonus,
+    v: 0, x: 1.5, meters: 0, coins: 0, timeLeft: RULES.START_TIME,
     shake: 0, flash: 0, time: G.time || 0,
+    crashes: 0, crashCD: 0, cleanM: 0, cleanBonus: 0, bonusT: 0,
     cars: [], items: [],
     trafficAcc: 0, nextTraffic: 70, coinAcc: 0, nextCoin: 12, fuelAcc: 60, lv: 0,
     laneNow: 1, lastCross: null, sigPenAt: -99, sigGood: 0, sigMiss: 0, distPen: 0,
@@ -799,7 +846,6 @@ function startLevel(level) {
   setGear("D", true);
   clearAlerts();
   hideCard();
-  if (bonus) showAlert("🎁 פרס: 10 שניות מתנה! <small>מתחילים ב-2:50</small>", true);
   updateHud(true);
 }
 
@@ -1114,48 +1160,38 @@ function hornMovesCars(funny) {
   }
 }
 
-// a crash is a soft bump that ends the level kindly
+// a crash is a driving mistake: a soft bump, -10 s, the other car moves aside and the drive goes on
 function crash(c) {
   c.hit = true;
   c.v += 18;                          // the other car drives off happily
-  G.mode = "crash"; G.over = true;
-  G.shake = 0.45; G.flash = 0.3;
+  const opts = [c.lane - 1, c.lane + 1].filter(l => l >= 0 && l <= 2 && !laneBusy(l, c.y - carH * 1.6, c.y + carH * 1.6, c));
+  if (opts.length) {                  // and is pushed aside, away from us
+    opts.sort((a, b) => Math.abs(b + 0.5 - G.x) - Math.abs(a + 0.5 - G.x));
+    c.lane = opts[0];
+  }
+  G.crashes++; G.crashCD = 1.2;
+  G.shake = 0.35; G.flash = 0.25;
   G.v *= 0.3;
   sfx.bump(); vibrate(120);
-  const score = levelScore(), isBest = score > progress.best;
-  if (isBest) progress.best = score;
-  recordRun(true);
+  showAlert("💥 בום! התנגשת <small>שומרים מרחק ונוהגים לאט ובזהירות</small>");
+  penalty();
+}
+const mistakesNow = () => (G.sigMiss || 0) + (G.distPen || 0) + (G.speedPen || 0) + (G.turnBad || 0) + (G.lightPen || 0) + (G.crashes || 0);
+// the clock reached 0:00: the drive is over, the distance is the result
+function endRun() {
+  G.mode = "end"; G.over = true;
+  const m = Math.floor(G.meters), isBest = m > 0 && m > progress.bestM;
+  const mist = recordRun();
+  progress.runs++;
   saveProgress();
   postBest();
-  setTimeout(() => {
-    if (G.mode !== "crash") return;
-    showCard("crash", { score, isBest });
-    sfx.over();
-  }, 800);
+  showCard("end", { m, mist, isBest });
+  if (isBest) sfx.best(); else sfx.over();
+  vibrate(200);
 }
-function winLevel() {
-  G.mode = "win"; G.over = true;
-  const done = G.level, score = levelScore(), isBest = score > progress.best;
-  if (isBest) progress.best = score;
-  const mist = recordRun(false);
-  progress.passed = Math.max(progress.passed, done);
-  const prize = mist === 0;
-  if (prize) progress.prize = true;
-  let kind = "win";
-  if (done >= LAST_LEVEL) { progress.trophy = true; progress.level = 1; kind = "trophy"; }
-  else {
-    progress.level = Math.max(progress.level, done + 1);
-    if (done % LEVELS_PER_SEASON === 0) kind = "season";   // after level 10 and level 20
-  }
-  saveProgress();
-  postBest();
-  showCard(kind, { score, isBest, done, prize });
-  sfx.best(); vibrate(200);
-}
-const levelScore = () => Math.floor(G.meters) + G.coins * 10;
-// champions table: the farthest run counts, fewer mistakes breaks a tie
-function recordRun(crashed) {
-  const m = Math.floor(G.meters), mist = (G.sigMiss || 0) + (G.distPen || 0) + (G.speedPen || 0) + (G.turnBad || 0) + (G.lightPen || 0) + (crashed ? 1 : 0);
+// champions table: the farthest drive counts, fewer mistakes breaks a tie
+function recordRun() {
+  const m = Math.floor(G.meters), mist = mistakesNow();
   if (m > progress.bestM || (m === progress.bestM && m > 0 && mist < progress.bestMist)) { progress.bestM = m; progress.bestMist = mist; }
   const sc = runScore(G.meters, mist);
   if (sc > progress.bestSc) progress.bestSc = sc;
@@ -1167,7 +1203,7 @@ let newAv = AVATARS[0];
 function selectPlayer(id) {
   const p = players.list.find(q => q.id === id) || guest;
   players.cur = p.guest ? null : p.id; progress = p;
-  G.level = p.level; G.set = levelSettings(p.level);
+  G.level = 1; G.set = levelSettings(1);
   saveProgress(); updateHud(true);
   showCard("start");
 }
@@ -1234,7 +1270,7 @@ $("pCancel").onclick = () => { sfx.click(); closeNewPlayer(); };
 $("pName").addEventListener("pointerdown", e => e.stopPropagation());
 
 function openBoard() {
-  const rows = players.list.slice().sort((a, b) => b.bestM - a.bestM || a.bestMist - b.bestMist || b.passed - a.passed);
+  const rows = players.list.slice().sort((a, b) => b.bestM - a.bestM || a.bestMist - b.bestMist || b.runs - a.runs);
   const body = $("lbBody");
   body.textContent = "";
   rows.forEach((p, i) => {
@@ -1242,7 +1278,7 @@ function openBoard() {
     const played = p.bestM > 0;
     tr.className = (played && i < 3 ? "g" + (i + 1) : "") + (p.id === players.cur ? " me" : "");
     const cells = [played && i < 3 ? ["🥇", "🥈", "🥉"][i] : String(i + 1), p.av, p.name,
-      played ? p.bestM + " מ׳" : "—", played ? String(p.bestMist) : "—", String(p.passed)];
+      played ? p.bestM + " מ׳" : "—", played ? String(p.bestMist) : "—", String(p.runs)];
     cells.forEach((t, k) => {
       const td = document.createElement("td");
       td.textContent = t;
@@ -1294,7 +1330,7 @@ function wrongCode() {
   openCode("הקוד לא נכון, נסה שוב");
 }
 let posting = false;
-// one POST at most per level end, only for a named player, only when it beats the last posted score
+// one POST at most per drive end, only for a named player, only when it beats the last posted score
 async function postBest() {
   try {
     const p = progress;
@@ -1379,47 +1415,38 @@ $("lbTitle").onclick = () => {
 $("cBoard").onclick = () => { sfx.click(); $("cBoard").blur(); openBoard(); };
 $("lbClose").onclick = () => { sfx.click(); closeBoard(); };
 
-/* ================= Cards (start / crash / win / trophy) ================= */
+/* ================= Cards (start / end of the drive) ================= */
 function hideCard() { $("over").classList.remove("show"); }
 function showCard(kind, info = {}) {
-  const card = $("card"), lvl = G.level;
+  const card = $("card"), ended = kind === "end";
   clearAlerts();
-  const stats = info.score !== undefined
-    ? `<span>📏 <b>${Math.floor(G.meters)}</b> מ׳</span><span>🪙 <b>${G.coins}</b></span><span>⭐ <b>${info.score}</b> נקודות</span>`
-    : `<span>שלב <b>${lvl}</b> · עונה <b>${seasonOf(lvl)}</b></span>` +
-      (progress.trophy ? `<span>🏆 יש לך גביע!</span>` : "");
-  const set = (big, title, btn, btn2, how) => {
-    $("cBig").textContent = big;
-    $("cTitle").textContent = title;
-    $("cBtn").textContent = btn;
-    $("cBtn2").textContent = btn2 || "";
-    $("cBtn2").hidden = !btn2;
-    $("cHow").hidden = !how;
-    $("cGoal").hidden = !how;
-  };
-  card.classList.toggle("trophy", kind === "trophy");
   closeNewPlayer();
-  $("who").hidden = kind !== "start";
-  if (kind === "start") renderWho();
-  $("cPrize").hidden = !info.prize;
-  if (kind === "start")       set("🚙", "איך משחקים?", "🚦 יאללה, נוסעים!", "", true);
-  else if (kind === "crash")  set("😅", "אופס! עוד פעם?", "🔄 עוד פעם!", "❓ איך משחקים", false);
-  else if (kind === "win")    set("🎉", `כל הכבוד! עברת שלב ${info.done}`, `➡️ לשלב ${info.done + 1}`, "🔄 שוב אותו שלב", false);
-  else if (kind === "season") set(seasonOf(info.done + 1) === 3 ? "🏔️" : "🌟", `עונה ${seasonOf(info.done + 1)} נפתחה!`, `➡️ לעונה ${seasonOf(info.done + 1)}`, "🔄 שוב אותו שלב", false);
-  else if (kind === "trophy") set("🏆", "קיבלת גביע! סיימת 3 עונות!", "🚙 מתחילים שוב", "", false);
-  $("cBig").hidden = kind === "start";        // the player buttons take its place
-  $("cStats").innerHTML = stats;
-  const ended = info.score !== undefined;
+  $("who").hidden = ended;
+  if (!ended) renderWho();
+  $("cBig").hidden = true;                    // the player buttons / the big distance take its place
+  $("cTitle").textContent = ended ? "🏁 הנסיעה הסתיימה!" : "איך משחקים?";
+  $("cAim").hidden = $("cHow").hidden = $("cGoal").hidden = ended;
+  $("cDist").hidden = !ended;
+  $("cBtn").textContent = ended ? "🔁 נסיעה חדשה" : "🚦 יאללה, נוסעים!";
+  $("cBtn2").textContent = "👤 החלפת נהג";
+  $("cBtn2").hidden = !(ended && players.list.length);   // only when there is someone to switch to
   $("cHabits").hidden = $("cTip").hidden = !ended;
   if (ended) {
-    $("cHabits").innerHTML = `איתותים נכונים: <b>${G.sigGood || 0}</b> · שכחת לאותת: <b>${G.sigMiss || 0}</b> · שמירת מרחק: <b>${G.distPen || 0}</b><br>` +
+    $("cDistN").textContent = info.m;
+    $("cStats").innerHTML = `<span>❌ טעויות: <b>${info.mist}</b></span><span>🪙 <b>${G.coins}</b></span>` +
+      (G.bonusT ? `<span>🌟 זמן בונוס: <b>+${G.bonusT}</b> שניות</span>` : "") +
+      (progress.bestM > 0 && !info.isBest ? `<span>🏆 השיא: <b>${progress.bestM}</b> מ׳</span>` : "");
+    $("cHabits").innerHTML = `איתותים נכונים: <b>${G.sigGood || 0}</b> · שכחת לאותת: <b>${G.sigMiss || 0}</b> · שמירת מרחק: <b>${G.distPen || 0}</b> · 💥 התנגשויות: <b>${G.crashes || 0}</b><br>` +
       `🚫 מהירות: <b>${G.speedPen || 0}</b> · ↪️ פניות נכונות: <b>${G.turnGood || 0}</b>${G.turnBad ? ` (טעויות: <b>${G.turnBad}</b>)` : ""} · 🚦 רמזורים: <b>${G.lightGood || 0}</b>${G.lightPen ? ` (באדום: <b>${G.lightPen}</b>)` : ""}`;
-    $("cTip").textContent = G.lightPen ? "💡 טיפ: רמזור אדום 🔴 = עוצרים לפני הקו הלבן"
+    $("cTip").textContent = G.crashes ? "💡 טיפ: רואים רכב מקדימה? ברקס 🛑 או עוקפים עם איתות"
+      : G.lightPen ? "💡 טיפ: רמזור אדום 🔴 = עוצרים לפני הקו הלבן"
       : G.speedPen ? "💡 טיפ: מסתכלים על השלט העגול 🚫 ולא נוסעים מהר ממנו"
       : G.turnBad ? "💡 טיפ: השלט הכחול אומר לאן לפנות: מאותתים ועוברים לנתיב"
       : G.sigMiss ? "💡 טיפ: לפני שעוברים נתיב, לוחצים על איתות ⬅️ ➡️"
       : G.distPen ? "💡 טיפ: מתקרבים לרכב? לוחצים ברקס 🛑 ושומרים מרחק"
-      : "💡 נהג מצוין! ממשיכים לאותת, לשמור מרחק ולציית לשלטים 👍";
+      : "💡 נהג מצוין! פחות טעויות = יותר זמן = יותר רחוק 👍";
+  } else {
+    $("cStats").innerHTML = progress.bestM > 0 ? `<span>🏆 השיא שלך: <b>${progress.bestM}</b> מ׳</span>` : "";
   }
   $("cBest").classList.toggle("show", !!info.isBest);
   card.dataset.kind = kind;
@@ -1427,19 +1454,10 @@ function showCard(kind, info = {}) {
   card.style.animation = "none"; void card.offsetWidth; card.style.animation = "";
 }
 $("cBtn").onclick = () => {
-  const kind = $("card").dataset.kind;
   sfx.click(); $("cBtn").blur(); engineOn();
-  if (kind === "crash") startLevel(G.level);
-  else if (kind === "win" || kind === "season") startLevel(G.level + 1);
-  else if (kind === "trophy") startLevel(1);   // a new round after the trophy
-  else startLevel(G.level);                    // the start card
+  startRun();                                  // the start card and the end card both start a new drive
 };
-$("cBtn2").onclick = () => {
-  const kind = $("card").dataset.kind;
-  sfx.click(); $("cBtn2").blur();
-  if (kind === "crash") showCard("start");
-  else startLevel(G.level);                    // replay the level just won
-};
+$("cBtn2").onclick = () => { sfx.click(); $("cBtn2").blur(); showCard("start"); };   // pick another driver
 
 function updateCar(dt) {
   const gas = (gasTouch || gasKey) && !G.over;
@@ -1507,11 +1525,13 @@ function update(dt) {
 
   if (G.mode === "play") {
     G.meters += fwdMeters;
-    // the level clock runs while the car is driving forward
-    if (G.v > 3) {
-      G.timeLeft = Math.max(0, G.timeLeft - dt);
-      if (G.timeLeft <= 0) { winLevel(); return; }
-    }
+    // the clock runs only while the car is driving forward (standing still never wastes time)
+    if (G.v > 3) G.timeLeft = Math.max(0, G.timeLeft - dt);
+    if (G.timeLeft <= 0) { endRun(); return; }
+    cleanBonus(fwdMeters);
+    // the farther we drive, the harder it gets: more traffic, junctions, lights, lower limits
+    const lv = levelAt(G.meters);
+    if (lv !== G.level) { G.level = lv; G.set = levelSettings(lv); }
     worldEvents(dt);
     // traffic: higher levels have a bit more cars (see levelSettings)
     G.trafficAcc += fwdMeters;
@@ -1546,10 +1566,11 @@ function update(dt) {
   G.flash = Math.max(0, G.flash - dt);
   if (G.mode !== "play") return;
 
-  // collisions: a soft bump ends the level
+  // collisions: a soft bump is a mistake (-10 s), the drive goes on
+  G.crashCD = Math.max(0, (G.crashCD || 0) - dt);
   const px = G.x, pw = carW * 0.8, ph = carH * 0.85;
   for (const c of G.cars) {
-    if (c.hit) continue;
+    if (c.hit || G.crashCD > 0) continue;
     const s = carSize(c);
     if (Math.abs((c.x - px) * laneW) < (pw + s.w * 0.85) / 2 && Math.abs(c.y - playerY) < (ph + s.h * 0.88) / 2) { crash(c); return; }
   }
@@ -1583,7 +1604,7 @@ function limitFor(kind, level) {
   return Math.random() < (level < 5 ? 0.3 : 0.55) ? 70 : 50;
 }
 const sectionLen = () => rand(260, 420);                       // meters of city or countryside
-const junctionGap = level => level <= 1 ? Infinity : rand(0.8, 1.2) * Math.max(240, 540 - (level - 2) * 12);
+const junctionGap = level => rand(0.8, 1.2) * Math.max(240, 540 - Math.max(0, level - 2) * 12);
 
 function newWorld(kind, limit, signY) {
   const S = { scenes: [{ y: H + 400, kind }], side: [], feats: [], top: [H + 40, H + 40], off: 0, seed: Math.random() * 1000 };
@@ -1746,7 +1767,10 @@ function lightTick(j, dt, front) {
     if (Math.abs(G.v) < 1.5 && front - sl < H * 0.75) {
       L.waitT += dt;
       if (!L.stopShown && L.waitT > 0.25) { L.stopShown = true; showAlert("👍 עצרת ברמזור! <small>מחכים לאור ירוק 🟢</small>", true); }
-      if (L.waitT >= LIGHT_WAIT) { L.red = false; L.done = true; G.lightGood++; toast("🟢 ירוק! נוסעים", 1.5); sfx.coin(); }
+      if (L.waitT >= LIGHT_WAIT) {
+        L.red = false; L.done = true; G.lightGood++; sfx.coin();
+        toast(addTime(RULES.BONUS_LIGHT) ? `🟢 ירוק! נוסעים · ⏱️ +${RULES.BONUS_LIGHT} שניות` : "🟢 ירוק! נוסעים", 1.5);
+      }
     }
   } else {                                               // we drove over the line on red
     L.done = true; L.red = false; L.ran = true; G.lightPen++;
@@ -1773,7 +1797,8 @@ function decideJunction(j) {
       }
     } else {
       G.turnGood++; G.coins += 2; sfx.coin(); setTimeout(() => sfx.coin(), 120);
-      showAlert("👍 פנית נכון! <small>+2 🪙</small>", true);
+      const b = addTime(RULES.BONUS_TURN);
+      showAlert(`👍 פנית נכון! <small>+2 🪙${b ? ` · ⏱️ +${RULES.BONUS_TURN} שניות` : ""}</small>`, true);
     }
     startTurn(j, take === "R" ? 1 : -1);
   } else if (take) {
@@ -1783,7 +1808,8 @@ function decideJunction(j) {
   } else if (j.instr === "S") {
     if (j.light && j.light.ran) { G.turnAll--; return; }      // the red light mistake was already counted
     G.turnGood++; G.coins += 2; sfx.coin();
-    showAlert("👍 ישר, נכון! <small>+2 🪙</small>", true);
+    const b = addTime(RULES.BONUS_TURN);
+    showAlert(`👍 ישר, נכון! <small>+2 🪙${b ? ` · ⏱️ +${RULES.BONUS_TURN} שניות` : ""}</small>`, true);
   } else {
     G.turnBad++;
     showAlert(`😮 פספסת את הפנייה! <small>השלט אמר: ${DIR_TEXT[j.instr]}</small>`);
@@ -2549,15 +2575,14 @@ function draw(dt) {
 let lastHud = "";
 function updateHud(force) {
   const meters = Math.floor(G.meters || 0);
-  const secs = Math.ceil(G.timeLeft === undefined ? LEVEL_TIME : G.timeLeft);
+  const secs = Math.ceil(G.timeLeft === undefined ? RULES.START_TIME : G.timeLeft);
   const clock = Math.floor(secs / 60) + ":" + String(secs % 60).padStart(2, "0");
-  const gift = G.bonus && G.mode === "play" ? " 🎁" : "";
-  const key = [meters, G.coins || 0, clock, G.level, gift, progress.id].join("|");
+  const key = [meters, G.coins || 0, clock, G.level, progress.id].join("|");
   if (key === lastHud && !force) return;
   lastHud = key;
-  $("timer").textContent = "⏱️ " + clock + gift;
+  $("timer").textContent = "⏱️ " + clock;
   $("timer").classList.toggle("end", secs <= 10 && G.mode === "play");
-  $("levelTag").textContent = `${progress.av} שלב ${G.level} · עונה ${seasonOf(G.level)}` + (progress.trophy ? " 🏆" : "");
+  $("levelTag").textContent = `${progress.av} רמה ${G.level}`;     // how hard the road is now, not a goal
   $("meters").textContent = meters;
   $("coins").textContent = G.coins || 0;
 }
