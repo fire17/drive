@@ -167,6 +167,17 @@
   .lb tr.g1 td{background:#fbbf2426}.lb tr.g2 td{background:#cbd5e11f}.lb tr.g3 td{background:#d9770622}
   .lb tr.me td.nm{color:var(--blue)}
   .lbNote{font-size:12px;color:var(--muted)}
+  /* ---- family board (off until a family code is saved) ---- */
+  .lbTabs{display:flex;gap:8px;justify-content:center}
+  .lbTabs button{flex-direction:row;font-size:15px;padding:6px 12px;border-radius:12px}
+  .lbTabs button.on{background:var(--amber);color:#211600;border-color:#fff}
+  .famBox{width:100%;display:flex;flex-direction:column;align-items:center;gap:6px;min-height:60px}
+  .spin{width:34px;height:34px;border:4px solid var(--line);border-top-color:var(--amber);border-radius:50%;animation:spin .8s linear infinite;margin:10px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .famMsg{font-size:16px;font-weight:700;color:var(--amber);padding:8px}
+  .overCard.code{border-color:var(--green);box-shadow:0 0 40px #4ade8044;width:min(340px,100%)}
+  .overCard.code input{font-family:inherit;font-size:20px;font-weight:700;color:var(--ink);background:#0b0d13;border:2px solid var(--green);border-radius:14px;padding:6px 12px;width:220px;max-width:100%;text-align:center;direction:ltr;user-select:text;-webkit-user-select:text;outline:none}
+  .codeErr{font-size:15px;font-weight:700;color:var(--red)}
   @media (orientation:landscape) and (max-height:640px){
     .overCard .goal{display:none}
     .overCard{gap:5px;padding:10px 14px}
@@ -306,7 +317,7 @@
 <body>
 <div class="app">
   <header>
-    <h1>🚙 נהג <span>צעיר</span><small>גרסה 0.5</small></h1>
+    <h1>🚙 נהג <span>צעיר</span><small>גרסה 0.6</small></h1>
     <div class="hdrEnd">
       <button class="mute" id="mute" title="צלילים">🔊</button>
       <div class="gear" id="gear">
@@ -380,14 +391,36 @@
       </div>
       <div class="over" id="boardOver">
         <div class="overCard board">
-          <h2>🏆 טבלת האלופים</h2>
+          <h2 id="lbTitle">🏆 טבלת האלופים</h2>
+          <div class="lbTabs" id="lbTabs" hidden>
+            <button id="tabDev" class="on">📱 במכשיר הזה</button>
+            <button id="tabFam">👨‍👩‍👦 המשפחה</button>
+          </div>
+          <div id="devBox" style="display:contents">
           <table class="lb">
             <thead><tr><th></th><th></th><th>שחקן</th><th>📏 הכי רחוק</th><th>❌ טעויות</th><th>🏁 שלבים</th></tr></thead>
             <tbody id="lbBody"></tbody>
           </table>
           <div class="lbNote" id="lbEmpty" hidden>עוד אין שחקנים. לוחצים על ➕ שחקן חדש!</div>
           <div class="lbNote">מי שנסע הכי רחוק עם הכי מעט טעויות מנצח · הטבלה שמורה במכשיר הזה</div>
+          </div>
+          <div class="famBox" id="famBox" hidden>
+            <div class="spin" id="famSpin"></div>
+            <div class="famMsg" id="famMsg" hidden></div>
+            <table class="lb" id="famTable" hidden>
+              <thead><tr><th></th><th>שחקן</th><th>📏 הכי רחוק</th></tr></thead>
+              <tbody id="famBody"></tbody>
+            </table>
+          </div>
           <button class="again" id="lbClose">👍 סגור</button>
+        </div>
+      </div>
+      <div class="over" id="codeOver">
+        <div class="overCard code">
+          <h2>🔐 קוד המשפחה</h2>
+          <div class="codeErr" id="codeErr" hidden></div>
+          <input id="codeIn" type="password" maxlength="64" autocomplete="off" enterkeyhint="done" placeholder="••••">
+          <div class="cardBtns"><button class="again alt" id="codeSkip">דלג</button><button class="again" id="codeSave">שמור</button></div>
         </div>
       </div>
     </div>
@@ -556,6 +589,8 @@ const LEVELS_PER_SEASON = 10, LAST_SEASON = 3, LAST_LEVEL = LEVELS_PER_SEASON * 
 const AVATARS = ["🚙", "🏎️", "🦁", "🐯", "🐶", "🐱", "🦄", "🐸", "🐼", "🦖", "🚀", "⭐"];
 const PRIZE = 10, MAX_PLAYERS = 12;
 const num = (v, lo, hi) => clamp(parseInt(v, 10) || 0, lo, hi);
+// family board score: farther is better, fewer mistakes breaks a tie (same order as the device table)
+const runScore = (m, mist) => clamp(Math.round(m) * 10 + Math.max(0, 9 - mist), 0, 1e7);
 function cleanPlayer(p, i) {
   p = p && typeof p === "object" ? p : {};
   return {
@@ -568,7 +603,9 @@ function cleanPlayer(p, i) {
     bestM: num(p.bestM, 0, 1e9),         // farthest distance in one level (meters)
     bestMist: num(p.bestMist, 0, 999),   // mistakes in that run
     passed: num(p.passed, 0, LAST_LEVEL),
-    prize: !!p.prize                     // 10 free seconds waiting for the next level
+    prize: !!p.prize,                    // 10 free seconds waiting for the next level
+    bestSc: Math.max(num(p.bestSc, 0, 1e7), p.bestM > 0 ? runScore(num(p.bestM, 0, 1e6), num(p.bestMist, 0, 999)) : 0),
+    posted: num(p.posted, 0, 1e7)        // the best score already sent to the family board
   };
 }
 function loadPlayers() {
@@ -958,7 +995,8 @@ const keyUp = {
 };
 const typing = e => e.target && e.target.tagName === "INPUT";
 document.addEventListener("keydown", e => {
-  if (typing(e)) { if (e.key === "Enter") { e.preventDefault(); savePlayer(); } return; }
+  if (typing(e)) { if (e.key === "Enter") { e.preventDefault(); if (e.target.id === "codeIn") saveCode(); else savePlayer(); } return; }
+  if ($("codeOver").classList.contains("show")) { if (e.code === "Escape") closeCode(); return; }
   if ($("boardOver").classList.contains("show") && (e.code === "Enter" || e.code === "Escape")) { e.preventDefault(); closeBoard(); return; }
   const fn = keyDown[e.code];
   if (!fn) return;
@@ -1088,6 +1126,7 @@ function crash(c) {
   if (isBest) progress.best = score;
   recordRun(true);
   saveProgress();
+  postBest();
   setTimeout(() => {
     if (G.mode !== "crash") return;
     showCard("crash", { score, isBest });
@@ -1109,6 +1148,7 @@ function winLevel() {
     if (done % LEVELS_PER_SEASON === 0) kind = "season";   // after level 10 and level 20
   }
   saveProgress();
+  postBest();
   showCard(kind, { score, isBest, done, prize });
   sfx.best(); vibrate(200);
 }
@@ -1117,6 +1157,8 @@ const levelScore = () => Math.floor(G.meters) + G.coins * 10;
 function recordRun(crashed) {
   const m = Math.floor(G.meters), mist = (G.sigMiss || 0) + (G.distPen || 0) + (G.speedPen || 0) + (G.turnBad || 0) + (G.lightPen || 0) + (crashed ? 1 : 0);
   if (m > progress.bestM || (m === progress.bestM && m > 0 && mist < progress.bestMist)) { progress.bestM = m; progress.bestMist = mist; }
+  const sc = runScore(G.meters, mist);
+  if (sc > progress.bestSc) progress.bestSc = sc;
   return mist;
 }
 
@@ -1211,9 +1253,129 @@ function openBoard() {
     body.appendChild(tr);
   });
   $("lbEmpty").hidden = rows.length > 0;
+  $("lbTabs").hidden = !familyOn();
+  showTab("dev");
   $("boardOver").classList.add("show");
 }
 function closeBoard() { $("boardOver").classList.remove("show"); }
+
+/* ================= Family board (online, OFF until a family code is saved) ================= */
+// Hidden switch: tap the table title 5 times to enter the family code. With no saved code
+// there is no family tab, no prompt and not a single network request.
+const FAM_API = "https://31-97-114-221.sslip.io/family-scores-api";
+const FAM_KEY = "youngDriverFamilyCode";
+const FAM_GAME = "drive";
+let famCode = "";
+try { famCode = String(localStorage.getItem(FAM_KEY) || ""); } catch (e) { famCode = ""; }
+const familyOn = () => !!famCode;
+function setFamCode(c) {
+  famCode = c || "";
+  try { if (famCode) localStorage.setItem(FAM_KEY, famCode); else localStorage.removeItem(FAM_KEY); } catch (e) {}
+}
+// every call: 6 s timeout, never throws, resolves to { status, data } (status 0 = no connection)
+async function famFetch(path, opts = {}, code = famCode) {
+  if (!code || typeof fetch !== "function") return { status: 0, data: null };
+  let ctl = null, timer = 0;
+  try {
+    ctl = typeof AbortController === "function" ? new AbortController() : null;
+    if (ctl) timer = setTimeout(() => { try { ctl.abort(); } catch (e) {} }, 6000);
+    const headers = Object.assign({ "X-Family-Code": code }, opts.body ? { "Content-Type": "application/json" } : {});
+    const r = await fetch(FAM_API + path, Object.assign({}, opts, { headers, cache: "no-store", signal: ctl ? ctl.signal : undefined }));
+    let data = null;
+    try { data = await r.json(); } catch (e) { data = null; }
+    return { status: r.status, data };
+  } catch (e) {
+    return { status: 0, data: null };
+  } finally { clearTimeout(timer); }
+}
+function wrongCode() {
+  setFamCode("");
+  $("lbTabs").hidden = true; showTab("dev");
+  openCode("הקוד לא נכון, נסה שוב");
+}
+let posting = false;
+// one POST at most per level end, only for a named player, only when it beats the last posted score
+async function postBest() {
+  try {
+    const p = progress;
+    if (!familyOn() || posting || !p || p.guest) return;
+    const score = p.bestSc, nick = String(p.name || "").trim().slice(0, 12);
+    if (!nick || nick === "?" || score <= p.posted) return;
+    posting = true;
+    const r = await famFetch("/scores", { method: "POST", body: JSON.stringify({ game: FAM_GAME, nick, score }) });
+    if (r.status === 403) wrongCode();
+    else if ((r.status >= 200 && r.status < 300 && r.data && r.data.ok) || (r.status >= 400 && r.status < 500 && r.status !== 429)) {
+      p.posted = Math.max(p.posted, score);   // accepted, or the name was refused: don't keep retrying
+      saveProgress();
+    }
+  } catch (e) {} finally { posting = false; }
+}
+let famReq = 0;
+async function loadFamily() {
+  const id = ++famReq;
+  $("famSpin").hidden = false; $("famMsg").hidden = true; $("famTable").hidden = true;
+  const r = await famFetch("/scores?game=" + FAM_GAME);
+  if (id !== famReq) return;
+  $("famSpin").hidden = true;
+  if (r.status === 403) { wrongCode(); return; }
+  const top = r.status === 200 && r.data && Array.isArray(r.data.top) ? r.data.top : null;
+  if (!top) { $("famMsg").textContent = "אין חיבור כרגע, נסה אחר כך"; $("famMsg").hidden = false; return; }
+  if (!top.length) { $("famMsg").textContent = "עוד אין תוצאות במשפחה. נוסעים ומנצחים! 🚙"; $("famMsg").hidden = false; return; }
+  const body = $("famBody"), me = progress.guest ? "" : String(progress.name || "").trim().slice(0, 12);
+  body.textContent = "";
+  top.slice(0, 20).forEach((row, i) => {
+    const tr = document.createElement("tr");
+    const nick = String((row && row.nick) || "?").slice(0, 12), sc = num(row && row.score, 0, 1e7);
+    tr.className = (i < 3 ? "g" + (i + 1) : "") + (me && nick === me ? " me" : "");
+    [i < 3 ? ["🥇", "🥈", "🥉"][i] : String(i + 1), nick, Math.floor(sc / 10) + " מ׳"].forEach((t, k) => {
+      const td = document.createElement("td");
+      td.textContent = t;
+      if (k === 0) td.className = "md";
+      if (k === 1) td.className = "nm";
+      tr.appendChild(td);
+    });
+    body.appendChild(tr);
+  });
+  $("famTable").hidden = false;
+}
+function showTab(t) {
+  const fam = t === "fam" && familyOn();
+  $("tabDev").classList.toggle("on", !fam); $("tabFam").classList.toggle("on", fam);
+  $("devBox").hidden = fam; $("famBox").hidden = !fam;
+  if (fam) loadFamily(); else famReq++;
+}
+$("tabDev").onclick = () => { sfx.click(); showTab("dev"); };
+$("tabFam").onclick = () => { sfx.click(); showTab("fam"); };
+function openCode(err) {
+  $("codeErr").textContent = err || ""; $("codeErr").hidden = !err;
+  $("codeIn").value = "";
+  $("codeOver").classList.add("show");
+  setTimeout(() => { try { $("codeIn").focus(); } catch (e) {} }, 50);
+}
+function closeCode() { $("codeOver").classList.remove("show"); try { $("codeIn").blur(); } catch (e) {} }
+let codeBusy = false;
+async function saveCode() {
+  if (codeBusy) return;
+  const c = $("codeIn").value.trim().slice(0, 64);
+  if (!c) { setFamCode(""); closeCode(); $("lbTabs").hidden = true; showTab("dev"); return; }   // empty = turn the board off
+  codeBusy = true; $("codeSave").textContent = "⏳";
+  const r = await famFetch("/scores?game=" + FAM_GAME, {}, c);   // check the code before saving it
+  codeBusy = false; $("codeSave").textContent = "שמור";
+  if (r.status === 403) { openCode("הקוד לא נכון, נסה שוב"); return; }
+  if (r.status !== 200) { $("codeErr").textContent = "אין חיבור כרגע, נסה אחר כך"; $("codeErr").hidden = false; return; }
+  setFamCode(c); closeCode();
+  if ($("boardOver").classList.contains("show")) { $("lbTabs").hidden = false; showTab("fam"); }
+  postBest();
+}
+$("codeSave").onclick = () => { sfx.click(); saveCode(); };
+$("codeSkip").onclick = () => { sfx.click(); closeCode(); };   // skip: the game keeps working offline
+$("codeIn").addEventListener("pointerdown", e => e.stopPropagation());
+let titleTaps = 0, titleT = 0;
+$("lbTitle").onclick = () => {
+  const now = Date.now();
+  titleTaps = now - titleT < 1500 ? titleTaps + 1 : 1; titleT = now;
+  if (titleTaps >= 5) { titleTaps = 0; openCode(); }
+};
 $("cBoard").onclick = () => { sfx.click(); $("cBoard").blur(); openBoard(); };
 $("lbClose").onclick = () => { sfx.click(); closeBoard(); };
 

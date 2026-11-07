@@ -1,2 +1,33 @@
-{"id":"./","name":"נהג צעיר","short_name":"נהג צעיר","description":"משחק נהיגה לילדים מגיל 5-6 ומעלה: הגה, גז, ברקס, איתות ושמירת מרחק","lang":"he","dir":"rtl","start_url":"./","scope":"./","display":"standalone","orientation":"any","background_color":"#0f1117","theme_color":"#0f1117","categories":["games","kids","education"],
- "icons":[{"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},{"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"}]}
+{
+ "id": "./",
+ "name": "נהג צעיר",
+ "short_name": "נהג צעיר",
+ "description": "משחק נהיגה לילדים מגיל 5-6 ומעלה: הגה, גז, ברקס, איתות ושמירת מרחק",
+ "lang": "he",
+ "dir": "rtl",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "any",
+ "background_color": "#0f1117",
+ "theme_color": "#0f1117",
+ "categories": [
+  "games",
+  "kids",
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  }
+ ]
+}
