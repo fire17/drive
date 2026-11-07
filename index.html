@@ -90,6 +90,62 @@
   .overCard.trophy h2{font-size:30px;color:var(--amber)}
   @keyframes bounce{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-10px) rotate(6deg)}}
   [hidden]{display:none!important}
+  /* ---- driving-rule alerts (top of the road, never over the jeep) ---- */
+  .alert{position:absolute;left:50%;top:86px;transform:translateX(-50%);z-index:3;direction:rtl;max-width:calc(100% - 16px);text-align:center;
+    background:#0f1117ee;border:3px solid var(--amber);border-radius:18px;padding:8px 18px;font-size:24px;font-weight:900;white-space:nowrap;
+    color:#fff;box-shadow:0 0 30px #fbbf2466;pointer-events:none;transition:opacity .25s}
+  .alert small{display:block;font-size:14px;font-weight:700;color:var(--amber)}
+  .alert.show{animation:alertIn .35s ease-out}
+  .alert.good{border-color:var(--green);box-shadow:0 0 20px #4ade8055;font-size:17px;padding:5px 14px}
+  .alert.good small{color:var(--green)}
+  .alert.hide{opacity:0}
+  @keyframes alertIn{0%{transform:translateX(-50%) scale(.6)}70%{transform:translateX(-50%) scale(1.08)}100%{transform:translateX(-50%) scale(1)}}
+  .pen{position:absolute;top:44px;right:8px;z-index:4;color:#fff;background:#e11d48;border:2px solid #fff;border-radius:12px;padding:2px 10px;font-size:20px;font-weight:900;direction:rtl;pointer-events:none;
+    box-shadow:0 0 16px #f43f5e;opacity:0}
+  .hud .timer.pen-hit{color:#fff;background:#e11d48;border-color:#fff}
+  .pen.go{animation:penUp 1.6s ease-out}
+  @keyframes penUp{0%{opacity:0;transform:translateY(-6px) scale(.7)}15%{opacity:1;transform:translateY(0) scale(1.25)}70%{opacity:1;transform:translateY(14px) scale(1)}100%{opacity:0;transform:translateY(26px)}}
+  .habits{font-size:14px;color:var(--ink);background:#0b0d13;border:1px solid var(--line);border-radius:12px;padding:5px 10px}
+  .habits b{color:var(--amber)}
+  .tip{font-size:14px;font-weight:700;color:var(--green)}
+  /* ---- players + champions table ---- */
+  .who{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%}
+  .whoT{font-size:18px;font-weight:900;color:var(--amber)}
+  .whoList{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+  .pBtn{flex-direction:row;font-size:16px;padding:6px 12px;border-radius:14px;gap:6px;max-width:190px}
+  .pBtn .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pBtn.on{background:var(--blue);color:#06121c;border-color:#fff;box-shadow:0 0 16px #4fc3ff88}
+  .pBtn.add{border-style:dashed;color:var(--green)}
+  .newP{display:flex;flex-direction:column;align-items:center;gap:8px}
+  .newP input{font-family:inherit;font-size:20px;font-weight:700;color:var(--ink);background:#0b0d13;border:2px solid var(--blue);border-radius:14px;padding:6px 12px;width:220px;max-width:100%;text-align:center;direction:rtl;user-select:text;-webkit-user-select:text;outline:none}
+  .avs{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;max-width:300px}
+  .avs button{width:42px;height:42px;font-size:22px;padding:0;justify-content:center;border-radius:12px}
+  .avs button.on{background:#25304a;border-color:var(--amber);box-shadow:0 0 12px #fbbf2488}
+  .overCard.adding > :not(.who){display:none}
+  .overCard.adding .whoList{display:none}
+  .prize{font-size:17px;font-weight:900;color:#06210f;background:var(--amber);border-radius:12px;padding:4px 12px}
+  .overCard.board{border-color:var(--amber);box-shadow:0 0 40px #fbbf2444;width:min(560px,100%)}
+  .lb{border-collapse:collapse;width:100%;font-size:15px;direction:rtl}
+  .lb th{font-size:12px;color:var(--muted);font-weight:700;padding:2px 4px}
+  .lb td{padding:5px 4px;border-top:1px solid var(--line);white-space:nowrap}
+  .lb td.nm{text-align:start;font-weight:900;max-width:150px;overflow:hidden;text-overflow:ellipsis}
+  .lb td.md{font-size:20px;width:30px}
+  .lb tr.g1 td{background:#fbbf2426}.lb tr.g2 td{background:#cbd5e11f}.lb tr.g3 td{background:#d9770622}
+  .lb tr.me td.nm{color:var(--blue)}
+  .lbNote{font-size:12px;color:var(--muted)}
+  @media (orientation:landscape){
+    .howto{display:grid;grid-template-columns:auto auto;column-gap:16px;row-gap:2px;font-size:14px}
+    .overCard .who + .big[hidden] + h2{font-size:20px}
+  }
+  @media (orientation:portrait){
+    .overCard{padding:8px 10px;gap:4px}
+    .howto{font-size:13px;gap:0}
+    .overCard h2{font-size:19px}
+    .whoT{font-size:15px}
+    .pBtn{font-size:13px;padding:4px 9px}
+    .goal{font-size:13px}
+    .again{font-size:16px;padding:7px 14px}
+  }
 
   /* ---- bottom buttons ---- */
   .controls{direction:ltr;display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:6px}
@@ -156,6 +212,16 @@
     .overCard .big{font-size:24px}
     .howto{font-size:12px;gap:1px}
     .goal{font-size:12px}
+    .alert{top:62px;font-size:17px;padding:5px 12px}
+    .alert.good{font-size:13px}
+    .alert small{font-size:11px}
+    .pen{top:32px;font-size:14px;padding:1px 8px}
+    .habits,.tip{font-size:11px}
+    .whoT{font-size:14px}
+    .pBtn{font-size:13px;padding:4px 9px}
+    .lb{font-size:12px}
+    .lb td{padding:2px 4px}
+    .prize{font-size:13px}
     .overCard.trophy .big{font-size:56px}
     .overCard h2{font-size:19px}
     .again{font-size:16px;padding:7px 16px}
@@ -191,7 +257,7 @@
 <body>
 <div class="app">
   <header>
-    <h1>🚙 נהג <span>צעיר</span><small>גרסה 0.3</small></h1>
+    <h1>🚙 נהג <span>צעיר</span><small>גרסה 0.4</small></h1>
     <div class="hdrEnd">
       <button class="mute" id="mute" title="צלילים">🔊</button>
       <div class="gear" id="gear">
@@ -223,8 +289,19 @@
         <span>📏 <b id="meters">0</b> מ׳</span>
       </div>
       <div class="hint hide" id="hint"></div>
+      <div class="alert hide" id="alert"></div>
+      <div class="pen" id="pen"><bdi dir="ltr">−10</bdi> שניות</div>
       <div class="over show" id="over">
         <div class="overCard" id="card">
+          <div class="who" id="who" hidden>
+            <div class="whoT" id="whoT">מי נוהג?</div>
+            <div class="whoList" id="whoList"></div>
+            <div class="newP" id="newP" hidden>
+              <input id="pName" maxlength="14" placeholder="מה השם?" autocomplete="off" enterkeyhint="done">
+              <div class="avs" id="avs"></div>
+              <div class="cardBtns"><button class="again alt" id="pCancel">ביטול</button><button class="again" id="pSave">✔️ שמור</button></div>
+            </div>
+          </div>
           <div class="big" id="cBig">🚙</div>
           <h2 id="cTitle">איך משחקים?</h2>
           <div class="howto" id="cHow">
@@ -233,15 +310,33 @@
             <div><b>🎡 הגה</b> = ימינה ושמאלה</div>
             <div><b>⏱️ 3 דקות</b> בלי להתנגש = עוברים שלב!</div>
             <div><b>🪙 מטבעות</b> = עוד נקודות</div>
+            <div><b>⬅️ ➡️ איתות</b> = לפני שעוברים נתיב</div>
+            <div><b>🚗↔️ מרחק</b> = לא נוסעים צמוד לרכב שלפניך</div>
             <div><b>🚀 ☀️ 🎵</b> = כפתורים של ג׳יפ, נסו הכל!</div>
           </div>
-          <div class="goal" id="cGoal">לומדים לנהוג טוב מגיל קטן 🚙</div>
+          <div class="goal" id="cGoal">משחק לילדים מגיל 5-6 ומעלה 🚙</div>
           <div class="stats" id="cStats"></div>
+          <div class="habits" id="cHabits" hidden></div>
+          <div class="tip" id="cTip" hidden></div>
+          <div class="prize" id="cPrize" hidden>🎁 פרס: 10 שניות מתנה! השלב הבא מתחיל ב-2:50</div>
           <div class="newBest" id="cBest">⭐ שיא חדש!</div>
           <div class="cardBtns">
             <button class="again alt" id="cBtn2"></button>
             <button class="again" id="cBtn">🚦 יאללה, נוסעים!</button>
+            <button class="again alt" id="cBoard">🏆 טבלת האלופים</button>
           </div>
+        </div>
+      </div>
+      <div class="over" id="boardOver">
+        <div class="overCard board">
+          <h2>🏆 טבלת האלופים</h2>
+          <table class="lb">
+            <thead><tr><th></th><th></th><th>שחקן</th><th>📏 הכי רחוק</th><th>❌ טעויות</th><th>🏁 שלבים</th></tr></thead>
+            <tbody id="lbBody"></tbody>
+          </table>
+          <div class="lbNote" id="lbEmpty" hidden>עוד אין שחקנים. לוחצים על ➕ שחקן חדש!</div>
+          <div class="lbNote">מי שנסע הכי רחוק עם הכי מעט טעויות מנצח · הטבלה שמורה במכשיר הזה</div>
+          <button class="again" id="lbClose">👍 סגור</button>
         </div>
       </div>
     </div>
@@ -324,7 +419,8 @@ const sfx = {
   },
   turbo() { beep(120, .9, "sawtooth", .12, 900); beep(200, .7, "square", .05, 1400); noiseBurst(.8, .25); },
   roof()  { beep(500, .25, "triangle", .1, 900); noiseBurst(.6, .2); },
-  four()  { beep(140, .12, "square", .14); setTimeout(() => beep(190, .18, "square", .14), 110); }
+  four()  { beep(140, .12, "square", .14); setTimeout(() => beep(190, .18, "square", .14), 110); },
+  dingDong() { beep(784, .45, "sine", .2); beep(1568, .2, "sine", .03); setTimeout(() => beep(622, .6, "sine", .2), 320); }
 };
 let noiseBuf = null;
 function getNoise() {
@@ -387,21 +483,53 @@ function engineOn() {
 function vibrate(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
 
 /* ================= Progress (localStorage) ================= */
-const SAVE_KEY = "youngDriverProgress";
+const SAVE_KEY = "youngDriverProgress";     // the guest's progress (same save as v0.3)
+const PLAYERS_KEY = "youngDriverPlayers";   // players + their records, only on this device
 const LEVEL_TIME = 180;            // every level lasts exactly 3 minutes
 const LEVELS_PER_SEASON = 10, LAST_SEASON = 3, LAST_LEVEL = LEVELS_PER_SEASON * LAST_SEASON;   // 30 levels
-function loadProgress() {
-  let p = null;
-  try { p = JSON.parse(localStorage.getItem(SAVE_KEY) || "null"); } catch (e) { p = null; }
+const AVATARS = ["🚙", "🏎️", "🦁", "🐯", "🐶", "🐱", "🦄", "🐸", "🐼", "🦖", "🚀", "⭐"];
+const PRIZE = 10, MAX_PLAYERS = 12;
+const num = (v, lo, hi) => clamp(parseInt(v, 10) || 0, lo, hi);
+function cleanPlayer(p, i) {
   p = p && typeof p === "object" ? p : {};
   return {
-    level: clamp(parseInt(p.level, 10) || 1, 1, LAST_LEVEL),
+    id: String(p.id || "p" + (i + 1)).slice(0, 40),
+    name: String(p.name || "").trim().slice(0, 14) || "?",
+    av: AVATARS.includes(p.av) ? p.av : "🚙",
+    level: num(p.level, 1, LAST_LEVEL) || 1,
     trophy: !!p.trophy,
-    best: parseInt(p.best, 10) || 0
+    best: num(p.best, 0, 1e9),
+    bestM: num(p.bestM, 0, 1e9),         // farthest distance in one level (meters)
+    bestMist: num(p.bestMist, 0, 999),   // mistakes in that run
+    passed: num(p.passed, 0, LAST_LEVEL),
+    prize: !!p.prize                     // 10 free seconds waiting for the next level
   };
 }
+function loadPlayers() {
+  let d = null;
+  try { d = JSON.parse(localStorage.getItem(PLAYERS_KEY) || "null"); } catch (e) { d = null; }
+  let list = d && Array.isArray(d.list) ? d.list.slice(0, MAX_PLAYERS).map(cleanPlayer) : [];
+  list = list.filter((p, i) => list.findIndex(q => q.id === p.id) === i);
+  const cur = list.find(p => d && p.id === d.cur);
+  return { list, cur: cur ? cur.id : null };     // starts empty: nobody is built in
+}
+// the guest: drives when nobody picked a player, never shown in the table
+function loadGuest() {
+  let old = null;
+  try { old = JSON.parse(localStorage.getItem(SAVE_KEY) || "null"); } catch (e) { old = null; }
+  old = old && typeof old === "object" ? old : {};
+  const g = cleanPlayer({ id: "guest", name: "אורח", av: "🚙", level: old.level, trophy: old.trophy, best: old.best }, 0);
+  g.guest = true;
+  return g;
+}
+const players = loadPlayers();
+const guest = loadGuest();
+let progress = players.list.find(p => p.id === players.cur) || guest;
 function saveProgress() {
-  try { localStorage.setItem(SAVE_KEY, JSON.stringify(progress)); } catch (e) {}
+  try {
+    if (progress.guest) localStorage.setItem(SAVE_KEY, JSON.stringify({ level: guest.level, trophy: guest.trophy, best: guest.best }));
+    localStorage.setItem(PLAYERS_KEY, JSON.stringify(players));
+  } catch (e) {}
 }
 const seasonOf = level => Math.min(LAST_SEASON, Math.ceil(level / LEVELS_PER_SEASON));
 
@@ -415,7 +543,99 @@ let roof = false, fog = false, four = false, cam = false, turboT = 0, turboCD = 
 const TURBO_TIME = 2.5, TURBO_COOL = 8;
 let toastText = "", toastT = 0;
 function toast(text, secs = 1.6) { toastText = text; toastT = secs; }
-const progress = loadProgress();
+
+/* ================= Driving rules: signal + keep distance ================= */
+const PENALTY = 10;          // seconds of progress lost (the clock goes back up)
+const SIG_GRACE = 1.5;       // a signal switched off up to 1.5 s ago still counts
+const WOBBLE = 1.5;          // crossing straight back within 1.5 s = same lane change
+const SIG_PEN_GAP = 1.5;     // one quick swerve over two lanes = one mistake
+const CLOSE_WARN = 0.35;     // seconds too close before the "keep distance" banner
+const CLOSE_PEN = 1.0;       // seconds too close before the penalty
+const DIST_COOL = 5;         // seconds between two distance penalties
+const ALERT_TIME = 1.8;
+const sigPrev = { L: false, R: false }, sigOffAt = { L: -99, R: -99 };
+const alertQ = [];
+let alertCur = null, alertT = 0;
+function showAlert(html, good) {
+  if (alertCur && alertCur.html === html) { alertT = Math.max(alertT, ALERT_TIME * 0.6); return; }
+  if (alertQ.some(a => a.html === html)) return;
+  if (alertQ.length >= 3) alertQ.shift();
+  alertQ.push({ html, good: !!good });
+  if (!alertCur) nextAlert();
+}
+function nextAlert() {
+  const el = $("alert");
+  alertCur = alertQ.shift() || null;
+  if (!alertCur) { el.classList.add("hide"); return; }
+  alertT = ALERT_TIME;
+  el.innerHTML = alertCur.html;
+  el.classList.toggle("good", alertCur.good);
+  el.classList.remove("hide", "show"); void el.offsetWidth; el.classList.add("show");
+}
+function tickAlerts(dt) {
+  if (!alertCur) return;
+  alertT -= dt;
+  if (alertT <= 0) nextAlert();
+}
+function clearAlerts() { alertQ.length = 0; alertCur = null; $("alert").classList.add("hide"); }
+function penalty() {
+  G.timeLeft = Math.min(LEVEL_TIME, G.timeLeft + PENALTY);   // lose 10 s of progress, never more than 3:00
+  const p = $("pen");
+  p.classList.remove("go"); void p.offsetWidth; p.classList.add("go");
+  $("timer").classList.add("pen-hit"); clearTimeout(penalty.t);
+  penalty.t = setTimeout(() => $("timer").classList.remove("pen-hit"), 900);
+  sfx.dingDong(); vibrate([90, 60, 90]);
+  updateHud(true);
+}
+function onLaneChange(from, to) {
+  const dir = to > from ? "R" : "L";
+  const lc = G.lastCross;
+  G.lastCross = { from, to, t: G.time };
+  // drifting straight back over the same line is still the same lane change
+  if (lc && lc.from === to && lc.to === from && G.time - lc.t < WOBBLE) return;
+  const signalled = sig[dir] || G.time - sigOffAt[dir] < SIG_GRACE;
+  if (signalled) {
+    G.sigGood++; G.coins++; sfx.coin();
+    showAlert("👍 איתות מצוין! <small>+1 🪙</small>", true);
+  } else if (G.time - G.sigPenAt > SIG_PEN_GAP) {
+    G.sigPenAt = G.time; G.sigMiss++;
+    showAlert(`⚠️ שכחת לאותת! <small>לוחצים ${dir === "R" ? "➡️" : "⬅️"} לפני שעוברים נתיב</small>`);
+    penalty();
+  }
+}
+// the car right in front of us in our lane, and the gap in pixels (bumper to bumper)
+function carAhead() {
+  let best = null, gap = Infinity;
+  const top = playerY - carH * 0.49;
+  for (const c of G.cars) {
+    if (c.hit) continue;
+    const s = carSize(c);
+    if (Math.abs((c.x - G.x) * laneW) > (carW + s.w) * 0.42) continue;   // not in our lane
+    const g = top - (c.y + s.h / 2);
+    if (g > -carH * 0.2 && g < gap) { gap = g; best = c; }
+  }
+  return { car: best, gap };
+}
+// "2-second rule" for the game: a base gap plus more room the faster we go
+const safeGap = v => Math.min(H * 0.45, carH * 0.6 + Math.max(0, v) * pxPerKmh * 0.5);
+function updateRules(dt) {
+  for (const k of ["L", "R"]) { if (sigPrev[k] && !sig[k]) sigOffAt[k] = G.time; sigPrev[k] = sig[k]; }
+  if (G.mode !== "play") { G.closeCar = null; return; }
+  const ln = G.x < 1 ? 0 : (G.x < 2 ? 1 : 2);
+  if (ln !== G.laneNow) { const from = G.laneNow; G.laneNow = ln; onLaneChange(from, ln); }
+  G.distCD = Math.max(0, G.distCD - dt);
+  const a = carAhead();
+  const close = G.v > 10 && a.car && a.gap < safeGap(G.v);
+  G.closeCar = close ? a.car : null;
+  if (!close) { G.closeT = 0; G.distWarned = false; return; }
+  G.closeT += dt;
+  if (G.closeT >= CLOSE_WARN && !G.distWarned) { G.distWarned = true; showAlert("🚗↔️ שמור מרחק! <small>לוחצים 🛑 ברקס או עוברים נתיב עם איתות</small>"); }
+  if (G.closeT >= CLOSE_PEN && G.distCD <= 0) {
+    G.distPen++; G.distCD = DIST_COOL; G.closeT = 0;
+    showAlert("🚗↔️ שמור מרחק! <small>לוחצים 🛑 ברקס או עוברים נתיב עם איתות</small>");
+    penalty();
+  }
+}
 
 // how hard each level is: 1 = very easy (slow, few cars), 30 = still friendly
 function levelSettings(level) {
@@ -431,21 +651,28 @@ function levelSettings(level) {
 // G.mode: "menu" (card shown before driving), "play", "crash", "win"
 const G = {
   mode: "menu", over: true, level: progress.level, set: levelSettings(progress.level),
-  v: 0, x: 1.5, meters: 0, coins: 0, timeLeft: LEVEL_TIME, shake: 0, flash: 0, time: 0,
+  v: 0, x: 1.5, meters: 0, coins: 0, timeLeft: LEVEL_TIME, bonus: 0, shake: 0, flash: 0, time: 0,
   cars: [], items: [], laneOffset: 0, grassOffset: 0
 };
 function startLevel(level) {
+  // a prize from a level with no mistakes: the next level starts at 2:50
+  const bonus = progress.prize ? PRIZE : 0;
+  if (bonus) { progress.prize = false; saveProgress(); }
   Object.assign(G, {
     mode: "play", over: false, level, set: levelSettings(level),
-    v: 0, x: 1.5, meters: 0, coins: 0, timeLeft: LEVEL_TIME,
+    v: 0, x: 1.5, meters: 0, coins: 0, timeLeft: LEVEL_TIME - bonus, bonus,
     shake: 0, flash: 0, time: G.time || 0,
     cars: [], items: [],
     trafficAcc: 0, nextTraffic: 70, coinAcc: 0, nextCoin: 12, fuelAcc: 60, lv: 0,
+    laneNow: 1, lastCross: null, sigPenAt: -99, sigGood: 0, sigMiss: 0, distPen: 0,
+    closeT: 0, distCD: 0, closeCar: null, distWarned: false,
     laneOffset: G.laneOffset || 0, grassOffset: G.grassOffset || 0
   });
   fuel = 100; turboT = 0; turboCD = 0;
   setGear("D", true);
+  clearAlerts();
   hideCard();
+  if (bonus) showAlert("🎁 פרס: 10 שניות מתנה! <small>מתחילים ב-2:50</small>", true);
   updateHud(true);
 }
 
@@ -581,7 +808,10 @@ const keyUp = {
   ArrowUp:    () => { gasKey = false; press($("gas"), false); },
   ArrowDown:  () => { brakeKey = false; press($("brake"), false); }
 };
+const typing = e => e.target && e.target.tagName === "INPUT";
 document.addEventListener("keydown", e => {
+  if (typing(e)) { if (e.key === "Enter") { e.preventDefault(); savePlayer(); } return; }
+  if ($("boardOver").classList.contains("show") && (e.code === "Enter" || e.code === "Escape")) { e.preventDefault(); closeBoard(); return; }
   const fn = keyDown[e.code];
   if (!fn) return;
   e.preventDefault();
@@ -589,6 +819,7 @@ document.addEventListener("keydown", e => {
   if (!e.repeat || e.code.startsWith("Arrow")) fn();
 });
 document.addEventListener("keyup", e => {
+  if (typing(e)) return;
   if (keyDown[e.code]) e.preventDefault();
   if (keyUp[e.code]) keyUp[e.code]();
 });
@@ -718,7 +949,9 @@ function crash(c) {
   G.v *= 0.3;
   sfx.bump(); vibrate(120);
   const score = levelScore(), isBest = score > progress.best;
-  if (isBest) { progress.best = score; saveProgress(); }
+  if (isBest) progress.best = score;
+  recordRun(true);
+  saveProgress();
   setTimeout(() => {
     if (G.mode !== "crash") return;
     showCard("crash", { score, isBest });
@@ -729,6 +962,10 @@ function winLevel() {
   G.mode = "win"; G.over = true;
   const done = G.level, score = levelScore(), isBest = score > progress.best;
   if (isBest) progress.best = score;
+  const mist = recordRun(false);
+  progress.passed = Math.max(progress.passed, done);
+  const prize = mist === 0;
+  if (prize) progress.prize = true;
   let kind = "win";
   if (done >= LAST_LEVEL) { progress.trophy = true; progress.level = 1; kind = "trophy"; }
   else {
@@ -736,15 +973,119 @@ function winLevel() {
     if (done % LEVELS_PER_SEASON === 0) kind = "season";   // after level 10 and level 20
   }
   saveProgress();
-  showCard(kind, { score, isBest, done });
+  showCard(kind, { score, isBest, done, prize });
   sfx.best(); vibrate(200);
 }
 const levelScore = () => Math.floor(G.meters) + G.coins * 10;
+// champions table: the farthest run counts, fewer mistakes breaks a tie
+function recordRun(crashed) {
+  const m = Math.floor(G.meters), mist = (G.sigMiss || 0) + (G.distPen || 0) + (crashed ? 1 : 0);
+  if (m > progress.bestM || (m === progress.bestM && m > 0 && mist < progress.bestMist)) { progress.bestM = m; progress.bestMist = mist; }
+  return mist;
+}
+
+/* ================= Players (saved only on this device) ================= */
+let newAv = AVATARS[0];
+function selectPlayer(id) {
+  const p = players.list.find(q => q.id === id) || guest;
+  players.cur = p.guest ? null : p.id; progress = p;
+  G.level = p.level; G.set = levelSettings(p.level);
+  saveProgress(); updateHud(true);
+  showCard("start");
+}
+function renderWho() {
+  const box = $("whoList");
+  box.textContent = "";
+  for (const p of players.list) {
+    const b = document.createElement("button");
+    b.className = "pBtn" + (p.id === players.cur ? " on" : "");
+    const a = document.createElement("span"); a.textContent = p.av;
+    const n = document.createElement("span"); n.className = "nm"; n.textContent = p.name;
+    b.append(a, n);
+    b.onclick = () => { sfx.click(); selectPlayer(p.id); };
+    box.appendChild(b);
+  }
+  if (players.list.length) {                  // a guest can still drive without a name
+    const g = document.createElement("button");
+    g.className = "pBtn" + (progress.guest ? " on" : "");
+    g.textContent = "🚙 אורח";
+    g.onclick = () => { sfx.click(); selectPlayer("guest"); };
+    box.appendChild(g);
+  }
+  if (players.list.length < MAX_PLAYERS) {
+    const add = document.createElement("button");
+    add.className = "pBtn add"; add.textContent = "➕ שחקן חדש";
+    add.onclick = openNewPlayer;
+    box.appendChild(add);
+  }
+}
+function renderAvatars() {
+  const box = $("avs");
+  box.textContent = "";
+  for (const av of AVATARS) {
+    const b = document.createElement("button");
+    b.textContent = av; b.classList.toggle("on", av === newAv);
+    b.onclick = () => { newAv = av; sfx.click(); renderAvatars(); };
+    box.appendChild(b);
+  }
+}
+function openNewPlayer() {
+  sfx.click();
+  newAv = AVATARS[players.list.length % AVATARS.length];
+  $("pName").value = "";
+  renderAvatars();
+  $("newP").hidden = false; $("whoT").textContent = "➕ שחקן חדש";
+  $("card").classList.add("adding");
+  setTimeout(() => { try { $("pName").focus(); } catch (e) {} }, 50);
+}
+function closeNewPlayer() {
+  $("newP").hidden = true; $("whoT").textContent = "מי נוהג?";
+  $("card").classList.remove("adding");
+  try { $("pName").blur(); } catch (e) {}
+}
+function savePlayer() {
+  const name = $("pName").value.trim().slice(0, 14);
+  if (!name) { try { $("pName").focus(); } catch (e) {} sfx.gear(); return; }
+  const p = cleanPlayer({ id: "p" + Date.now().toString(36) + Math.floor(Math.random() * 1e4), name, av: newAv }, players.list.length);
+  players.list.push(p);
+  closeNewPlayer();
+  selectPlayer(p.id);
+}
+$("pSave").onclick = savePlayer;
+$("pCancel").onclick = () => { sfx.click(); closeNewPlayer(); };
+$("pName").addEventListener("pointerdown", e => e.stopPropagation());
+
+function openBoard() {
+  const rows = players.list.slice().sort((a, b) => b.bestM - a.bestM || a.bestMist - b.bestMist || b.passed - a.passed);
+  const body = $("lbBody");
+  body.textContent = "";
+  rows.forEach((p, i) => {
+    const tr = document.createElement("tr");
+    const played = p.bestM > 0;
+    tr.className = (played && i < 3 ? "g" + (i + 1) : "") + (p.id === players.cur ? " me" : "");
+    const cells = [played && i < 3 ? ["🥇", "🥈", "🥉"][i] : String(i + 1), p.av, p.name,
+      played ? p.bestM + " מ׳" : "—", played ? String(p.bestMist) : "—", String(p.passed)];
+    cells.forEach((t, k) => {
+      const td = document.createElement("td");
+      td.textContent = t;
+      if (k === 0) td.className = "md";
+      if (k === 2) td.className = "nm";
+      tr.appendChild(td);
+    });
+    body.appendChild(tr);
+  });
+  $("lbEmpty").hidden = rows.length > 0;
+  $("boardOver").classList.add("show");
+}
+function closeBoard() { $("boardOver").classList.remove("show"); }
+$("cBoard").onclick = () => { sfx.click(); $("cBoard").blur(); openBoard(); };
+$("lbClose").onclick = () => { sfx.click(); closeBoard(); };
 
 /* ================= Cards (start / crash / win / trophy) ================= */
 function hideCard() { $("over").classList.remove("show"); }
 function showCard(kind, info = {}) {
   const card = $("card"), lvl = G.level;
+  clearAlerts();
   const stats = info.score !== undefined
     ? `<span>📏 <b>${Math.floor(G.meters)}</b> מ׳</span><span>🪙 <b>${G.coins}</b></span><span>⭐ <b>${info.score}</b> נקודות</span>`
     : `<span>שלב <b>${lvl}</b> · עונה <b>${seasonOf(lvl)}</b></span>` +
@@ -759,12 +1100,25 @@ function showCard(kind, info = {}) {
     $("cGoal").hidden = !how;
   };
   card.classList.toggle("trophy", kind === "trophy");
+  closeNewPlayer();
+  $("who").hidden = kind !== "start";
+  if (kind === "start") renderWho();
+  $("cPrize").hidden = !info.prize;
   if (kind === "start")       set("🚙", "איך משחקים?", "🚦 יאללה, נוסעים!", "", true);
   else if (kind === "crash")  set("😅", "אופס! עוד פעם?", "🔄 עוד פעם!", "❓ איך משחקים", false);
   else if (kind === "win")    set("🎉", `כל הכבוד! עברת שלב ${info.done}`, `➡️ לשלב ${info.done + 1}`, "🔄 שוב אותו שלב", false);
   else if (kind === "season") set(seasonOf(info.done + 1) === 3 ? "🏔️" : "🌟", `עונה ${seasonOf(info.done + 1)} נפתחה!`, `➡️ לעונה ${seasonOf(info.done + 1)}`, "🔄 שוב אותו שלב", false);
   else if (kind === "trophy") set("🏆", "קיבלת גביע! סיימת 3 עונות!", "🚙 מתחילים שוב", "", false);
+  $("cBig").hidden = kind === "start";        // the player buttons take its place
   $("cStats").innerHTML = stats;
+  const ended = info.score !== undefined;
+  $("cHabits").hidden = $("cTip").hidden = !ended;
+  if (ended) {
+    $("cHabits").innerHTML = `איתותים נכונים: <b>${G.sigGood || 0}</b> · שכחת לאותת: <b>${G.sigMiss || 0}</b> · שמירת מרחק: <b>${G.distPen || 0}</b>`;
+    $("cTip").textContent = G.sigMiss ? "💡 טיפ: לפני שעוברים נתיב, לוחצים על איתות ⬅️ ➡️"
+      : G.distPen ? "💡 טיפ: מתקרבים לרכב? לוחצים ברקס 🛑 ושומרים מרחק"
+      : "💡 נהג מצוין! ממשיכים לאותת ולשמור מרחק 👍";
+  }
   $("cBest").classList.toggle("show", !!info.isBest);
   card.dataset.kind = kind;
   $("over").classList.add("show");
@@ -839,6 +1193,7 @@ function update(dt) {
   turboCD = Math.max(0, turboCD - dt);
   toastT = Math.max(0, toastT - dt);
   updateCar(dt);
+  updateRules(dt);
   const scroll = G.v * pxPerKmh * dt;        // how far the road moves this frame
   const fwdMeters = Math.max(0, G.v) / 3.6 * dt;
   G.laneOffset += scroll; G.grassOffset += scroll;
@@ -1033,6 +1388,14 @@ function drawTraffic() {
     const o = { lookDown: true, sigL: blink && moving < -0.05, sigR: blink && moving > 0.05, alpha: c.hit ? 0.6 : undefined };
     if (c.truck) drawTruck(cx, c.y, s.w, s.h, c.color, o);
     else drawCar(cx, c.y, s.w, s.h, c.color, o);
+    if (c === G.closeCar) {        // soft warning: a glowing yellow outline on the car ahead
+      ctx.save();
+      ctx.globalAlpha = 0.65 + 0.35 * Math.sin(G.time * 12);
+      ctx.lineWidth = 4; ctx.strokeStyle = G.closeT > CLOSE_PEN * 0.6 ? "#fb923c" : "#fde047";
+      ctx.shadowColor = "#fde047"; ctx.shadowBlur = 12;
+      rr(cx - s.w / 2 - 6, c.y - s.h / 2 - 6, s.w + 12, s.h + 12, s.w * 0.35); ctx.stroke();
+      ctx.restore();
+    }
     if (c.oops > 0) {              // little "!" bubble after the horn
       ctx.save(); ctx.globalAlpha = Math.min(1, c.oops * 2);
       const bx = cx + s.w * 0.6, by = c.y - s.h * 0.55, br = carW * 0.28;
@@ -1386,12 +1749,13 @@ function updateHud(force) {
   const meters = Math.floor(G.meters || 0);
   const secs = Math.ceil(G.timeLeft === undefined ? LEVEL_TIME : G.timeLeft);
   const clock = Math.floor(secs / 60) + ":" + String(secs % 60).padStart(2, "0");
-  const key = [meters, G.coins || 0, clock, G.level].join("|");
+  const gift = G.bonus && G.mode === "play" ? " 🎁" : "";
+  const key = [meters, G.coins || 0, clock, G.level, gift, progress.id].join("|");
   if (key === lastHud && !force) return;
   lastHud = key;
-  $("timer").textContent = "⏱️ " + clock;
+  $("timer").textContent = "⏱️ " + clock + gift;
   $("timer").classList.toggle("end", secs <= 10 && G.mode === "play");
-  $("levelTag").textContent = `שלב ${G.level} · עונה ${seasonOf(G.level)}` + (progress.trophy ? " 🏆" : "");
+  $("levelTag").textContent = `${progress.av} שלב ${G.level} · עונה ${seasonOf(G.level)}` + (progress.trophy ? " 🏆" : "");
   $("meters").textContent = meters;
   $("coins").textContent = G.coins || 0;
 }
@@ -1439,6 +1803,7 @@ function loop(now) {
   const dt = Math.min(0.05, Math.max(0, (now - lastT) / 1000));
   lastT = now;
   update(dt);
+  tickAlerts(dt);
   draw(dt);
   updateHud();
   updateHint();
