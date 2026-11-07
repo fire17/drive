@@ -11,7 +11,7 @@
   :root{--bg:#0f1117;--panel:#1a1d27;--line:#2c3142;--ink:#eef1ff;--muted:#8e96b8;--blue:#4fc3ff;--green:#4ade80;--amber:#fbbf24;--red:#f43f5e}
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
   html,body{height:100%;background:var(--bg);color:var(--ink);font-family:Rubik,system-ui,sans-serif;overflow:hidden;touch-action:none;overscroll-behavior:none}
-  .app{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:10px;padding:10px 12px;max-width:1200px;margin:0 auto}
+  .app{height:100%;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;gap:10px;padding:10px 12px;max-width:1200px;margin:0 auto}
 
   /* ---- header ---- */
   header{display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -68,7 +68,7 @@
   .hint.hide{opacity:0}
   .over{position:absolute;inset:0;display:none;place-items:center;background:#0f111788;padding:10px}
   .over.show{display:grid}
-  .overCard{direction:rtl;text-align:center;background:linear-gradient(180deg,#1e2230,#161922);border:2px solid var(--blue);border-radius:22px;padding:14px 18px;box-shadow:0 0 40px #4fc3ff44;display:flex;flex-direction:column;align-items:center;gap:8px;max-width:100%;animation:pop .35s ease-out}
+  .overCard{direction:rtl;text-align:center;background:linear-gradient(180deg,#1e2230,#161922);border:2px solid var(--blue);border-radius:22px;padding:14px 18px;box-shadow:0 0 40px #4fc3ff44;display:flex;flex-direction:column;align-items:center;gap:8px;max-width:100%;max-height:100%;overflow-y:auto;touch-action:pan-y;animation:pop .35s ease-out}
   @keyframes pop{from{transform:scale(.8)}to{transform:scale(1)}}
   .overCard .big{font-size:40px;line-height:1}
   .overCard h2{font-size:24px;font-weight:900}
@@ -89,7 +89,16 @@
   [hidden]{display:none!important}
 
   /* ---- bottom buttons ---- */
-  .controls{direction:ltr;display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+  .controls{direction:ltr;display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:6px}
+  .controls button{min-width:0;padding:7px 2px;font-size:12px;line-height:1.1;text-align:center;justify-content:center}
+  .controls button .lb{display:block;max-width:100%;overflow-wrap:normal;word-break:keep-all}
+  .controls #bR{order:1}
+  .controls #bTurbo{grid-column:span 2;background:linear-gradient(180deg,#ff9a3c,#f05a12);color:#1f0a00;border-color:#ffb36b;font-size:14px;font-weight:900}
+  .controls #bTurbo .ic{font-size:24px}
+  .controls #bTurbo.on{box-shadow:0 0 22px #ff8a00cc;background:linear-gradient(180deg,#ffd166,#ff7a00)}
+  .controls #bTurbo.cool{filter:grayscale(.75) brightness(.8)}
+  .controls #bRoof.on{background:#3a3218;border-color:var(--amber);box-shadow:0 0 14px #fbbf2466}
+  .controls #bFog.on{border-color:#fde047;box-shadow:0 0 14px #fde04766}
   button{font-family:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px 4px;font-size:13px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
   button .ic{font-size:21px;line-height:1}
   button.on{background:#25304a;border-color:var(--blue);box-shadow:0 0 14px #4fc3ff55}
@@ -109,7 +118,9 @@
     .pedals{gap:8px}
     .pedal{font-size:14px;border-radius:14px}
     .pedal .ic{font-size:22px}
-    .controls{grid-template-columns:repeat(3,1fr)}
+    .controls{grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+    .controls #bR{order:0}
+    .controls button{font-size:11px;padding:6px 1px}
   }
   /* wider portrait (tablet) gets bigger gauges */
   @media (orientation:portrait) and (min-width:600px){
@@ -131,9 +142,11 @@
     .unit{font-size:10px}
     .bar{height:7px}
     .fuel{font-size:11px}
-    .controls{gap:6px}
-    .controls button{flex-direction:row;justify-content:center;padding:5px 4px;font-size:11px;gap:4px}
-    .controls button .ic{font-size:16px}
+    .controls{gap:4px}
+    .controls button{padding:3px 1px;font-size:9.5px;gap:2px;border-radius:10px}
+    .controls button .ic{font-size:15px}
+    .controls #bTurbo{font-size:11px}
+    .controls #bTurbo .ic{font-size:17px}
     .hud span{font-size:12px;padding:2px 7px}
     .hint{font-size:14px;padding:7px 12px}
     .overCard{padding:8px 14px;gap:4px}
@@ -144,16 +157,38 @@
     .overCard h2{font-size:19px}
     .again{font-size:16px;padding:7px 16px}
   }
-  @media (max-width:370px){
-    h1{font-size:16px}
-    .gear button,.mute{width:36px;height:36px}
+  @media (max-width:400px){
+    .controls{gap:4px}
+    .controls button{font-size:9.5px;padding:5px 0;border-radius:11px}
+    .controls button .ic{font-size:18px}
+  }
+  /* small phones: the start card must always show its button */
+  @media (orientation:portrait) and (max-height:760px){
+    .overCard{padding:8px 12px;gap:4px}
+    .overCard .big{font-size:28px}
+    .overCard h2{font-size:19px}
+    .howto{font-size:13px;gap:1px}
+    .goal{display:none}
+    .again{font-size:16px;padding:7px 16px}
+  }
+  @media (orientation:landscape) and (max-width:700px){
+    .controls{grid-template-columns:repeat(13,minmax(0,1fr))}
+    .controls #bTurbo{grid-column:span 1}
+    .controls button{font-size:9px}
+  }
+  @media (max-width:415px){
+    .app{padding:8px}
+    h1{font-size:15px}
+    h1 small{margin-inline-start:3px;font-size:9px}
+    .hdrEnd,.gear{gap:4px}
+    .gear button,.mute{width:31px;height:34px;font-size:15px;border-radius:10px}
   }
 </style>
 </head>
 <body>
 <div class="app">
   <header>
-    <h1>🚗 נהג <span>צעיר</span><small>גרסה 0.2</small></h1>
+    <h1>🚙 נהג <span>צעיר</span><small>גרסה 0.3</small></h1>
     <div class="hdrEnd">
       <button class="mute" id="mute" title="צלילים">🔊</button>
       <div class="gear" id="gear">
@@ -178,7 +213,7 @@
 
     <div class="game" id="game">
       <canvas id="cv"></canvas>
-      <div class="hud">
+      <div class="hud" id="hud">
         <span class="timer" id="timer">⏱️ 3:00</span>
         <span id="levelTag">שלב 1</span>
         <span>🪙 <b id="coins">0</b></span>
@@ -187,7 +222,7 @@
       <div class="hint hide" id="hint"></div>
       <div class="over show" id="over">
         <div class="overCard" id="card">
-          <div class="big" id="cBig">🚗</div>
+          <div class="big" id="cBig">🚙</div>
           <h2 id="cTitle">איך משחקים?</h2>
           <div class="howto" id="cHow">
             <div><b>⚡ גז</b> = נוסעים</div>
@@ -195,8 +230,9 @@
             <div><b>🎡 הגה</b> = ימינה ושמאלה</div>
             <div><b>⏱️ 3 דקות</b> בלי להתנגש = עוברים שלב!</div>
             <div><b>🪙 מטבעות</b> = עוד נקודות</div>
+            <div><b>🚀 ☀️ 🎵</b> = כפתורים של ג׳יפ, נסו הכל!</div>
           </div>
-          <div class="goal" id="cGoal">לומדים לנהוג טוב מגיל קטן 🚗</div>
+          <div class="goal" id="cGoal">לומדים לנהוג טוב מגיל קטן 🚙</div>
           <div class="stats" id="cStats"></div>
           <div class="newBest" id="cBest">⭐ שיא חדש!</div>
           <div class="cardBtns">
@@ -220,12 +256,19 @@
   </div>
 
   <div class="controls">
-    <button id="bL"><span class="ic">⬅️</span>איתות שמאל</button>
-    <button id="bLights"><span class="ic">💡</span>אורות</button>
-    <button id="bHigh"><span class="ic">🔦</span>אור גבוה</button>
-    <button id="bWipe"><span class="ic">🌧️</span>מגבים</button>
-    <button id="bHaz"><span class="ic">⚠️</span>מהבהבים</button>
-    <button id="bR"><span class="ic">➡️</span>איתות ימין</button>
+    <button id="bL"><span class="ic">⬅️</span><span class="lb">איתות שמאל</span></button>
+    <button id="bLights"><span class="ic">💡</span><span class="lb">אורות</span></button>
+    <button id="bHigh"><span class="ic">🔦</span><span class="lb">אור גבוה</span></button>
+    <button id="bFog"><span class="ic">🌫️</span><span class="lb">פנסי ערפל</span></button>
+    <button id="bHaz"><span class="ic">⚠️</span><span class="lb">מהבהבים</span></button>
+    <button id="bWipe"><span class="ic">🌧️</span><span class="lb">מגבים</span></button>
+    <button id="bR"><span class="ic">➡️</span><span class="lb">איתות ימין</span></button>
+    <button id="bRoof"><span class="ic">☀️</span><span class="lb" id="roofLb">גג נפתח</span></button>
+    <button id="bTurbo"><span class="ic">🚀</span><span class="lb" id="turboLb">טורבו</span></button>
+    <button id="b4x4"><span class="ic">🏔️</span><span class="lb">4x4</span></button>
+    <button id="bMusic"><span class="ic" id="musicIc">🎵</span><span class="lb">מוזיקה</span></button>
+    <button id="bFunny"><span class="ic">🤡</span><span class="lb">צופר מצחיק</span></button>
+    <button id="bCam"><span class="ic">📷</span><span class="lb">מצלמה אחורית</span></button>
   </div>
 </div>
 
@@ -270,8 +313,66 @@ const sfx = {
   fuel()  { tune([523, 659, 784], 70, "triangle", .15); },
   bump()  { beep(320, .35, "sine", .3, 90); beep(180, .25, "triangle", .18, 70); },
   over()  { tune([659, 587, 523, 659, 784], 140, "triangle", .15); },
-  best()  { tune([523, 659, 784, 1047, 784, 1047], 110, "square", .08); }
+  best()  { tune([523, 659, 784, 1047, 784, 1047], 110, "square", .08); },
+  funny() {                                   // a silly slide-whistle honk: "hoo-wee-boing!"
+    beep(300, .22, "square", .12, 900);
+    setTimeout(() => beep(900, .22, "square", .12, 260), 200);
+    setTimeout(() => { beep(180, .3, "triangle", .2, 520); beep(240, .3, "sine", .12, 700); }, 420);
+  },
+  turbo() { beep(120, .9, "sawtooth", .12, 900); beep(200, .7, "square", .05, 1400); noiseBurst(.8, .25); },
+  roof()  { beep(500, .25, "triangle", .1, 900); noiseBurst(.6, .2); },
+  four()  { beep(140, .12, "square", .14); setTimeout(() => beep(190, .18, "square", .14), 110); }
 };
+let noiseBuf = null;
+function getNoise() {
+  const a = ac();
+  if (!a) return null;
+  if (!noiseBuf) {
+    noiseBuf = a.createBuffer(1, a.sampleRate * 2, a.sampleRate);
+    const d = noiseBuf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  }
+  return noiseBuf;
+}
+function noiseBurst(dur, vol) {               // a short "whoosh"
+  const a = ac(), buf = getNoise();
+  if (!a || !buf || muted) return;
+  const src = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain(), t = a.currentTime;
+  src.buffer = buf; f.type = "bandpass"; f.Q.value = 0.8;
+  f.frequency.setValueAtTime(400, t); f.frequency.exponentialRampToValueAtTime(2500, t + dur);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + dur * 0.3);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  src.connect(f); f.connect(g); g.connect(master);
+  src.start(t); src.stop(t + dur + 0.05);
+}
+// soft wind that plays while the roof is open (louder when driving faster)
+let wind = null;
+function windOn() {
+  const a = ac(), buf = getNoise();
+  if (!a || !buf || wind) return;
+  const src = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+  src.buffer = buf; src.loop = true;
+  f.type = "bandpass"; f.frequency.value = 700; f.Q.value = 0.6;
+  g.gain.value = 0;
+  src.connect(f); f.connect(g); g.connect(master); src.start();
+  wind = { src, f, g };
+}
+// happy chiptune music loop (made right here with WebAudio, no files)
+const MELODY = [523, 659, 784, 659, 698, 880, 784, 0, 659, 784, 1047, 784, 880, 784, 659, 0,
+                587, 698, 880, 698, 659, 784, 1047, 0, 988, 880, 784, 698, 659, 587, 523, 0];
+const BASS = [131, 131, 175, 175, 196, 196, 131, 131];
+let musicOn = false, musicTimer = null, musicStep = 0;
+function musicTick() {
+  const i = musicStep++ % MELODY.length;
+  if (MELODY[i]) beep(MELODY[i], .13, "square", .045);
+  if (i % 4 === 0) beep(BASS[(i / 4) % BASS.length], .3, "triangle", .12);
+  if (i % 2 === 1) beep(2400 + (i % 4) * 300, .02, "square", .015);   // little hi-hat tick
+}
+function setMusic(on) {
+  musicOn = on;
+  clearInterval(musicTimer); musicTimer = null;
+  if (on) { ac(); musicStep = 0; musicTick(); musicTimer = setInterval(musicTick, 150); }
+}
 function engineOn() {
   const a = ac();
   if (!a || engine) return;
@@ -285,7 +386,7 @@ function vibrate(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } cat
 /* ================= Progress (localStorage) ================= */
 const SAVE_KEY = "youngDriverProgress";
 const LEVEL_TIME = 180;            // every level lasts exactly 3 minutes
-const LEVELS_PER_SEASON = 10, LAST_LEVEL = 20;
+const LEVELS_PER_SEASON = 10, LAST_SEASON = 3, LAST_LEVEL = LEVELS_PER_SEASON * LAST_SEASON;   // 30 levels
 function loadProgress() {
   let p = null;
   try { p = JSON.parse(localStorage.getItem(SAVE_KEY) || "null"); } catch (e) { p = null; }
@@ -299,16 +400,21 @@ function loadProgress() {
 function saveProgress() {
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(progress)); } catch (e) {}
 }
-const seasonOf = level => level > LEVELS_PER_SEASON ? 2 : 1;
+const seasonOf = level => Math.min(LAST_SEASON, Math.ceil(level / LEVELS_PER_SEASON));
 
 /* ================= State ================= */
 let gear = "D", fuel = 100, steer = 0;
 let gasTouch = false, gasKey = false, brakeTouch = false, brakeKey = false;
 let keySteer = 0, touchSteer = 0, wheelDrag = null;
 let sig = { L: false, R: false, haz: false }, lights = false, high = false, wipe = false, blink = false;
+// jeep extras
+let roof = false, fog = false, four = false, cam = false, turboT = 0, turboCD = 0;
+const TURBO_TIME = 2.5, TURBO_COOL = 8;
+let toastText = "", toastT = 0;
+function toast(text, secs = 1.6) { toastText = text; toastT = secs; }
 const progress = loadProgress();
 
-// how hard each level is: 1 = very easy (slow, few cars), 20 = still friendly
+// how hard each level is: 1 = very easy (slow, few cars), 30 = still friendly
 function levelSettings(level) {
   const t = (level - 1) / (LAST_LEVEL - 1);           // 0 .. 1
   return {
@@ -331,10 +437,10 @@ function startLevel(level) {
     v: 0, x: 1.5, meters: 0, coins: 0, timeLeft: LEVEL_TIME,
     shake: 0, flash: 0, time: G.time || 0,
     cars: [], items: [],
-    trafficAcc: 0, nextTraffic: 70, coinAcc: 0, nextCoin: 12, fuelAcc: 0,
+    trafficAcc: 0, nextTraffic: 70, coinAcc: 0, nextCoin: 12, fuelAcc: 60, lv: 0,
     laneOffset: G.laneOffset || 0, grassOffset: G.grassOffset || 0
   });
-  fuel = 100;
+  fuel = 100; turboT = 0; turboCD = 0;
   setGear("D", true);
   hideCard();
   updateHud(true);
@@ -374,9 +480,35 @@ const toggles = {
   bHaz:    () => { sig.haz = !sig.haz; },
   bLights: () => { lights = !lights; },
   bHigh:   () => { high = !high; },
-  bWipe:   () => { wipe = !wipe; }
+  bWipe:   () => { wipe = !wipe; },
+  bFog:    () => { fog = !fog; toast(fog ? "🌫️ פנסי ערפל דולקים" : "🌫️ פנסי ערפל כבויים", 1.2); },
+  b4x4:    () => { four = !four; if (four) sfx.four(); toast(four ? "🏔️ 4x4: הג׳יפ לא מחליק!" : "🏔️ 4x4 כבוי", 1.6); },
+  bCam:    () => { cam = !cam; toast(cam ? "📷 מצלמה אחורית" : "📷 מצלמה כבויה", 1.2); },
+  bMusic:  () => { setMusic(!musicOn); },
+  bRoof:   () => {
+    roof = !roof;
+    $("roofLb").textContent = roof ? "סגור גג" : "גג נפתח";
+    if (roof) { windOn(); sfx.roof(); }
+    toast(roof ? "☀️ הגג פתוח! איזה רוח" : "🚙 הגג סגור", 1.4);
+  }
 };
 for (const id in toggles) $(id).onclick = () => { toggles[id](); sfx.click(); $(id).blur(); };
+
+function turbo() {
+  if (G.mode !== "play") return;
+  if (turboT > 0) return;
+  if (turboCD > 0) { toast("🚀 הטורבו נטען... רגע", 1.1); return; }
+  if (gear !== "D") { setGear("D"); }
+  turboT = TURBO_TIME; turboCD = TURBO_COOL;
+  sfx.turbo(); vibrate(80);
+  toast("🚀 טורבו!!!", 1.1);
+}
+$("bTurbo").onclick = () => { engineOn(); turbo(); $("bTurbo").blur(); };
+$("bFunny").onclick = () => {
+  engineOn(); sfx.funny(); vibrate(40);
+  hornMovesCars(true);
+  $("bFunny").blur();
+};
 
 $("mute").onclick = () => {
   muted = !muted;
@@ -435,6 +567,9 @@ const keyDown = {
   KeyL: () => $("bLights").click(), KeyH: () => $("bHigh").click(), KeyW: () => $("bWipe").click(),
   KeyQ: () => $("bL").click(), KeyE: () => $("bR").click(), KeyX: () => $("bHaz").click(),
   KeyM: () => $("mute").click(),
+  KeyT: () => $("bTurbo").click(), KeyO: () => $("bRoof").click(), KeyF: () => $("bFog").click(),
+  KeyG: () => $("b4x4").click(), KeyU: () => $("bMusic").click(), KeyK: () => $("bFunny").click(),
+  KeyC: () => $("bCam").click(),
   Enter: () => { if (G.over) $("cBtn").click(); }
 };
 const keyUp = {
@@ -555,7 +690,7 @@ function spawnFuel() {
   return true;
 }
 
-function hornMovesCars() {
+function hornMovesCars(funny) {
   if (G.over) return;
   for (const c of G.cars) {
     if (c.hit) continue;
@@ -564,10 +699,10 @@ function hornMovesCars() {
     if (Math.abs(c.x - G.x) > 1.2) continue;                     // same or next lane
     const options = [c.lane - 1, c.lane + 1].filter(l =>
       l >= 0 && l <= 2 && !laneBusy(l, c.y - carH * 1.6, c.y + carH * 1.6, c));
-    if (!options.length) continue;
+    if (!options.length) { if (funny) { c.oops = 1; c.laugh = true; } continue; }
     options.sort((a, b) => Math.abs(b + 0.5 - G.x) - Math.abs(a + 0.5 - G.x)); // move away from us
     c.lane = options[0];
-    c.oops = 1;
+    c.oops = 1; c.laugh = !!funny;
   }
 }
 
@@ -595,7 +730,7 @@ function winLevel() {
   if (done >= LAST_LEVEL) { progress.trophy = true; progress.level = 1; kind = "trophy"; }
   else {
     progress.level = Math.max(progress.level, done + 1);
-    if (done === LEVELS_PER_SEASON) kind = "season";
+    if (done % LEVELS_PER_SEASON === 0) kind = "season";   // after level 10 and level 20
   }
   saveProgress();
   showCard(kind, { score, isBest, done });
@@ -621,11 +756,11 @@ function showCard(kind, info = {}) {
     $("cGoal").hidden = !how;
   };
   card.classList.toggle("trophy", kind === "trophy");
-  if (kind === "start")       set("🚗", "איך משחקים?", "🚦 יאללה, נוסעים!", "", true);
+  if (kind === "start")       set("🚙", "איך משחקים?", "🚦 יאללה, נוסעים!", "", true);
   else if (kind === "crash")  set("😅", "אופס! עוד פעם?", "🔄 עוד פעם!", "❓ איך משחקים", false);
   else if (kind === "win")    set("🎉", `כל הכבוד! עברת שלב ${info.done}`, `➡️ לשלב ${info.done + 1}`, "🔄 שוב אותו שלב", false);
-  else if (kind === "season") set("🌟", "עונה 2 נפתחה!", "➡️ לעונה 2", "🔄 שוב אותו שלב", false);
-  else if (kind === "trophy") set("🏆", "קיבלת גביע!", "🚗 מתחילים שוב", "", false);
+  else if (kind === "season") set(seasonOf(info.done + 1) === 3 ? "🏔️" : "🌟", `עונה ${seasonOf(info.done + 1)} נפתחה!`, `➡️ לעונה ${seasonOf(info.done + 1)}`, "🔄 שוב אותו שלב", false);
+  else if (kind === "trophy") set("🏆", "קיבלת גביע! סיימת 3 עונות!", "🚙 מתחילים שוב", "", false);
   $("cStats").innerHTML = stats;
   $("cBest").classList.toggle("show", !!info.isBest);
   card.dataset.kind = kind;
@@ -650,11 +785,17 @@ $("cBtn2").onclick = () => {
 function updateCar(dt) {
   const gas = (gasTouch || gasKey) && !G.over;
   const brake = brakeTouch || brakeKey || G.over;
-  const maxF = fuel > 0 ? (G.set ? G.set.topSpeed : 40) : 20, maxR = 15;
+  // no fuel only slows the jeep a little (never a crawl); turbo adds a big burst
+  const top = G.set ? G.set.topSpeed : 40;
+  const maxF = (fuel > 0 ? top : Math.max(28, top * 0.8)) + (turboT > 0 ? 35 : 0), maxR = 15;
+  if (brakeTouch || brakeKey || G.over) turboT = 0;   // the brake always wins
   let v = G.v;
   const toward0 = amt => { v = v > 0 ? Math.max(0, v - amt) : Math.min(0, v + amt); };
 
-  if (gas && gear === "D") {
+  if (turboT > 0 && gear === "D" && !G.over) {
+    v += 45 * dt;                           // turbo pushes even without the gas pedal
+    if (v > maxF) v = maxF;
+  } else if (gas && gear === "D") {
     if (v < 0) v += 50 * dt;
     else v += ((maxF - v) * 0.4 + 5) * dt;
     if (v > maxF) v = Math.max(maxF, v - 25 * dt);
@@ -664,7 +805,7 @@ function updateCar(dt) {
   } else {
     toward0(7 * dt);                        // rolling slowly to a stop
   }
-  if (gas && (gear === "D" || gear === "R")) fuel = Math.max(0, fuel - 0.4 * dt);
+  if (gas && (gear === "D" || gear === "R")) fuel = Math.max(0, fuel - 0.3 * dt);
   if (brake) toward0(90 * dt);
   if (gear === "P") toward0(140 * dt);
   G.v = v;
@@ -676,11 +817,24 @@ function updateCar(dt) {
     else steer *= Math.pow(0.92, dt * 60);
   }
   const grip = Math.abs(v) < 1 ? 0 : 0.45 + 0.55 * Math.min(1, Math.abs(v) / 50);
-  if (!G.over) G.x = clamp(G.x + steer * 0.95 * grip * dt, 0.42, 2.58);
+  // sliding: the jeep follows the wheel with a small delay (more in the rain);
+  // 4x4 grips the road so it follows right away
+  const want = G.over ? 0 : steer * 0.95 * grip;
+  const k = four ? 18 : (wipe ? 3 : 5);
+  G.lv = (G.lv || 0) + (want - (G.lv || 0)) * Math.min(1, dt * k);
+  G.slide = want - G.lv;
+  if (!G.over) {
+    const nx = clamp(G.x + G.lv * dt, 0.42, 2.58);
+    if (nx !== G.x + G.lv * dt) G.lv = 0;
+    G.x = nx;
+  }
 }
 
 function update(dt) {
   G.time += dt;
+  turboT = Math.max(0, turboT - dt);
+  turboCD = Math.max(0, turboCD - dt);
+  toastT = Math.max(0, toastT - dt);
   updateCar(dt);
   const scroll = G.v * pxPerKmh * dt;        // how far the road moves this frame
   const fwdMeters = Math.max(0, G.v) / 3.6 * dt;
@@ -708,16 +862,18 @@ function update(dt) {
     G.coinAcc += fwdMeters;
     if (G.coinAcc >= G.nextCoin) { spawnCoins(); G.coinAcc = 0; G.nextCoin = rand(18, 38); }
     G.fuelAcc += fwdMeters;
-    if (fuel < 75 && G.fuelAcc > 220 && spawnFuel()) G.fuelAcc = 0;
+    if (fuel < 92 && G.fuelAcc > 120 && spawnFuel()) G.fuelAcc = 0;   // fuel cans come often
   }
 
   // traffic cars
   for (const c of G.cars) {
+    if (!c.hit && c.y - carSize(c).h / 2 > playerY + carH * 0.6) c.v = Math.min(c.v, G.v - 4);
     c.y += (G.v - c.v) * pxPerKmh * dt;
     c.x += (c.lane + 0.5 - c.x) * Math.min(1, dt * 3);
     c.oops = Math.max(0, c.oops - dt * 0.8);
   }
-  G.cars = G.cars.filter(c => c.y > -carH * 4 && c.y < H + carH * 3);
+  // cars we passed stay a bit longer so the rear camera can see them
+  G.cars = G.cars.filter(c => c.y > -carH * 4 && c.y < playerY + H * 0.95 + carH);
 
   // items on the road
   for (const it of G.items) { it.y += scroll; it.spin = (it.spin || 0) + dt * 5; }
@@ -878,8 +1034,8 @@ function drawTraffic() {
       ctx.save(); ctx.globalAlpha = Math.min(1, c.oops * 2);
       const bx = cx + s.w * 0.6, by = c.y - s.h * 0.55, br = carW * 0.28;
       circle(bx, by, br, "#fff");
-      ctx.fillStyle = "#f43f5e"; ctx.font = `900 ${br * 1.5}px Rubik, sans-serif`;
-      ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("!", bx, by + 1);
+      ctx.fillStyle = "#f43f5e"; ctx.font = `900 ${br * (c.laugh ? 1.2 : 1.5)}px Rubik, sans-serif`;
+      ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(c.laugh ? "😂" : "!", bx, by + 1);
       ctx.restore();
     }
   }
@@ -904,16 +1060,267 @@ function drawHeadlights() {
   }
   ctx.restore();
 }
+// the player's super upgraded jeep, seen from above, front pointing up
+const JEEP = { body: "#ff7a1a", dark: "#c2410c", stripe: "#16181f", trim: "#2b2f3a" };
+function drawTyre(x, y, w, h, roll) {
+  rr(x, y, w, h, w * 0.3); ctx.fillStyle = "#121318"; ctx.fill();
+  ctx.save(); rr(x, y, w, h, w * 0.3); ctx.clip();
+  ctx.fillStyle = "#3a3d47";                         // chunky off-road tread, rolling
+  const step = h / 4, off = ((roll % step) + step) % step;
+  for (let ty = y - step + off; ty < y + h; ty += step) {
+    ctx.fillRect(x, ty, w * 0.42, step * 0.45);
+    ctx.fillRect(x + w * 0.58, ty + step * 0.5, w * 0.42, step * 0.45);
+  }
+  ctx.restore();
+}
+function drawJeep(w, h, o) {
+  const x = -w / 2, y = -h / 2;
+  const roll = G.laneOffset * 0.6;
+  // shadow
+  rr(x - w * 0.1 + 4, y + 6, w * 1.2, h * 1.02, w * 0.2); ctx.fillStyle = "#00000050"; ctx.fill();
+  // big chunky wheels (they stick out of the body)
+  const tw = w * 0.27, th = h * 0.24;
+  for (const wy of [y + h * 0.1, y + h * 0.63]) {
+    drawTyre(x - tw * 0.55, wy, tw, th, roll);
+    drawTyre(x + w - tw * 0.45, wy, tw, th, roll);
+  }
+  // spare tyre on the back
+  const sy = y + h * 1.0, sr = w * 0.24;
+  circle(0, sy, sr, "#121318");
+  ctx.lineWidth = sr * 0.22; ctx.strokeStyle = "#3a3d47"; ctx.setLineDash([sr * 0.25, sr * 0.2]);
+  ctx.beginPath(); ctx.arc(0, sy, sr * 0.82, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
+  circle(0, sy, sr * 0.48, "#9ca3af"); circle(0, sy, sr * 0.2, JEEP.body);
+  // body (boxy!) + dark fender flares
+  ctx.fillStyle = JEEP.trim;
+  for (const wy of [y + h * 0.08, y + h * 0.61]) {
+    rr(x - w * 0.07, wy, w * 0.2, th * 1.1, 4); ctx.fill();
+    rr(x + w * 0.87, wy, w * 0.2, th * 1.1, 4); ctx.fill();
+  }
+  rr(x, y, w, h * 0.97, w * 0.14); ctx.fillStyle = JEEP.body; ctx.fill();
+  ctx.lineWidth = 2; ctx.strokeStyle = "#00000066"; ctx.stroke();
+  rr(x + w * 0.06, y + h * 0.02, w * 0.88, h * 0.3, w * 0.1); ctx.fillStyle = "#ffffff26"; ctx.fill();   // hood shine
+  // racing stripes: two black stripes with white edges, front to back
+  for (const sx of [-w * 0.2, w * 0.08]) {
+    ctx.fillStyle = "#ffffffcc"; ctx.fillRect(sx - 1, y + 1, w * 0.12 + 2, h * 0.95);
+    ctx.fillStyle = JEEP.stripe; ctx.fillRect(sx, y + 1, w * 0.12, h * 0.95);
+  }
+  // the famous jeep grille: 7 slots + round headlights
+  rr(x + w * 0.22, y + h * 0.008, w * 0.56, h * 0.045, 2); ctx.fillStyle = "#1b1d24"; ctx.fill();
+  ctx.fillStyle = "#6b7280";
+  for (let i = 0; i < 7; i++) ctx.fillRect(x + w * (0.25 + i * 0.075), y + h * 0.015, w * 0.035, h * 0.03);
+  for (const hx of [x + w * 0.13, x + w * 0.87]) { circle(hx, y + h * 0.035, w * 0.1, "#1b1d24"); circle(hx, y + h * 0.035, w * 0.075, lights || high ? "#fffbe0" : "#fef3c7"); }
+  if (four) {                                        // a shiny 4x4 sticker on the hood
+    ctx.fillStyle = "#fff"; ctx.font = `900 ${w * 0.2}px Rubik, sans-serif`;
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.lineWidth = 3; ctx.strokeStyle = "#16181f"; ctx.strokeText("4x4", 0, y + h * 0.2); ctx.fillText("4x4", 0, y + h * 0.2);
+  }
+  // snorkel on the right side (for crossing rivers!)
+  rr(x + w * 0.9, y + h * 0.2, w * 0.1, h * 0.2, 3); ctx.fillStyle = "#111318"; ctx.fill();
+  circle(x + w * 0.95, y + h * 0.2, w * 0.07, "#111318");
+  // side mirrors
+  ctx.fillStyle = JEEP.trim;
+  rr(x - w * 0.12, y + h * 0.33, w * 0.13, h * 0.05, 3); ctx.fill();
+  rr(x + w * 0.99, y + h * 0.33, w * 0.13, h * 0.05, 3); ctx.fill();
+  // windshield frame
+  rr(x + w * 0.06, y + h * 0.32, w * 0.88, h * 0.07, 3); ctx.fillStyle = "#1e293b"; ctx.fill();
+  rr(x + w * 0.1, y + h * 0.33, w * 0.8, h * 0.035, 2); ctx.fillStyle = "#7dd3fc88"; ctx.fill();
+  // cabin
+  const cy0 = y + h * 0.4, ch = h * 0.47;
+  if (!roof) {
+    rr(x + w * 0.06, cy0, w * 0.88, ch, w * 0.1); ctx.fillStyle = "#1c1f27"; ctx.fill();   // hard top
+    rr(x + w * 0.12, cy0 + ch * 0.06, w * 0.76, ch * 0.3, w * 0.06); ctx.fillStyle = "#ffffff18"; ctx.fill();
+    for (const sx of [-w * 0.2, w * 0.08]) { ctx.fillStyle = "#ff7a1acc"; ctx.fillRect(sx + w * 0.03, cy0 + ch * 0.1, w * 0.06, ch * 0.8); }
+    ctx.fillStyle = "#94a3b8";                                                                // roof rack
+    for (const ry of [0.55, 0.75]) ctx.fillRect(x + w * 0.1, cy0 + ch * ry, w * 0.8, 2);
+  } else {
+    // roof open: seats, roll bar and a happy driver with a cap
+    rr(x + w * 0.06, cy0, w * 0.88, ch, w * 0.08); ctx.fillStyle = "#3b2a20"; ctx.fill();   // floor
+    ctx.fillStyle = "#111318";
+    rr(x + w * 0.12, cy0 + ch * 0.18, w * 0.32, ch * 0.3, 4); ctx.fill();                     // front seats
+    rr(x + w * 0.56, cy0 + ch * 0.18, w * 0.32, ch * 0.3, 4); ctx.fill();
+    rr(x + w * 0.12, cy0 + ch * 0.62, w * 0.76, ch * 0.28, 4); ctx.fill();                    // back seat
+    ctx.fillStyle = "#ff7a1a";
+    for (const sx of [0.18, 0.62]) ctx.fillRect(x + w * sx, cy0 + ch * 0.22, w * 0.2, ch * 0.04);
+    ctx.lineWidth = Math.max(2, w * 0.06); ctx.strokeStyle = "#94a3b8";                       // roll bar
+    ctx.beginPath(); ctx.moveTo(x + w * 0.09, cy0 + ch * 0.55); ctx.lineTo(x + w * 0.91, cy0 + ch * 0.55); ctx.stroke();
+    // the driver (left seat, like in Israel), seen from above
+    const dx = x + w * 0.28, dy = cy0 + ch * 0.3;
+    ctx.lineWidth = w * 0.07; ctx.lineCap = "round"; ctx.strokeStyle = "#f2c79a";              // arms to the wheel
+    ctx.beginPath(); ctx.moveTo(dx - w * 0.12, dy); ctx.lineTo(dx - w * 0.08, dy - ch * 0.17);
+    ctx.moveTo(dx + w * 0.12, dy); ctx.lineTo(dx + w * 0.08, dy - ch * 0.17); ctx.stroke(); ctx.lineCap = "butt";
+    ctx.lineWidth = w * 0.035; ctx.strokeStyle = "#111318";                                    // little steering wheel
+    ctx.beginPath(); ctx.ellipse(dx, dy - ch * 0.19, w * 0.1, ch * 0.04, 0, 0, Math.PI * 2); ctx.stroke();
+    rr(dx - w * 0.15, dy - ch * 0.04, w * 0.3, ch * 0.14, 5); ctx.fillStyle = "#2563eb"; ctx.fill(); // shoulders (shirt)
+    circle(dx, dy, w * 0.12, "#f2c79a");                                                       // head
+    ctx.beginPath(); ctx.arc(dx, dy + w * 0.01, w * 0.12, Math.PI * 1.05, Math.PI * 1.95); ctx.fillStyle = "#ef4444"; ctx.fill(); // cap
+    rr(dx - w * 0.08, dy - w * 0.17, w * 0.16, w * 0.07, 3); ctx.fill();                       // cap visor (to the front)
+    circle(dx, dy + w * 0.03, w * 0.025, "#fff");
+  }
+  // roof light bar (always on top of the windshield frame)
+  rr(x + w * 0.08, y + h * 0.385, w * 0.84, h * 0.05, 3); ctx.fillStyle = "#0b0c10"; ctx.fill();
+  for (let i = 0; i < 6; i++) {
+    const lx = x + w * (0.15 + i * 0.14), ly = y + h * 0.41;
+    circle(lx, ly, w * 0.045, high ? "#ffffff" : (lights ? "#fff7cc" : "#cbd5e1"));
+    if (high) { ctx.globalAlpha = 0.35; circle(lx, ly, w * 0.11, "#fffbe0"); ctx.globalAlpha = 1; }
+  }
+  // bull bar in front: thick steel tubes
+  ctx.lineCap = "round"; ctx.strokeStyle = "#2b2f3a"; ctx.lineWidth = Math.max(3, w * 0.09);
+  ctx.beginPath();
+  ctx.moveTo(x + w * 0.04, y + h * 0.02); ctx.lineTo(x + w * 0.1, y - h * 0.06); ctx.lineTo(x + w * 0.9, y - h * 0.06); ctx.lineTo(x + w * 0.96, y + h * 0.02);
+  ctx.moveTo(x + w * 0.32, y - h * 0.06); ctx.lineTo(x + w * 0.32, y + h * 0.01);
+  ctx.moveTo(x + w * 0.68, y - h * 0.06); ctx.lineTo(x + w * 0.68, y + h * 0.01);
+  ctx.stroke();
+  ctx.strokeStyle = "#9ca3af"; ctx.lineWidth = Math.max(1, w * 0.025);                        // chrome shine
+  ctx.beginPath(); ctx.moveTo(x + w * 0.12, y - h * 0.067); ctx.lineTo(x + w * 0.88, y - h * 0.067); ctx.stroke();
+  ctx.lineCap = "butt";
+  if (fog) for (const fx of [x + w * 0.2, x + w * 0.8]) { circle(fx, y - h * 0.06, w * 0.07, "#fde047"); ctx.globalAlpha = 0.4; circle(fx, y - h * 0.06, w * 0.16, "#fde047"); ctx.globalAlpha = 1; }
+  // tail lights
+  ctx.fillStyle = o.brake ? "#ff2d55" : "#9f1239";
+  rr(x + w * 0.04, y + h * 0.88, w * 0.12, h * 0.08, 2); ctx.fill();
+  rr(x + w * 0.84, y + h * 0.88, w * 0.12, h * 0.08, 2); ctx.fill();
+  if (o.brake) { ctx.globalAlpha = 0.35; circle(x + w * 0.1, y + h * 0.97, w * 0.2, "#ff2d55"); circle(x + w * 0.9, y + h * 0.97, w * 0.2, "#ff2d55"); ctx.globalAlpha = 1; }
+  // turn signals
+  const sigDot = (sx, sy) => { circle(sx, sy, w * 0.1, "#fbbf24"); ctx.globalAlpha = 0.4; circle(sx, sy, w * 0.22, "#fbbf24"); ctx.globalAlpha = 1; };
+  if (o.sigL) { sigDot(x + w * 0.02, y + h * 0.06); sigDot(x + w * 0.02, y + h * 0.92); }
+  if (o.sigR) { sigDot(x + w * 0.98, y + h * 0.06); sigDot(x + w * 0.98, y + h * 0.92); }
+}
+function drawTurboFlames(w, h) {
+  const t = G.time * 30;
+  ctx.save();
+  ctx.globalCompositeOperation = "lighter";
+  for (const fx of [-w * 0.36, w * 0.36]) {
+    const len = h * (0.45 + 0.15 * Math.sin(t + fx)), fy = h * 0.5;
+    const g = ctx.createLinearGradient(0, fy, 0, fy + len);
+    g.addColorStop(0, "rgba(255,255,220,.95)"); g.addColorStop(0.3, "rgba(255,190,40,.9)");
+    g.addColorStop(0.7, "rgba(255,90,20,.6)"); g.addColorStop(1, "rgba(255,40,0,0)");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(fx - w * 0.11, fy);
+    ctx.quadraticCurveTo(fx - w * 0.16, fy + len * 0.5, fx + Math.sin(t * 1.3) * w * 0.05, fy + len);
+    ctx.quadraticCurveTo(fx + w * 0.16, fy + len * 0.5, fx + w * 0.11, fy);
+    ctx.closePath(); ctx.fill();
+  }
+  ctx.restore();
+}
 function drawPlayer() {
   const L = (sig.L || sig.haz) && blink, R = (sig.R || sig.haz) && blink;
   const braking = brakeTouch || brakeKey;
+  const w = carW * 1.02, h = carH * 0.98;
   ctx.save();
   ctx.translate(laneX(G.x), playerY);
-  ctx.rotate(clamp(steer, -1.6, 1.6) * 0.06 * Math.min(1, Math.abs(G.v) / 20) * Math.sign(G.v || 1));
-  drawCar(0, 0, carW, carH, "#4fc3ff", { sigL: L, sigR: R, brake: braking || gear === "R" });
-  // racing stripe
-  ctx.fillStyle = "#ffffffaa";
-  ctx.fillRect(-carW * 0.06, -carH * 0.5 + 3, carW * 0.12, carH * 0.15);
+  const slide = four ? 0 : clamp(G.slide || 0, -1.5, 1.5) * 0.12;
+  ctx.rotate(clamp(steer, -1.6, 1.6) * 0.06 * Math.min(1, Math.abs(G.v) / 20) * Math.sign(G.v || 1) + slide);
+  if (turboT > 0) drawTurboFlames(w, h);
+  drawJeep(w, h, { sigL: L, sigR: R, brake: braking || gear === "R" });
+  ctx.restore();
+}
+// fog lights: low, wide yellow beams close to the road
+function drawFogLights() {
+  if (!fog) return;
+  const top = playerY - carH * 0.56, len = H * 0.2;
+  ctx.save();
+  ctx.globalCompositeOperation = "lighter";
+  for (const side of [-1, 1]) {
+    const hx = laneX(G.x) + side * carW * 0.3;
+    const g = ctx.createRadialGradient(hx, top, 2, hx, top, len);
+    g.addColorStop(0, "rgba(255,215,60,.6)"); g.addColorStop(1, "rgba(255,200,40,0)");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(hx, top);
+    ctx.arc(hx, top, len, -Math.PI / 2 + side * 0.15 - 0.75, -Math.PI / 2 + side * 0.15 + 0.75);
+    ctx.closePath(); ctx.fill();
+  }
+  ctx.restore();
+}
+// wind streaks with the roof open, speed lines with the turbo, dust with 4x4
+const puffs = [];
+function drawSpeedFx(dt) {
+  const sp = Math.max(0, G.v);
+  if (roof && sp > 5) {
+    ctx.save(); ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = 2; ctx.lineCap = "round";
+    ctx.beginPath();
+    const cx = laneX(G.x);
+    for (let i = 0; i < 6; i++) {
+      const side = i % 2 ? 1 : -1, ph = (G.time * (1.2 + sp / 40) + i * 0.37) % 1;
+      const wx = cx + side * carW * (0.75 + (i % 3) * 0.18), wy = playerY - carH * 0.9 + ph * carH * 2.2;
+      ctx.moveTo(wx, wy); ctx.quadraticCurveTo(wx + side * 4, wy + carH * 0.2, wx, wy + carH * 0.35);
+    }
+    ctx.stroke(); ctx.restore();
+  }
+  if (turboT > 0) {
+    ctx.save(); ctx.strokeStyle = "rgba(255,255,255,.5)"; ctx.lineWidth = 3;
+    ctx.beginPath();
+    for (let i = 0; i < 14; i++) {
+      const lx = (i * 71.3) % W, ly = ((i * 37.9 + G.time * 1600) % (H + 120)) - 60;
+      if (lx > roadX + 10 && lx < roadX + roadW - 10 && Math.abs(lx - laneX(G.x)) < carW) continue;
+      ctx.moveTo(lx, ly); ctx.lineTo(lx, ly + 50);
+    }
+    ctx.stroke(); ctx.restore();
+  }
+  if (four && sp > 8 && G.mode === "play" && Math.random() < dt * 25) {
+    const side = Math.random() < 0.5 ? -1 : 1;
+    puffs.push({ x: laneX(G.x) + side * carW * 0.55, y: playerY + carH * 0.4, r: rand(3, 6), a: 0.55 });
+  }
+  for (let i = puffs.length - 1; i >= 0; i--) {
+    const p = puffs[i];
+    p.y += sp * pxPerKmh * dt * 0.8; p.r += dt * 14; p.a -= dt * 1.1;
+    if (p.a <= 0) { puffs.splice(i, 1); continue; }
+    ctx.globalAlpha = p.a; circle(p.x, p.y, p.r, "#b08d5a"); ctx.globalAlpha = 1;
+  }
+}
+// rear camera: a little screen that shows the road behind the jeep
+function drawRearCam() {
+  if (!cam) return;
+  const iw = Math.round(clamp(Math.max(roadX - 14, roadW * 0.34), 90, 180)), ih = Math.round(iw * 0.72);
+  const hud = $("hud").getBoundingClientRect(), gr = gameEl.getBoundingClientRect();
+  const hudBottom = hud.bottom - gr.top + 6;
+  const ix = 8, iy = hudBottom;                                         // top corner, like a small screen
+  const s = iw / roadW, range = ih / s, y0 = playerY + carH * 0.6;
+  ctx.save();
+  rr(ix - 4, iy - 4, iw + 8, ih + 8, 12); ctx.fillStyle = "#0b0d13"; ctx.fill();
+  ctx.lineWidth = 2; ctx.strokeStyle = "#4fc3ff"; ctx.stroke();
+  rr(ix, iy, iw, ih, 8); ctx.clip();
+  ctx.fillStyle = "#3a3f4d"; ctx.fillRect(ix, iy, iw, ih);
+  // world -> camera: nearest road at the bottom, far away at the top
+  ctx.translate(ix - roadX * s, iy + ih + y0 * s);
+  ctx.scale(s, -s);
+  ctx.fillStyle = "#f3f4f6";
+  ctx.fillRect(roadX + 4, y0, 4, range); ctx.fillRect(roadX + roadW - 8, y0, 4, range);
+  const dash = carH * 0.55, period = dash * 2, off = ((G.laneOffset % period) + period) % period;
+  ctx.fillStyle = "#fbbf24";
+  for (let l = 1; l < 3; l++) for (let y = y0 - period + off; y < y0 + range; y += period) ctx.fillRect(roadX + l * laneW - 2.5, y, 5, dash);
+  for (const c of G.cars) {
+    const sz = carSize(c);
+    if (c.y - sz.h / 2 > y0 + range || c.y + sz.h / 2 < y0) continue;
+    const o = { lookDown: true };
+    if (c.truck) drawTruck(laneX(c.x), c.y, sz.w, sz.h, c.color, o); else drawCar(laneX(c.x), c.y, sz.w, sz.h, c.color, o);
+  }
+  ctx.setTransform(cv.width / W, 0, 0, cv.height / H, 0, 0);
+  // parking guide lines + REC dot
+  ctx.lineWidth = 3;
+  const gl = (f, col) => { ctx.strokeStyle = col; ctx.beginPath(); ctx.moveTo(ix + iw * (0.3 - f * 0.12), iy + ih * (1 - f * 0.5)); ctx.lineTo(ix + iw * (0.3 - f * 0.12) + 8, iy + ih * (1 - f * 0.5)); ctx.moveTo(ix + iw * (0.7 + f * 0.12), iy + ih * (1 - f * 0.5)); ctx.lineTo(ix + iw * (0.7 + f * 0.12) - 8, iy + ih * (1 - f * 0.5)); ctx.stroke(); };
+  ctx.strokeStyle = "#ffffff88"; ctx.beginPath();
+  ctx.moveTo(ix + iw * 0.18, iy + ih); ctx.lineTo(ix + iw * 0.3, iy + ih * 0.35);
+  ctx.moveTo(ix + iw * 0.82, iy + ih); ctx.lineTo(ix + iw * 0.7, iy + ih * 0.35); ctx.stroke();
+  gl(1.3, "#4ade80"); gl(0.7, "#fbbf24"); gl(0.15, "#f43f5e");
+  if (blink) circle(ix + 10, iy + 10, 4, "#f43f5e");
+  ctx.fillStyle = "#fff"; ctx.font = `700 ${Math.max(10, iw * 0.09)}px Rubik, sans-serif`;
+  ctx.textAlign = "left"; ctx.textBaseline = "middle"; ctx.fillText("📷", ix + 18, iy + 11);
+  ctx.restore();
+}
+function drawToast() {
+  if (toastT <= 0 || !toastText) return;
+  const fs = clamp(W * 0.045, 13, 20);
+  ctx.save();
+  ctx.globalAlpha = Math.min(1, toastT * 3);
+  ctx.font = `900 ${fs}px Rubik, sans-serif`;
+  ctx.direction = "rtl";
+  const tw = ctx.measureText(toastText).width + fs * 1.6, th = fs * 1.9;
+  const tx = (W - tw) / 2, ty = H * 0.62 - th / 2 - carH;
+  rr(tx, ty, tw, th, th / 2); ctx.fillStyle = "#0f1117dd"; ctx.fill();
+  ctx.lineWidth = 2; ctx.strokeStyle = "#fbbf24"; ctx.stroke();
+  ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillText(toastText, W / 2, ty + th / 2 + 1);
   ctx.restore();
 }
 
@@ -959,10 +1366,14 @@ function draw(dt) {
   if (lights || high) { ctx.fillStyle = "rgba(10,15,40,.22)"; ctx.fillRect(-20, -20, W + 40, H + 40); }
   for (const it of G.items) it.kind === "coin" ? drawCoin(it) : drawFuelCan(it);
   drawHeadlights();
+  drawFogLights();
   drawTraffic();
+  drawSpeedFx(dt);
   drawPlayer();
   ctx.restore();
   drawRain(dt);
+  drawRearCam();
+  drawToast();
   if (G.flash > 0) { ctx.fillStyle = `rgba(255,255,255,${G.flash})`; ctx.fillRect(0, 0, W, H); }
 }
 
@@ -1001,6 +1412,17 @@ function updateDashboard() {
   $("fuel").style.background = fuel < 20 ? "var(--red)" : "var(--green)";
   $("iLights").classList.toggle("on", lights); $("iHigh").classList.toggle("on", high);
   $("bLights").classList.toggle("on", lights); $("bHigh").classList.toggle("on", high); $("bWipe").classList.toggle("on", wipe);
+  $("bFog").classList.toggle("on", fog); $("b4x4").classList.toggle("on", four);
+  $("bCam").classList.toggle("on", cam); $("bMusic").classList.toggle("on", musicOn); $("bRoof").classList.toggle("on", roof);
+  $("musicIc").textContent = musicOn ? (Date.now() % 600 < 300 ? "🎵" : "🎶") : "🎵";
+  $("bTurbo").classList.toggle("on", turboT > 0);
+  $("bTurbo").classList.toggle("cool", turboT <= 0 && turboCD > 0);
+  const tl = turboT > 0 ? "טורבו!" : (turboCD > 0 ? "טורבו " + Math.ceil(turboCD) : "טורבו");
+  if ($("turboLb").textContent !== tl) $("turboLb").textContent = tl;
+  if (wind) {
+    wind.g.gain.value = roof && !muted ? 0.015 + Math.min(sp, 90) * 0.0011 : 0;
+    wind.f.frequency.value = 500 + sp * 8;
+  }
   $("bWipe").querySelector(".ic").textContent = wipe ? (Date.now() % 800 < 400 ? "🌧️" : "💦") : "🌧️";
   if (engine) {
     engine.o.frequency.value = 40 + sp * 1.3 + (gas ? 20 : 0);
