@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0f1117">
+<title>נהג צעיר · לוח מחוונים</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0f1117;--panel:#1a1d27;--line:#2c3142;--ink:#eef1ff;--muted:#8e96b8;--blue:#4fc3ff;--green:#4ade80;--amber:#fbbf24;--red:#f43f5e}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+  html,body{height:100%;background:var(--bg);color:var(--ink);font-family:Rubik,system-ui,sans-serif;overflow:hidden;touch-action:none}
+  .app{height:100%;display:grid;grid-template-rows:auto 1fr auto;gap:10px;padding:12px;max-width:1100px;margin:0 auto}
+  header{display:flex;justify-content:space-between;align-items:center}
+  h1{font-size:20px;font-weight:900}
+  h1 span{color:var(--blue)}
+  .gear{display:flex;gap:6px}
+  .gear button{width:42px;height:42px;font-size:18px}
+  .main{direction:ltr;display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:12px;align-items:center;min-height:0}
+  .card{background:linear-gradient(180deg,#1e2230,#161922);border:1px solid var(--line);border-radius:22px;padding:14px;box-shadow:inset 0 1px 0 #ffffff10,0 10px 30px #0008}
+  .gauges{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .speed{font-size:64px;font-weight:900;line-height:1;color:var(--blue);text-shadow:0 0 24px #4fc3ff66}
+  .unit{font-size:14px;color:var(--muted)}
+  .bar{width:100%;height:12px;border-radius:8px;background:#0b0d13;overflow:hidden;border:1px solid var(--line)}
+  .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--amber),var(--red));transition:width .1s}
+  .fuel{display:flex;align-items:center;gap:8px;width:100%;font-size:13px;color:var(--muted)}
+  .lights{direction:ltr;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .ind{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:#0b0d13;border:1px solid var(--line);opacity:.35;transition:all .15s}
+  .ind.on{opacity:1;box-shadow:0 0 16px currentColor}
+  .ind.l{color:var(--green)} .ind.h{color:var(--blue)} .ind.w{color:var(--amber)}
+  .wheelWrap{display:grid;place-items:center}
+  .wheel{width:min(38vw,300px);aspect-ratio:1;border-radius:50%;border:18px solid #2a2f40;background:radial-gradient(circle,#232838 0 22%,transparent 23%);position:relative;box-shadow:0 12px 40px #000a,inset 0 0 0 2px #ffffff10;cursor:grab;transition:transform .05s}
+  .wheel::before,.wheel::after{content:"";position:absolute;background:#2a2f40;border-radius:8px}
+  .wheel::before{left:50%;top:50%;width:84%;height:16px;transform:translate(-50%,-50%)}
+  .wheel::after{left:50%;top:50%;width:16px;height:42%;transform:translate(-50%,0)}
+  .hornBtn{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:30%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 40% 35%,#3b4258,#232838);border:2px solid #ffffff20;z-index:2;display:grid;place-items:center;font-size:clamp(18px,4vw,30px)}
+  .road{height:46px;border-radius:12px;background:#0b0d13;border:1px solid var(--line);position:relative;overflow:hidden;margin-top:12px}
+  .lane{position:absolute;top:50%;left:0;width:200%;height:4px;transform:translateY(-50%);background:repeating-linear-gradient(90deg,#fbbf24 0 26px,transparent 26px 52px)}
+  .car{position:absolute;top:50%;left:50%;font-size:26px;transform:translate(-50%,-50%) scaleX(-1);transition:left .1s}
+  .pedals{display:flex;gap:12px;justify-content:center;align-items:flex-end;height:100%}
+  .pedal{flex:1;max-width:120px;border-radius:18px;border:none;color:#111;font-weight:900;font-size:18px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:12px 6px;box-shadow:0 8px 0 #0009,0 14px 24px #0008;transition:transform .06s,box-shadow .06s}
+  .pedal.brake{height:min(30vh,170px);background:linear-gradient(180deg,#ff7a8c,var(--red))}
+  .pedal.gas{height:min(38vh,220px);background:linear-gradient(180deg,#86efac,var(--green))}
+  .pedal.down{transform:translateY(6px);box-shadow:0 2px 0 #0009,0 6px 12px #0008}
+  .pedal .ic{font-size:30px;margin-bottom:6px}
+  .controls{direction:ltr;display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+  button{font-family:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 4px;font-size:13px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+  button .ic{font-size:22px}
+  button.on{background:#25304a;border-color:var(--blue);box-shadow:0 0 14px #4fc3ff55}
+  .gear button.on{background:var(--blue);color:#06121c}
+  .ver{position:fixed;bottom:2px;left:8px;font-size:10px;color:var(--muted);opacity:.6}
+  @media (orientation:portrait){
+    .main{grid-template-columns:1fr 1fr;grid-template-areas:"g p" "w w"}
+    .gauges{grid-area:g}.pedalsCard{grid-area:p}.wheelWrap{grid-area:w}
+    .wheel{width:min(62vw,300px)}
+    .controls{grid-template-columns:repeat(3,1fr)}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>🚗 נהג <span>צעיר</span></h1>
+    <div class="gear" id="gear">
+      <button data-g="P">P</button><button data-g="R">R</button><button data-g="N">N</button><button data-g="D" class="on">D</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="card gauges">
+      <div class="lights">
+        <div class="ind w" id="iL">⬅️</div>
+        <div class="ind l" id="iLights">💡</div>
+        <div class="ind h" id="iHigh">🔦</div>
+        <div class="ind w" id="iR">➡️</div>
+      </div>
+      <div class="speed" id="speed">0</div>
+      <div class="unit">קמ״ש</div>
+      <div class="bar"><i id="rpm"></i></div>
+      <div class="fuel">⛽ <div class="bar"><i id="fuel" style="width:100%;background:var(--green)"></i></div></div>
+      <div class="road" style="width:100%"><div class="lane" id="lane"></div><div class="car" id="car">🚙</div></div>
+    </div>
+
+    <div class="wheelWrap">
+      <div class="wheel" id="wheel"><div class="hornBtn" id="horn">📯</div></div>
+    </div>
+
+    <div class="card pedalsCard">
+      <div class="pedals">
+        <div class="pedal brake" id="brake"><span class="ic">🛑</span>ברקס</div>
+        <div class="pedal gas" id="gas"><span class="ic">⚡</span>גז</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="bL"><span class="ic">⬅️</span>איתות שמאל</button>
+    <button id="bLights"><span class="ic">💡</span>אורות</button>
+    <button id="bHigh"><span class="ic">🔦</span>אור גבוה</button>
+    <button id="bWipe"><span class="ic">🌧️</span>מגבים</button>
+    <button id="bHaz"><span class="ic">⚠️</span>מהבהבים</button>
+    <button id="bR"><span class="ic">➡️</span>איתות ימין</button>
+  </div>
+</div>
+<div class="ver">גרסה 0.1</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let AC=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}return AC}
+function beep(f,d,type="square",vol=.15){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type=type;o.frequency.value=f;g.gain.value=vol;o.connect(g);g.connect(a.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+d);o.stop(a.currentTime+d)}
+let engine=null;
+function engineOn(){const a=ac();if(!a||engine)return;const o=a.createOscillator(),g=a.createGain();o.type="sawtooth";o.frequency.value=40;g.gain.value=.03;o.connect(g);g.connect(a.destination);o.start();engine={o,g}}
+let speed=0,gas=false,brake=false,gear="D",fuel=100,steer=0,lane=0,carX=50;
+let sig={L:false,R:false,haz:false},lights=false,high=false,wipe=false,blink=false;
+function press(el,on){el.classList.toggle("down",on)}
+function hold(el,set){
+  const down=e=>{e.preventDefault();set(true);press(el,true);engineOn()};
+  const up=e=>{e.preventDefault();set(false);press(el,false)};
+  el.addEventListener("pointerdown",down);el.addEventListener("pointerup",up);el.addEventListener("pointerleave",up);el.addEventListener("pointercancel",up);
+}
+hold($("gas"),v=>gas=v);hold($("brake"),v=>brake=v);
+let hornT=null;
+$("horn").addEventListener("pointerdown",e=>{e.stopPropagation();e.preventDefault();beep(420,.35,"sawtooth",.2);beep(520,.35,"sawtooth",.15);if(navigator.vibrate)navigator.vibrate(60)});
+document.querySelectorAll("#gear button").forEach(b=>b.onclick=()=>{gear=b.dataset.g;document.querySelectorAll("#gear button").forEach(x=>x.classList.toggle("on",x===b));beep(900,.05)});
+function tog(id,fn){$(id).onclick=()=>{fn();beep(1200,.04,"sine",.1)}}
+tog("bL",()=>{sig.L=!sig.L;sig.R=false});tog("bR",()=>{sig.R=!sig.R;sig.L=false});
+tog("bHaz",()=>{sig.haz=!sig.haz});tog("bLights",()=>{lights=!lights});tog("bHigh",()=>{high=!high});tog("bWipe",()=>{wipe=!wipe});
+const wh=$("wheel");let drag=null;
+wh.addEventListener("pointerdown",e=>{const r=wh.getBoundingClientRect();drag={cx:r.left+r.width/2,cy:r.top+r.height/2,a0:Math.atan2(e.clientY-(r.top+r.height/2),e.clientX-(r.left+r.width/2)),s0:steer};wh.setPointerCapture(e.pointerId)});
+wh.addEventListener("pointermove",e=>{if(!drag)return;const a=Math.atan2(e.clientY-drag.cy,e.clientX-drag.cx);let d=a-drag.a0;if(d>Math.PI)d-=2*Math.PI;if(d<-Math.PI)d+=2*Math.PI;steer=Math.max(-2.4,Math.min(2.4,drag.s0+d))});
+const rel=()=>{drag=null};wh.addEventListener("pointerup",rel);wh.addEventListener("pointercancel",rel);
+setInterval(()=>{blink=!blink;
+  const L=(sig.L||sig.haz)&&blink,R=(sig.R||sig.haz)&&blink;
+  $("iL").classList.toggle("on",L);$("iR").classList.toggle("on",R);
+  if(sig.L||sig.R||sig.haz)beep(blink?1800:1400,.03,"square",.05);
+  $("bL").classList.toggle("on",sig.L);$("bR").classList.toggle("on",sig.R);$("bHaz").classList.toggle("on",sig.haz);
+},450);
+function loop(){
+  const max=gear==="R"?20:gear==="D"?120:0;
+  if(gas&&max&&fuel>0){speed+= (max-speed)*0.012+0.15;fuel=Math.max(0,fuel-0.02)}
+  else speed-=0.12;
+  if(brake)speed-=1.6;
+  speed=Math.max(0,Math.min(max||speed,speed));
+  if(!drag)steer*=0.92;
+  $("wheel").style.transform="rotate("+steer+"rad)";
+  $("speed").textContent=Math.round(speed);
+  $("rpm").style.width=Math.min(100,(gas?30:8)+speed*0.6)+"%";
+  $("fuel").style.width=fuel+"%";$("fuel").style.background=fuel<20?"var(--red)":"var(--green)";
+  lane=(lane+speed*0.06*(gear==="R"?-1:1))%52;$("lane").style.transform="translate("+(-lane)+"px,-50%)";
+  carX=Math.max(12,Math.min(88,carX-steer*speed*0.006));$("car").style.left=carX+"%";
+  $("car").textContent=gear==="R"?"🚙":"🚙";
+  $("iLights").classList.toggle("on",lights);$("iHigh").classList.toggle("on",high);
+  $("bLights").classList.toggle("on",lights);$("bHigh").classList.toggle("on",high);$("bWipe").classList.toggle("on",wipe);
+  $("bWipe").querySelector(".ic").textContent=wipe?(Date.now()%800<400?"🌧️":"💦"):"🌧️";
+  if(engine){engine.o.frequency.value=40+speed*1.2+(gas?20:0);engine.g.gain.value=.02+(gas?.03:0)}
+  requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body>
+</html>
