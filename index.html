@@ -62,17 +62,27 @@
   /* short landscape: like looking over a dashboard; only the top half of the wheel is over the road,
      the rim is see-through and the buttons sit on the lower half, below the jeep */
   .main.ovl .wheelWrap{overflow:hidden}
-  .main.ovl .wheel{border-color:#2f354866;background:radial-gradient(circle,#232838c0 0 22%,transparent 23%);box-shadow:inset 0 0 0 2px #ffffff10}
-  .main.ovl .wheel::before,.main.ovl .wheel::after{background:#30364a66}
+  /* the wheel stands out on the dark dashboard: a thick light rim (grey to white) with a red racing band
+     at 12 o'clock, a dark edge on both sides of the rim and a soft blue glow around it */
+  .main.ovl .wheel{background:radial-gradient(circle,#232838c0 0 22%,transparent 23%);box-shadow:0 0 0 2px #0b0d1399,0 0 0 4px #4fc3ff88,0 0 16px #4fc3ff55}
+  .main.ovl .rim{opacity:.8}
+  .main.ovl .wheel::before,.main.ovl .wheel::after{background:#cbd5e166;border-color:#0b0d1344}
   .main.ovl .hornBtn{width:28%}
-  .wheel{--ws:200px;position:absolute;left:50%;top:var(--wcy,50%);width:var(--ws);height:var(--ws);border-radius:50%;border:calc(var(--ws)*.06) solid #2a2f40;background:radial-gradient(circle,#232838 0 22%,transparent 23%);box-shadow:0 12px 40px #000a,inset 0 0 0 2px #ffffff10;cursor:grab;touch-action:none;transform:translate(-50%,-50%)}
-  .wheel::before,.wheel::after{content:"";position:absolute;background:#2a2f40;border-radius:8px}
-  .wheel::before{left:50%;top:50%;width:84%;height:calc(var(--ws)*.055);transform:translate(-50%,-50%)}
-  .wheel::after{left:50%;top:50%;width:calc(var(--ws)*.055);height:42%;transform:translate(-50%,0)}
+  .wheel{--ws:200px;position:absolute;left:50%;top:var(--wcy,50%);width:var(--ws);height:var(--ws);border-radius:50%;border:calc(var(--ws)*.06) solid transparent;background:radial-gradient(circle,#232838 0 22%,transparent 23%);
+    box-shadow:0 0 0 2px #0b0d13,0 0 0 4px #4fc3ffaa,0 0 24px #4fc3ff66,0 12px 40px #000a;cursor:grab;touch-action:none;transform:translate(-50%,-50%)}
+  .rim{--rw:calc(var(--ws)*.095);position:absolute;inset:calc(var(--ws)*-.06);border-radius:50%;pointer-events:none;z-index:1;
+    background:radial-gradient(farthest-side,#0b0d13 calc(100% - var(--rw)),transparent calc(100% - var(--rw) + 1px)),
+      conic-gradient(from -10deg,#f43f5e 0 20deg,transparent 20deg),
+      radial-gradient(farthest-side,transparent calc(100% - var(--rw) * .55),#ffffff55 calc(100% - var(--rw) * .45),transparent calc(100% - var(--rw) * .2)),
+      linear-gradient(160deg,#ffffff 0%,#e5e7eb 40%,#a3abbb 100%);
+    -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - var(--rw) - 3px),#000 calc(100% - var(--rw) - 2px));
+    mask:radial-gradient(farthest-side,transparent calc(100% - var(--rw) - 3px),#000 calc(100% - var(--rw) - 2px))}
+  .wheel::before,.wheel::after{content:"";position:absolute;background:linear-gradient(180deg,#d5dae4,#8d96aa);border:1px solid #0b0d1388;border-radius:8px;z-index:0}
+  .wheel::before{left:50%;top:50%;width:86%;height:calc(var(--ws)*.065);transform:translate(-50%,-50%)}
+  .wheel::after{left:50%;top:50%;width:calc(var(--ws)*.065);height:44%;transform:translate(-50%,0)}
   .hornBtn{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:32%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 40% 35%,#3b4258,#232838);border:2px solid #ffffff20;z-index:2;display:grid;place-items:center;font-size:calc(var(--ws)*.11);cursor:pointer}
   .hornBtn.down{background:radial-gradient(circle at 40% 35%,#4b5577,#2a3045)}
-  .wheel{--rot:0rad;z-index:2;border-color:#2f3548;background:radial-gradient(circle,#232838 0 22%,transparent 23%)}
-  .wheel::before,.wheel::after{background:#30364a}
+  .wheel{--rot:0rad;z-index:2}
   .wBtn{position:absolute;width:clamp(34px,calc(var(--ws)*.17),84px);height:clamp(34px,calc(var(--ws)*.17),84px);border-radius:50%;display:grid;place-items:center;
     font-size:clamp(16px,calc(var(--ws)*.085),42px);background:radial-gradient(circle at 40% 35%,#475073,#252a3b);border:2px solid #ffffff38;
     box-shadow:0 2px 6px #000a;z-index:3;cursor:pointer;transform:translate(-50%,-50%) rotate(calc(var(--rot) * -1));transition:box-shadow .15s,background .15s}
@@ -340,12 +350,20 @@
   .main.ovl .hint{top:max(15%,52px)}
   .main.ovl .alert{top:36px}
   .main.ovl .praise{top:62px}
+  /* turn assist: a big arrow guide while the jeep moves by itself into the turning lane */
+  .assist{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);z-index:5;pointer-events:none;direction:rtl;display:flex;align-items:center;gap:10px;
+    background:linear-gradient(135deg,#1d4ed8,#2563eb);color:#fff;border:3px solid #fff;border-radius:22px;padding:6px 18px;font-size:26px;font-weight:900;white-space:nowrap;
+    box-shadow:0 0 28px #4fc3ffcc;animation:assistP .9s ease-in-out infinite}
+  .assist b{font-size:46px;line-height:1}
+  @keyframes assistP{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.07)}}
+  .main.ovl .assist{top:118px;font-size:18px;padding:4px 12px}
+  .main.ovl .assist b{font-size:30px}
 </style>
 </head>
 <body>
 <div class="app" id="app">
   <header>
-    <h1>🚙 נהג <span>צעיר</span><small>גרסה 0.7.2</small></h1>
+    <h1>🚙 נהג <span>צעיר</span><small>גרסה 0.7.3</small></h1>
     <div class="hdrEnd">
       <button class="mute" id="mute" title="צלילים">🔊</button>
       <div class="gear" id="gear">
@@ -389,6 +407,7 @@
       <div class="pen" id="pen"><bdi dir="ltr">−10</bdi> שניות</div>
       <div class="plus" id="plus"><bdi dir="ltr">+5</bdi></div>
       <div class="praise" id="praise"></div>
+      <div class="assist" id="assist" hidden></div>
       <div class="over show" id="over">
         <div class="overCard" id="card">
           <div class="who" id="who" hidden>
@@ -472,6 +491,7 @@
         <div class="stTrack"><span class="stA">⬆️<i>ימינה</i></span><div class="arm"><b></b></div><span class="stA">⬇️<i>שמאלה</i></span></div>
       </div>
       <div class="wheel" id="wheel">
+        <div class="rim"></div>
         <div class="wBtn" id="wTurbo" data-a="90" data-r="0.33" title="טורבו">🚀</div>
         <div class="wBtn" id="wLights" data-a="270" data-r="0.33" title="אורות">💡</div>
         <div class="wBtn" id="wCam" data-a="180" data-r="0.33" title="מצלמה אחורית">📷</div>
@@ -519,8 +539,19 @@ const RULES = {
   BONUS_TURN: 3,            // seconds for each correct turn at a junction (0 = off)
   BONUS_LIGHT: 3,           // seconds for each correct stop at a red light (0 = off)
   LEVEL_DIST: 300,          // every 300 m the road gets a little harder ("רמה" in the HUD)
-  MAX_LEVEL: 30
+  MAX_LEVEL: 30,
+  // ---- steering + turns, tuned for 5-8 year olds (v0.7.3) ----
+  STEER_GAIN: 1.8,          // steering per finger rotation (drive11 was 1.0: 1 rad finger = 1 rad steer)
+  FULL_LOCK_DEG: 75,        // finger rotation (degrees) that reaches full lock (drive11: about 137)
+  STEER_RETURN: 0.95,       // spring-back per 1/60 s when the wheel is let go (drive11: 0.92, lower = faster)
+  LANE_SPEED: 1.3,          // how fast the jeep moves sideways for the same steering (drive11: 1.0)
+  LANE_SNAP: 3,             // how strongly the jeep settles into the lane centre when the wheel is near neutral
+  LANE_SNAP_STEER: 0.18,    // "near neutral": steering below this (rad) lets the lane snap work
+  TURN_ASSIST_DIST: 150,    // meters: a correct signal this close to a junction starts the turn assist
+  TURN_ASSIST_TIME: 1.0,    // seconds the assist takes to ease the jeep into the turning lane
+  SIGN_EARLY: 1.5           // the blue direction sign shows up this many times earlier than in drive11
 };
+const STEER_LOCK = RULES.FULL_LOCK_DEG * Math.PI / 180 * RULES.STEER_GAIN;   // max steering (rad), about 2.36
 const $ = id => document.getElementById(id);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const rand = (a, b) => a + Math.random() * (b - a);
@@ -569,6 +600,7 @@ const sfx = {
   turbo() { beep(120, .9, "sawtooth", .12, 900); beep(200, .7, "square", .05, 1400); noiseBurst(.8, .25); },
   roof()  { beep(500, .25, "triangle", .1, 900); noiseBurst(.6, .2); },
   four()  { beep(140, .12, "square", .14); setTimeout(() => beep(190, .18, "square", .14), 110); },
+  chime() { beep(880, .14, "sine", .12); setTimeout(() => beep(1175, .14, "sine", .12), 120); setTimeout(() => beep(1568, .3, "sine", .1), 240); },
   dingDong() { beep(784, .45, "sine", .2); beep(1568, .2, "sine", .03); setTimeout(() => beep(622, .6, "sine", .2), 320); }
 };
 let noiseBuf = null;
@@ -795,8 +827,13 @@ function onLaneChange(from, to) {
     // like a real car the signal lever snaps back after the lane change,
     // unless a junction just ahead needs a turn to that side
     const nj = G.world && nextJunction();
-    if (sig[dir] && !(nj && nj.instr === dir && nj.y > -H * 1.2)) { sig[dir] = false; sigOffAt[dir] = G.time; sigPrev[dir] = false; syncStalks(); }
-  } else if (G.time - G.sigPenAt > SIG_PEN_GAP) {
+    if (sig[dir] && !(nj && nj.instr === dir && (nj.y > -H * 1.2 || juncDist(nj) <= JUNC_AHEAD + 5))) { sig[dir] = false; sigOffAt[dir] = G.time; sigPrev[dir] = false; syncStalks(); }
+  } else {
+    // one mistake = one penalty: an unsignalled lane change toward the turn of the junction ahead is THE
+    // forgot-to-signal mistake for that turn, so the turn itself won't add a second one
+    const nj = G.world && nextJunction();
+    if (nj && nj.instr === dir && juncDist(nj) > 0 && juncDist(nj) <= JUNC_APPROACH) nj.sigPen = true;
+    if (G.time - G.sigPenAt <= SIG_PEN_GAP) return;
     G.sigPenAt = G.time; G.sigMiss++;
     showAlert(`⚠️ שכחת לאותת! <small>לוחצים ${dir === "R" ? "➡️" : "⬅️"} לפני שעוברים נתיב</small>`);
     penalty();
@@ -879,12 +916,13 @@ function startRun() {
     closeT: 0, distCD: 0, closeCar: null, distWarned: false,
     laneOffset: G.laneOffset || 0, grassOffset: G.grassOffset || 0,
     speedPen: 0, speedCD: 0, overT: 0, speedWarn: false, slowShown: false, limFlash: 0,
-    turnGood: 0, turnBad: 0, turnAll: 0, lightGood: 0, lightPen: 0, turn: null,
+    turnGood: 0, turnBad: 0, turnAll: 0, lightGood: 0, lightPen: 0, turn: null, assist: null,
     secAt: sectionLen(), nextJ: level <= 1 ? rand(220, 300) : rand(140, 240)
   });
   G.secKind = level % 2 ? "country" : "city";
   G.limit = limitFor(G.secKind, level);
   G.world = newWorld(G.secKind, G.limit, playerY - H * 0.55);
+  showAssist();
   fuel = 100; turboT = 0; turboCD = 0;
   setGear("D", true);
   clearAlerts();
@@ -968,7 +1006,8 @@ const wh = $("wheel");
 // The steering follows the ROTATION ANGLE of the finger around the hub (not pixel distance),
 // so a bigger wheel steers exactly like a small one. Grab anywhere on the rim or spokes.
 // Each move adds the small angle change since the last move, so going past 180° never jumps.
-// Lock = ±2.4 rad (about ±137°). Only the finger that grabbed the wheel turns it (multi-touch safe).
+// The steering is RULES.STEER_GAIN times the finger rotation, full lock at ±RULES.FULL_LOCK_DEG of finger
+// rotation; the wheel picture turns with the finger. Only the finger that grabbed the wheel turns it (multi-touch safe).
 wh.addEventListener("pointerdown", e => {
   if (wheelDrag) return;                                      // a second finger on the wheel is ignored
   const r = wh.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
@@ -985,7 +1024,7 @@ wh.addEventListener("pointermove", e => {
   if (d > Math.PI) d -= 2 * Math.PI;
   if (d < -Math.PI) d += 2 * Math.PI;
   wheelDrag.last = a;
-  steer = clamp(steer + d, -2.4, 2.4);
+  steer = clamp(steer + d * RULES.STEER_GAIN, -STEER_LOCK, STEER_LOCK);
 });
 const releaseWheel = e => { if (wheelDrag && (!e || e.pointerId === wheelDrag.id)) wheelDrag = null; };
 wh.addEventListener("pointerup", releaseWheel);
@@ -1178,7 +1217,7 @@ function layout() {
   let D, cy, wrapH, ovl = 0, pw, ph;
   const over = land && h < 600;
   if (!land) {
-    D = Math.floor(Math.min(w * 0.76, h * 0.48));
+    D = Math.floor(Math.min(w * 0.77, h * 0.5));
     cy = D / 2 + 2;
     pw = Math.round(clamp(w * 0.17, 58, 130));
     const gap = w / 2 - pw - 6, R = D / 2;
@@ -1194,7 +1233,7 @@ function layout() {
       ovl = Math.round(D / 2);
       wrapH = ovl + Math.round(D * 0.41);
     } else {
-      D = Math.floor(Math.min(w * 0.62, h * 0.5));
+      D = Math.floor(Math.min(w * 0.64, h * 0.52));
       cy = D / 2 + 2;
       wrapH = D + 6;
     }
@@ -1245,7 +1284,8 @@ function spawnTraffic() {
   const band = carH * 3.6;
   const busy = [0, 1, 2].filter(l => laneBusy(l, -carH * 4, band));
   if (busy.length >= 2) return false;
-  const free = [0, 1, 2].filter(l => !busy.includes(l));
+  let free = [0, 1, 2].filter(l => !busy.includes(l));
+  if (G.assist && free.length > 1) free = free.filter(l => l !== Math.floor(G.assist.to));   // keep the turning lane clear
   const lane = pick(free);
   // traffic is always slower than us, so cars come down the screen towards us
   const hi = Math.max(6, Math.min(G.set.carMax, G.v - 10));
@@ -1545,6 +1585,7 @@ function hideCard() { $("over").classList.remove("show"); }
 function showCard(kind, info = {}) {
   const card = $("card"), ended = kind === "end";
   clearAlerts();
+  G.assist = null; showAssist();
   closeNewPlayer();
   $("who").hidden = ended;
   if (!ended) renderWho();
@@ -1618,20 +1659,41 @@ function updateCar(dt) {
   const wanted = keySteer || touchSteer;
   if (!wheelDrag) {
     if (wanted) steer += (wanted * 1.6 - steer) * Math.min(1, dt * 10);
-    else steer *= Math.pow(0.92, dt * 60);
+    else steer *= Math.pow(RULES.STEER_RETURN, dt * 60);
   }
   const grip = Math.abs(v) < 1 ? 0 : 0.45 + 0.55 * Math.min(1, Math.abs(v) / 50);
   // sliding: the jeep follows the wheel with a small delay (more in the rain);
   // 4x4 grips the road so it follows right away
-  const want = G.over ? 0 : steer * 0.95 * grip;
+  const want = G.over ? 0 : steer * 0.95 * grip * RULES.LANE_SPEED;
   const k = four ? 18 : (wipe ? 3 : 5);
   G.lv = (G.lv || 0) + (want - (G.lv || 0)) * Math.min(1, dt * k);
   G.slide = want - G.lv;
+  if (G.assist && !G.over) { assistMove(dt); return; }      // the turn assist drives the jeep into the lane
   if (!G.over) {
     const nx = clamp(G.x + G.lv * dt, 0.42, 2.58);
     if (nx !== G.x + G.lv * dt) G.lv = 0;
     G.x = nx;
+    // wheel near neutral: settle gently into the middle of the lane, so the jeep never drifts on a line
+    if (Math.abs(steer) < RULES.LANE_SNAP_STEER && !wanted && Math.abs(v) >= 1) {
+      let c = clamp(Math.floor(G.x) + 0.5, 0.5, 2.5);
+      // a required turn is close and the jeep is already partly over the line: settle into the turning lane
+      const nj = G.world && G.mode === "play" && nextJunction();
+      if (nj && nj.instr !== "S" && juncDist(nj) <= RULES.TURN_ASSIST_DIST) {
+        if (nj.instr === "R" && G.x > 1.7) c = 2.5;
+        if (nj.instr === "L" && G.x < 1.3) c = 0.5;
+      }
+      G.x += (c - G.x) * Math.min(1, dt * RULES.LANE_SNAP);
+    }
   }
+}
+// turn assist: over RULES.TURN_ASSIST_TIME the jeep eases into the turning lane by itself, then stays there
+function assistMove(dt) {
+  const A = G.assist;
+  if (Math.abs(G.v) >= 1) A.t += dt;
+  const u = Math.min(1, A.t / RULES.TURN_ASSIST_TIME), e = u * u * (3 - 2 * u);
+  G.x = A.x0 + (A.to - A.x0) * e;
+  G.lv = 0; G.slide = 0;
+  makeWay(A.to);
 }
 
 function update(dt) {
@@ -1843,19 +1905,26 @@ function makeJunction(level, kind) {
   jGeom(j);
   return j;
 }
+const PX_PER_M = () => pxPerKmh * 3.6;                     // screen pixels for one meter of road
+const juncDist = j => (playerY - j.y) / PX_PER_M();          // meters from the jeep to the junction
+const JUNC_AHEAD = RULES.TURN_ASSIST_DIST + 15;              // a new junction is made this many meters ahead
+const JUNC_EARLY = JUNC_AHEAD - 50;                          // ...and that much earlier than in drive11 (about 50 m ahead)
+const JUNC_APPROACH = 250;                                   // meters: "on the approach" to a junction (forgot-to-signal counted once)
 function spawnJunction() {
   const S = G.world;
   if (S.scenes.some((s, i) => i > 0 && s.y < H * 0.1)) return;     // wait until the new section began
   const j = makeJunction(G.level, topKind(S));
-  const signOff = j.slOff + H * 0.62;
-  j.y = -60 - signOff;
+  // the blue sign: RULES.SIGN_EARLY times as far before the junction (when it comes into view) as in drive11
+  const signOff = RULES.SIGN_EARLY * (j.slOff + H * 0.62 + playerY + 60) - playerY - 60;
+  j.y = Math.min(-60 - signOff, playerY - JUNC_AHEAD * PX_PER_M());
   S.feats.push(j, { type: "dir", y: j.y + signOff, j });
-  G.nextJ = G.meters + junctionGap(G.level);      // level 1 has just this one
+  G.nextJ = G.meters + junctionGap(G.level) + JUNC_EARLY;   // same spacing as before (level 1 has just this one)
 }
 const nextJunction = () => G.world.feats.find(f => f.type === "junc" && !f.decided);
 const sigOn = d => sig[d] || G.time - sigOffAt[d] < SIG_GRACE;
 
 function dirAlert(j) {
+  if (G.assist && G.assist.j === j) return;                       // the big assist arrow already shows the way
   if (j.instr === "R") showAlert("↪️ בצומת: פנה ימינה! <small>מאותתים ➡️ ועוברים לנתיב הימני</small>", "info");
   else if (j.instr === "L") showAlert("↩️ בצומת: פנה שמאלה! <small>מאותתים ⬅️ ועוברים לנתיב השמאלי</small>", "info");
   else showAlert("⬆️ בצומת: ממשיכים ישר! <small>לא פונים לשום צד</small>", "info");
@@ -1863,7 +1932,7 @@ function dirAlert(j) {
 function worldEvents(dt) {
   const S = G.world, front = playerY - carH * 0.5;
   if (G.meters >= G.secAt) startSection();
-  if (G.meters >= G.nextJ) spawnJunction();
+  if (G.meters >= G.nextJ - JUNC_EARLY) spawnJunction();
   for (const f of S.feats) {
     if (f.type === "limit") {
       if (!f.seen && f.y >= front) {
@@ -1874,14 +1943,49 @@ function worldEvents(dt) {
       if (!f.shown && f.y > 10) { f.shown = true; dirAlert(f.j); }
     } else if (f.type === "junc") {
       const d = f.instr;
+      if (d !== "S" && !f.decided) assistCheck(f);
       if (!f.reminded && d !== "S" && f.y > playerY - H * 0.45) {
         f.reminded = true;
-        const ready = (d === "R" ? G.x > 2 : G.x < 1) && sigOn(d);
+        const ready = (G.assist && G.assist.j === f) || ((d === "R" ? G.x > 2 : G.x < 1) && sigOn(d));
         if (!ready && !alertCur) showAlert(d === "R" ? "➡️ מאותתים ימינה ועוברים לנתיב הימני!" : "⬅️ מאותתים שמאלה ועוברים לנתיב השמאלי!", "info");
       }
       if (f.light) lightTick(f, dt, front);
       if (!f.decided && f.y >= playerY && G.v > 0) { f.decided = true; decideJunction(f); }
     }
+  }
+}
+// early warning + the kid-friendly turn assist for a junction that needs a turn
+function assistCheck(j) {
+  const d = j.instr, dist = juncDist(j);
+  if (dist <= 0 || dist > RULES.TURN_ASSIST_DIST) return;
+  if (!j.soon) {                                                  // first: a chime and a "soon" banner
+    j.soon = true; sfx.chime();
+    showAlert(d === "R" ? "🔜 עוד מעט פנייה ימינה <small>מאותתים ➡️ והג׳יפ עובר לבד לנתיב הימני</small>"
+                        : "🔜 עוד מעט פנייה שמאלה <small>מאותתים ⬅️ והג׳יפ עובר לבד לנתיב השמאלי</small>", "info");
+  }
+  const other = d === "R" ? "L" : "R";
+  if (G.assist && G.assist.j === j) {                            // the other signal cancels the assist
+    if (sig[other]) { G.assist = null; showAssist(); }
+    return;
+  }
+  if (!G.assist && !G.turn && sig[d] && !sig[other]) {
+    G.assist = { j, dir: d, t: 0, x0: G.x, to: d === "R" ? 2.5 : 0.5 };
+    G.lv = 0; steer = 0; sfx.coin();
+    showAssist();
+  }
+}
+function showAssist() {
+  const el = $("assist"), A = G.assist;
+  el.hidden = !A;
+  if (A) el.innerHTML = A.dir === "R" ? "<b>↪️</b> פונים ימינה!" : "<b>↩️</b> פונים שמאלה!";
+}
+// while the assist drives, cars in the turning lane make way: the ones ahead speed off, the ones beside us drop back
+function makeWay(x) {
+  const lane = Math.floor(x);
+  for (const c of G.cars) {
+    if (c.hit || c.wait || c.lane !== lane) continue;
+    if (c.y < playerY - carH * 0.3) c.v = Math.max(c.v, G.v + 15);
+    else if (c.y < playerY + carH * 1.6) c.v = Math.min(c.v, Math.max(0, G.v - 20));
   }
 }
 function lightTick(j, dt, front) {
@@ -1907,15 +2011,25 @@ function decideJunction(j) {
   G.turnAll++;
   let take = null, noSig = false;
   const intent = keySteer || touchSteer || (Math.abs(steer) > 0.25 ? Math.sign(steer) : 0);
-  for (const d of ["R", "L"]) {
-    if (!j[d] || !(d === "R" ? G.x > 2 : G.x < 1)) continue;
-    if (sigOn(d)) take = d;
-    else if (intent === (d === "R" ? 1 : -1)) { take = d; noSig = true; }     // turning without a signal
+  const assisted = G.assist && G.assist.j === j;
+  G.assist = null; showAssist();
+  const ins = j.instr;
+  // the turn the sign asks for: a wide window (in, partly in, or moving toward the turning lane)
+  const nearIns = ins === "R" ? (G.x > 1.7 || (G.x > 1.5 && G.lv > 0.15)) : (G.x < 1.3 || (G.x < 1.5 && G.lv < -0.15));
+  if (ins !== "S" && j[ins] && (assisted || nearIns)) {
+    take = ins;
+    noSig = !assisted && !sigOn(ins);                                       // turning without a signal
+  } else {
+    for (const d of ["R", "L"]) {                                           // any other side: the old strict rule
+      if (!j[d] || !(d === "R" ? G.x > 2 : G.x < 1)) continue;
+      if (sigOn(d)) take = d;
+      else if (intent === (d === "R" ? 1 : -1)) { take = d; noSig = true; }
+    }
   }
   if (take && take === j.instr && j[take] === "ok") {
     if (noSig) {
-      G.turnBad++;
-      if (G.time - G.sigPenAt > SIG_PEN_GAP) {
+      if (!j.sigPen) G.turnBad++;                         // already counted (and penalised) at the lane change
+      if (!j.sigPen && G.time - G.sigPenAt > SIG_PEN_GAP) {
         G.sigPenAt = G.time; G.sigMiss++;
         showAlert(`⚠️ שכחת לאותת! <small>לוחצים ${take === "R" ? "➡️" : "⬅️"} לפני שפונים</small>`);
         penalty();
@@ -1947,6 +2061,7 @@ function startTurn(j, dir) {
   G.secKind = G.secKind === "city" ? "country" : "city";
   G.world = newWorld(G.secKind, limitFor(G.secKind, G.level), playerY - H * 0.55);
   G.turn = { dir, t: 0, px: laneX(G.x), jy: j.y, ox: 0, oy: 0, old };
+  G.assist = null; showAssist();
   G.cars = []; G.items = [];
   G.secAt = G.meters + sectionLen();
   G.nextJ = G.meters + junctionGap(G.level);
@@ -2628,6 +2743,22 @@ function drawRearCam() {
   ctx.textAlign = "left"; ctx.textBaseline = "middle"; ctx.fillText("📷", ix + 18, iy + 11);
   ctx.restore();
 }
+// turn assist: big pulsing chevrons on the road, from the jeep toward the turning lane
+function drawAssistArrows() {
+  const A = G.assist;
+  if (!A) return;
+  const sd = A.dir === "R" ? 1 : -1, s = clamp(laneW * 0.32, 14, 40);
+  ctx.save();
+  ctx.lineWidth = s * 0.32; ctx.lineCap = "round"; ctx.lineJoin = "round";
+  ctx.strokeStyle = "#ffffff"; ctx.shadowColor = "#4fc3ff"; ctx.shadowBlur = 14;
+  for (let i = 0; i < 3; i++) {
+    const ph = (G.time * 2 + i / 3) % 1;
+    ctx.globalAlpha = 0.25 + 0.75 * Math.sin(ph * Math.PI);
+    const cx = laneX(clamp(G.x + sd * (0.35 + i * 0.32), 0.3, 2.7)), cy = playerY - carH * (0.9 + i * 0.55);
+    ctx.beginPath(); ctx.moveTo(cx - sd * s * 0.4, cy - s * 0.55); ctx.lineTo(cx + sd * s * 0.4, cy); ctx.lineTo(cx - sd * s * 0.4, cy + s * 0.55); ctx.stroke();
+  }
+  ctx.restore();
+}
 function drawToast() {
   if (toastT <= 0 || !toastText) return;
   const fs = clamp(W * 0.045, 13, 20);
@@ -2688,6 +2819,7 @@ function draw(dt) {
   drawTraffic();
   drawOverhead();
   drawSpeedFx(dt);
+  drawAssistArrows();
   drawPlayer();
   ctx.restore();
   drawRain(dt);
@@ -2725,8 +2857,9 @@ function updateHint() {
 }
 function updateDashboard() {
   const gas = gasTouch || gasKey, sp = Math.abs(G.v);
-  wh.style.transform = "translate(-50%,-50%) rotate(" + steer + "rad)";
-  wh.style.setProperty("--rot", steer + "rad");
+  const wRot = steer / RULES.STEER_GAIN;              // the wheel picture turns with the finger
+  wh.style.transform = "translate(-50%,-50%) rotate(" + wRot + "rad)";
+  wh.style.setProperty("--rot", wRot + "rad");
   $("wTurbo").classList.toggle("on", turboT > 0); $("wTurbo").classList.toggle("cool", turboT <= 0 && turboCD > 0);
   $("wLights").classList.toggle("on", lights); $("wCam").classList.toggle("on", cam); $("wMusic").classList.toggle("on", musicOn);
   $("speed").textContent = Math.round(sp);
