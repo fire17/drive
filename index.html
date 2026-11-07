@@ -14,10 +14,10 @@
   :root{--bg:#0f1117;--panel:#1a1d27;--line:#2c3142;--ink:#eef1ff;--muted:#8e96b8;--blue:#4fc3ff;--green:#4ade80;--amber:#fbbf24;--red:#f43f5e}
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
   html,body{height:100%;background:var(--bg);color:var(--ink);font-family:Rubik,system-ui,sans-serif;overflow:hidden;touch-action:none;overscroll-behavior:none}
-  .app{height:100%;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;gap:10px;padding:10px 12px;max-width:1200px;margin:0 auto}
+  .app{height:100%;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:6px;padding:8px 10px;max-width:1400px;margin:0 auto;position:relative}
 
   /* ---- header ---- */
-  header{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  header{display:flex;justify-content:space-between;align-items:center;gap:6px 8px;flex-wrap:wrap;min-width:0}
   h1{font-size:20px;font-weight:900;white-space:nowrap}
   h1 span{color:var(--blue)}
   h1 small{font-size:10px;font-weight:500;color:var(--muted);margin-inline-start:6px}
@@ -25,31 +25,47 @@
   .gear{display:flex;gap:6px}
   .gear button,.mute{width:42px;height:42px;font-size:18px;padding:0;justify-content:center}
 
-  /* ---- main area: game + dashboard ---- */
-  .main{direction:ltr;display:grid;gap:10px;min-height:0;
-    grid-template-columns:minmax(230px,33%) minmax(0,1fr) minmax(118px,15%);
-    grid-template-rows:auto minmax(0,1fr);
-    grid-template-areas:"w game g" "w game p"}
-  .gauges{grid-area:g}.wheelWrap{grid-area:w}.pedalsCard{grid-area:p}.game{grid-area:game}
+  /* ---- main area: the road on top, the big wheel under it (or over its bottom in short landscape) ---- */
+  /* --wrapH = the wheel area height, --ovl = how much of it lies over the bottom of the road (short landscape) */
+  .main{direction:ltr;position:relative;display:grid;min-height:0;min-width:0;grid-template-columns:minmax(0,1fr);
+    grid-template-rows:minmax(0,1fr) calc(var(--wrapH,240px) - var(--ovl,0px));row-gap:var(--rgap,6px);padding:0 var(--side,0px)}
+  .game{grid-row:1;grid-column:1;z-index:1}
+  .wheelWrap{grid-row:2;grid-column:1;align-self:start;height:var(--wrapH,240px);margin-top:calc(var(--ovl,0px) * -1);z-index:5;pointer-events:none}
+  .wheelWrap > *{pointer-events:auto}
+  .main.carded .wheelWrap{z-index:0}
   .card{background:linear-gradient(180deg,#1e2230,#161922);border:1px solid var(--line);border-radius:22px;padding:12px;box-shadow:inset 0 1px 0 #ffffff10,0 10px 30px #0008;min-height:0;min-width:0}
-  .gauges{display:flex;flex-direction:column;align-items:center;gap:8px}
-  .speed{font-size:48px;font-weight:900;line-height:1;color:var(--blue);text-shadow:0 0 24px #4fc3ff66}
-  .unit{font-size:13px;color:var(--muted);margin-top:-4px}
-  .spdRow{direction:ltr;display:flex;align-items:center;justify-content:center;gap:8px}
-  .lim{flex:none;width:46px;height:46px;border-radius:50%;background:#fff;border:5px solid #e11d48;color:#111;font-weight:900;font-size:18px;display:grid;place-items:center;box-shadow:0 0 0 2px #fff3}
+  .strip{direction:ltr;flex:1 1 100%;order:3;display:flex;align-items:center;justify-content:space-between;gap:6px;min-width:0;
+    background:linear-gradient(180deg,#1e2230,#161922);border:1px solid var(--line);border-radius:16px;padding:4px 6px;box-shadow:inset 0 1px 0 #ffffff10}
+  .stripL,.stripR{display:flex;align-items:center;gap:6px;min-width:0}
+  .stripR{flex:1;justify-content:flex-end}
+  .sigRow{display:contents}
+  .bars{flex:1;min-width:40px;max-width:260px;display:flex;flex-direction:column;gap:3px}
+  .sigB{width:46px;height:38px;padding:0;justify-content:center;border-radius:12px;flex:none}
+  .sigB .ic{font-size:22px}
+  .more{width:40px;height:38px;padding:0;justify-content:center;font-size:24px;font-weight:900;border-radius:12px;flex:none;line-height:1}
+  .speed{font-size:30px;font-weight:900;line-height:1;color:var(--blue);text-shadow:0 0 24px #4fc3ff66;min-width:1.7em;text-align:center;font-variant-numeric:tabular-nums}
+  .unit{font-size:11px;color:var(--muted)}
+  .spdRow{direction:ltr;display:flex;align-items:center;justify-content:center;gap:5px}
+  .lim{flex:none;width:34px;height:34px;border-radius:50%;background:#fff;border:3px solid #e11d48;color:#111;font-weight:900;font-size:13px;display:grid;place-items:center;box-shadow:0 0 0 2px #fff3}
   .speed.warn{color:var(--red);text-shadow:0 0 24px #f43f5e;animation:warnP .5s infinite}
   .lim.warn{animation:warnP .5s infinite;box-shadow:0 0 18px #f43f5e}
   @keyframes warnP{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
-  .bar{width:100%;height:10px;border-radius:8px;background:#0b0d13;overflow:hidden;border:1px solid var(--line)}
+  .bar{width:100%;height:7px;border-radius:8px;background:#0b0d13;overflow:hidden;border:1px solid var(--line)}
   .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--amber),var(--red));transition:width .1s}
-  .fuel{display:flex;align-items:center;gap:6px;width:100%;font-size:13px;color:var(--muted)}
-  .lights{direction:ltr;display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
-  .ind{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:17px;background:#0b0d13;border:1px solid var(--line);opacity:.35;transition:all .15s}
+  .fuel{display:flex;align-items:center;gap:4px;width:100%;font-size:11px;line-height:1;color:var(--muted)}
+  .lights{direction:ltr;display:flex;gap:3px;justify-content:center;flex:none}
+  .ind{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;font-size:13px;background:#0b0d13;border:1px solid var(--line);opacity:.35;transition:all .15s}
   .ind.on{opacity:1;box-shadow:0 0 16px currentColor}
   .ind.l{color:var(--green)} .ind.h{color:var(--blue)} .ind.w{color:var(--amber)}
 
   .wheelWrap{position:relative;min-height:0;min-width:0}
-  .wheel{--ws:200px;position:absolute;left:50%;top:50%;width:var(--ws);height:var(--ws);border-radius:50%;border:calc(var(--ws)*.06) solid #2a2f40;background:radial-gradient(circle,#232838 0 22%,transparent 23%);box-shadow:0 12px 40px #000a,inset 0 0 0 2px #ffffff10;cursor:grab;touch-action:none;transform:translate(-50%,-50%)}
+  /* short landscape: like looking over a dashboard; only the top half of the wheel is over the road,
+     the rim is see-through and the buttons sit on the lower half, below the jeep */
+  .main.ovl .wheelWrap{overflow:hidden}
+  .main.ovl .wheel{border-color:#2f354866;background:radial-gradient(circle,#232838c0 0 22%,transparent 23%);box-shadow:inset 0 0 0 2px #ffffff10}
+  .main.ovl .wheel::before,.main.ovl .wheel::after{background:#30364a66}
+  .main.ovl .hornBtn{width:28%}
+  .wheel{--ws:200px;position:absolute;left:50%;top:var(--wcy,50%);width:var(--ws);height:var(--ws);border-radius:50%;border:calc(var(--ws)*.06) solid #2a2f40;background:radial-gradient(circle,#232838 0 22%,transparent 23%);box-shadow:0 12px 40px #000a,inset 0 0 0 2px #ffffff10;cursor:grab;touch-action:none;transform:translate(-50%,-50%)}
   .wheel::before,.wheel::after{content:"";position:absolute;background:#2a2f40;border-radius:8px}
   .wheel::before{left:50%;top:50%;width:84%;height:calc(var(--ws)*.055);transform:translate(-50%,-50%)}
   .wheel::after{left:50%;top:50%;width:calc(var(--ws)*.055);height:42%;transform:translate(-50%,0)}
@@ -57,16 +73,16 @@
   .hornBtn.down{background:radial-gradient(circle at 40% 35%,#4b5577,#2a3045)}
   .wheel{--rot:0rad;z-index:2;border-color:#2f3548;background:radial-gradient(circle,#232838 0 22%,transparent 23%)}
   .wheel::before,.wheel::after{background:#30364a}
-  .wBtn{position:absolute;width:max(30px,calc(var(--ws)*.17));height:max(30px,calc(var(--ws)*.17));border-radius:50%;display:grid;place-items:center;
-    font-size:max(15px,calc(var(--ws)*.085));background:radial-gradient(circle at 40% 35%,#475073,#252a3b);border:2px solid #ffffff38;
+  .wBtn{position:absolute;width:clamp(34px,calc(var(--ws)*.17),84px);height:clamp(34px,calc(var(--ws)*.17),84px);border-radius:50%;display:grid;place-items:center;
+    font-size:clamp(16px,calc(var(--ws)*.085),42px);background:radial-gradient(circle at 40% 35%,#475073,#252a3b);border:2px solid #ffffff38;
     box-shadow:0 2px 6px #000a;z-index:3;cursor:pointer;transform:translate(-50%,-50%) rotate(calc(var(--rot) * -1));transition:box-shadow .15s,background .15s}
   .wBtn.down{background:radial-gradient(circle at 40% 35%,#6b78a8,#3a4260)}
   .wBtn.on{border-color:var(--amber);box-shadow:0 0 12px #fbbf24cc}
   #wTurbo{background:radial-gradient(circle at 40% 35%,#ffb15e,#d9480f)}
   #wTurbo.cool{filter:grayscale(.8) brightness(.8)}
   /* stalk levers beside the wheel */
-  .stalk{position:absolute;top:50%;transform:translateY(-50%);width:var(--sw,48px);height:min(150px,92%);display:flex;flex-direction:column;align-items:center;touch-action:none;cursor:ns-resize;z-index:1}
-  .stalk.sL{left:0}.stalk.sR{right:0}
+  .stalk{position:absolute;top:calc(var(--wcy,50%) - var(--ws,200px)*.12);transform:translateY(-50%);width:var(--sw,48px);height:clamp(90px,calc(var(--ws,200px)*.42),170px);display:flex;flex-direction:column;align-items:center;touch-action:none;cursor:ns-resize;z-index:1}
+  .stalk.sL{left:calc(50% - var(--ws,200px)/2 - var(--sw,48px) + 12px)}.stalk.sR{right:calc(50% - var(--ws,200px)/2 - var(--sw,48px) + 12px)}
   .stLb{font-size:11px;font-weight:900;color:var(--muted);white-space:nowrap;direction:rtl}
   .stTrack{position:relative;flex:1;width:100%;min-height:0;border-radius:14px;background:#0b0d13aa;border:1px solid var(--line);display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:3px 0}
   .stA{font-size:13px;line-height:1;display:flex;flex-direction:column;align-items:center;opacity:.55;transition:opacity .15s}
@@ -82,13 +98,13 @@
   .stalk.up .arm b,.stalk.dn .arm b{background:radial-gradient(circle at 40% 35%,#fde68a,#d97706);border-color:#fff}
   .sR.up .arm b{background:radial-gradient(circle at 40% 35%,#bae6fd,#0284c7)}
 
-  .pedalsCard{display:flex}
-  .pedals{display:flex;gap:10px;justify-content:center;align-items:flex-end;width:100%;height:100%;min-height:0}
-  .pedal{flex:1;max-width:120px;border-radius:18px;border:none;color:#111;font-weight:900;font-size:17px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:10px 4px;box-shadow:0 8px 0 #0009,0 14px 24px #0008;transition:transform .06s,box-shadow .06s;touch-action:none;cursor:pointer;min-height:0}
-  .pedal.brake{height:min(76%,190px);background:linear-gradient(180deg,#ff7a8c,var(--red))}
-  .pedal.gas{height:min(96%,240px);background:linear-gradient(180deg,#86efac,var(--green))}
+  /* pedals: brake bottom-left, gas bottom-right (under the right hand) */
+  .pedal{position:absolute;bottom:0;width:var(--pw,80px);z-index:6;border-radius:18px;border:none;color:#111;font-weight:900;font-size:16px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:8px 4px;box-shadow:0 8px 0 #0009,0 14px 24px #0008;transition:transform .06s,box-shadow .06s;touch-action:none;cursor:pointer;min-height:0}
+  .pedal.brake{left:0;height:calc(var(--ph,140px)*.8);background:linear-gradient(180deg,#ff7a8c,var(--red))}
+  .pedal.gas{right:0;height:var(--ph,140px);background:linear-gradient(180deg,#86efac,var(--green))}
   .pedal.down{transform:translateY(6px);box-shadow:0 2px 0 #0009,0 6px 12px #0008}
-  .pedal .ic{font-size:28px;margin-bottom:4px}
+  .pedal .ic{font-size:clamp(22px,calc(var(--pw,80px)*.36),34px);margin-bottom:4px}
+  .main.ovl .pedal{bottom:4px}
 
   /* ---- game view ---- */
   .game{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:#24683c;box-shadow:0 10px 30px #0008;min-height:0;min-width:0;touch-action:none}
@@ -211,13 +227,14 @@
     .again{font-size:16px;padding:7px 14px}
   }
 
-  /* ---- bottom buttons ---- */
-  .controls{direction:ltr;display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:6px}
-  .controls button{min-width:0;padding:7px 2px;font-size:12px;line-height:1.1;text-align:center;justify-content:center}
+  /* ---- the "⋯" drawer: all the other buttons ---- */
+  .controls{direction:ltr;position:absolute;left:10px;right:10px;bottom:10px;z-index:20;display:none;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:6px;
+    max-height:min(60%,340px);overflow-y:auto;touch-action:pan-y;padding:10px;border-radius:18px;background:#161922f2;border:2px solid var(--blue);box-shadow:0 0 30px #000c}
+  .app.drawer .controls{display:grid}
+  .app.drawer .more{background:var(--blue);color:#06121c}
+  .controls button{min-width:0;padding:8px 2px;font-size:12px;line-height:1.1;text-align:center;justify-content:center}
   .controls button .lb{display:block;max-width:100%;overflow-wrap:normal;word-break:keep-all}
-  .controls #bR{order:1}
-  .controls #bTurbo{grid-column:span 2;background:linear-gradient(180deg,#ff9a3c,#f05a12);color:#1f0a00;border-color:#ffb36b;font-size:14px;font-weight:900}
-  .controls #bTurbo .ic{font-size:24px}
+  .controls #bTurbo{background:linear-gradient(180deg,#ff9a3c,#f05a12);color:#1f0a00;border-color:#ffb36b;font-weight:900}
   .controls #bTurbo.on{box-shadow:0 0 22px #ff8a00cc;background:linear-gradient(180deg,#ffd166,#ff7a00)}
   .controls #bTurbo.cool{filter:grayscale(.75) brightness(.8)}
   .controls #bRoof.on{background:#3a3218;border-color:var(--amber);box-shadow:0 0 14px #fbbf2466}
@@ -227,60 +244,47 @@
   button.on{background:#25304a;border-color:var(--blue);box-shadow:0 0 14px #4fc3ff55}
   .gear button.on{background:var(--blue);color:#06121c}
 
-  /* phone / tablet portrait: game on top, dashboard row below */
-  @media (orientation:portrait){
-    .main{grid-template-columns:minmax(0,.64fr) minmax(0,2.4fr) minmax(0,.8fr);gap:6px;
-      grid-template-rows:minmax(0,1fr) clamp(160px,27vh,280px);
-      grid-template-areas:"game game game" "g w p"}
-    .gauges{justify-content:center;gap:5px;padding:8px 4px}
-    .lights{gap:3px;display:grid;grid-template-columns:repeat(2,auto)}
-    .spdRow{flex-direction:column}
-    .stalk{--sw:44px}
-    .ind{width:22px;height:22px;font-size:12px;border-radius:7px}
-    .speed{font-size:34px}
-    .spdRow{gap:4px}
-    .lim{width:30px;height:30px;border-width:3px;font-size:12px}
-    .unit{font-size:11px}
-    .pedalsCard{padding:8px 5px}
-    .pedals{gap:5px}
-    .pedal{font-size:14px;border-radius:14px}
-    .pedal .ic{font-size:22px}
-    .controls{grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
-    .controls #bR{order:0}
-    .controls button{font-size:11px;padding:6px 1px}
+  /* landscape: the road in the middle, a column on each side (gauges on top, a pedal at the bottom) */
+  @media (orientation:landscape){
+    .app{direction:ltr;grid-template-columns:var(--side,130px) minmax(0,1fr) var(--side,130px);grid-template-rows:auto auto minmax(0,1fr);column-gap:0;row-gap:6px}
+    header,.strip{display:contents}
+    .main{grid-column:1/-1;grid-row:1/-1}
+    h1,.hdrEnd,.stripL,.stripR{position:relative;z-index:7;min-width:0}
+    h1{grid-column:3;grid-row:1;direction:rtl;text-align:center;white-space:normal;line-height:1.1;padding:0 4px}
+    h1 small{display:block;margin:0}
+    .hdrEnd{grid-column:1;grid-row:1;justify-content:center;flex-wrap:wrap;gap:4px}
+    .gear{gap:3px}
+    .stripL,.stripR{grid-row:2;flex-direction:column;justify-content:flex-start;align-self:start;gap:6px;padding:6px 4px;
+      background:linear-gradient(180deg,#1e2230,#161922);border:1px solid var(--line);border-radius:16px;box-shadow:inset 0 1px 0 #ffffff10;margin:0 4px}
+    .stripL{grid-column:1}.stripR{grid-column:3;flex:none}
+    .stripL .lights{flex-wrap:wrap;justify-content:center}
+    .stripR .bars{width:100%;flex:none}
+    .stripR .sigRow{display:flex;gap:5px;width:100%}
+    .sigB{width:100%;max-width:110px}
+    .sigRow .sigB{flex:1;width:auto;min-width:0}
+    .sigRow .more{flex:none;width:clamp(34px,30%,50px)}
   }
-  /* wider portrait (tablet) gets bigger gauges */
-  @media (orientation:portrait) and (min-width:600px){
-    .ind{width:36px;height:36px;font-size:18px}
-    .lights{display:flex}
-    .speed{font-size:48px}
-    .spdRow{flex-direction:row}
-    .lim{width:44px;height:44px;font-size:17px}
-    .stalk{--sw:54px}
-    .pedal{font-size:17px}
-    .pedal .ic{font-size:28px}
+  /* wider screens (tablet) get a bigger strip */
+  @media (min-width:600px) and (min-height:600px){
+    .speed{font-size:38px}
+    .lim{width:42px;height:42px;font-size:16px;border-width:4px}
+    .ind{width:32px;height:32px;font-size:17px;border-radius:10px}
+    .lights{gap:5px}
+    .sigB{width:58px;height:46px}
+    .more{width:50px;height:46px}
+    .bar{height:9px}
+    .fuel{font-size:13px}
+    .pedal{font-size:20px}
   }
   /* short landscape (phone on its side) */
   @media (orientation:landscape) and (max-height:500px){
-    .app{gap:6px;padding:6px 10px}
-    h1{font-size:16px}
-    .gear button,.mute{width:34px;height:34px;font-size:15px;border-radius:10px}
-    .main{gap:6px;grid-template-columns:minmax(190px,29%) minmax(0,1fr) minmax(108px,16%)}
-    .stalk{--sw:44px}
-    .lim{width:30px;height:30px}
-    .card{padding:8px;border-radius:16px}
-    .gauges{gap:4px}
-    .ind{width:26px;height:26px;font-size:13px;border-radius:8px}
-    .speed{font-size:28px}
-    .lim{width:32px;height:32px;border-width:3px;font-size:13px}
-    .unit{font-size:10px}
-    .bar{height:7px}
-    .fuel{font-size:11px}
-    .controls{gap:4px}
-    .controls button{padding:3px 1px;font-size:9.5px;gap:2px;border-radius:10px}
-    .controls button .ic{font-size:15px}
-    .controls #bTurbo{font-size:11px}
-    .controls #bTurbo .ic{font-size:17px}
+    .app{row-gap:4px;padding:5px 8px}
+    h1{font-size:15px}
+    .gear button,.mute{width:27px;height:30px;font-size:14px;border-radius:9px}
+    .stripL,.stripR{gap:4px;padding:4px 3px;border-radius:12px}
+    .sigB,.more{height:32px}
+    .speed{font-size:24px}
+    .lim{width:30px;height:30px;font-size:12px}
     .hud span{font-size:12px;padding:2px 7px}
     .hint{font-size:14px;padding:7px 12px}
     .overCard{padding:8px 14px;gap:4px}
@@ -301,11 +305,6 @@
     .overCard h2{font-size:19px}
     .again{font-size:16px;padding:7px 16px}
   }
-  @media (max-width:400px){
-    .controls{gap:4px}
-    .controls button{font-size:9.5px;padding:5px 0;border-radius:11px}
-    .controls button .ic{font-size:18px}
-  }
   /* small phones: the start card must always show its button */
   @media (orientation:portrait) and (max-height:760px){
     .overCard{padding:8px 12px;gap:4px}
@@ -316,46 +315,67 @@
     .goal{display:none}
     .again{font-size:16px;padding:7px 16px}
   }
-  @media (orientation:landscape) and (max-width:700px){
-    .controls{grid-template-columns:repeat(13,minmax(0,1fr))}
-    .controls #bTurbo{grid-column:span 1}
-    .controls button{font-size:9px}
-  }
-  @media (max-width:415px){
+  @media (max-width:415px) and (orientation:portrait){
     .app{padding:8px}
     h1{font-size:15px}
     h1 small{margin-inline-start:3px;font-size:9px}
     .hdrEnd,.gear{gap:4px}
     .gear button,.mute{width:31px;height:34px;font-size:15px;border-radius:10px}
+    .strip{gap:4px;padding:3px 4px}
+    .stripL,.stripR{gap:4px}
+    .sigB{width:42px}
+    .more{width:36px}
+    .unit{display:none}
+    .ind{width:21px;height:21px;font-size:12px;border-radius:7px}
+    .lights{gap:2px}
   }
+  @media (max-width:415px) and (orientation:portrait){
+    .lights{display:grid;grid-template-columns:repeat(2,auto);gap:2px}
+    .speed{font-size:25px;min-width:1.6em}
+    .lim{width:29px;height:29px;font-size:11px}
+    .sigB{width:40px}
+    .more{width:34px}
+  }
+  /* overlay wheel (short landscape): the hint sits higher, above the jeep */
+  .main.ovl .hint{top:max(15%,52px)}
+  .main.ovl .alert{top:36px}
+  .main.ovl .praise{top:62px}
 </style>
 </head>
 <body>
-<div class="app">
+<div class="app" id="app">
   <header>
-    <h1>🚙 נהג <span>צעיר</span><small>גרסה 0.7.1</small></h1>
+    <h1>🚙 נהג <span>צעיר</span><small>גרסה 0.7.2</small></h1>
     <div class="hdrEnd">
       <button class="mute" id="mute" title="צלילים">🔊</button>
       <div class="gear" id="gear">
         <button data-g="P">P</button><button data-g="R">R</button><button data-g="N">N</button><button data-g="D" class="on">D</button>
       </div>
     </div>
+    <!-- compact gauge strip (portrait: one row under the title; landscape: split into the two side columns) -->
+    <div class="strip" id="strip">
+      <div class="stripL" id="stripL">
+        <button class="sigB" id="bL" title="איתות שמאל"><span class="ic">⬅️</span></button>
+        <div class="lights">
+          <div class="ind w" id="iL">⬅️</div>
+          <div class="ind l" id="iLights">💡</div>
+          <div class="ind h" id="iHigh">🔦</div>
+          <div class="ind w" id="iR">➡️</div>
+        </div>
+        <div class="spdRow"><div class="lim" id="limit" title="המהירות המותרת">50</div><div class="speed" id="speed">0</div><div class="unit">קמ״ש</div></div>
+      </div>
+      <div class="stripR" id="stripR">
+        <div class="bars">
+          <div class="bar"><i id="rpm"></i></div>
+          <div class="fuel">⛽ <div class="bar"><i id="fuel" style="width:100%;background:var(--green)"></i></div></div>
+        </div>
+        <div class="sigRow"><button class="sigB" id="bR" title="איתות ימין"><span class="ic">➡️</span></button>
+        <button class="more" id="bMore" title="עוד כפתורים">⋯</button></div>
+      </div>
+    </div>
   </header>
 
-  <div class="main">
-    <div class="card gauges">
-      <div class="lights">
-        <div class="ind w" id="iL">⬅️</div>
-        <div class="ind l" id="iLights">💡</div>
-        <div class="ind h" id="iHigh">🔦</div>
-        <div class="ind w" id="iR">➡️</div>
-      </div>
-      <div class="spdRow"><div class="lim" id="limit" title="המהירות המותרת">50</div><div class="speed" id="speed">0</div></div>
-      <div class="unit">קמ״ש</div>
-      <div class="bar"><i id="rpm"></i></div>
-      <div class="fuel">⛽ <div class="bar"><i id="fuel" style="width:100%;background:var(--green)"></i></div></div>
-    </div>
-
+  <div class="main" id="main">
     <div class="game" id="game">
       <canvas id="cv"></canvas>
       <div class="hud" id="hud">
@@ -465,22 +485,17 @@
       </div>
     </div>
 
-    <div class="card pedalsCard">
-      <div class="pedals">
-        <div class="pedal brake" id="brake"><span class="ic">🛑</span>ברקס</div>
-        <div class="pedal gas" id="gas"><span class="ic">⚡</span>גז</div>
-      </div>
-    </div>
+    <div class="pedal brake" id="brake"><span class="ic">🛑</span>ברקס</div>
+    <div class="pedal gas" id="gas"><span class="ic">⚡</span>גז</div>
   </div>
 
-  <div class="controls">
-    <button id="bL"><span class="ic">⬅️</span><span class="lb">איתות שמאל</span></button>
+  <!-- the "⋯" drawer with all the other buttons -->
+  <div class="controls" id="controls">
     <button id="bLights"><span class="ic">💡</span><span class="lb">אורות</span></button>
     <button id="bHigh"><span class="ic">🔦</span><span class="lb">אור גבוה</span></button>
     <button id="bFog"><span class="ic">🌫️</span><span class="lb">פנסי ערפל</span></button>
     <button id="bHaz"><span class="ic">⚠️</span><span class="lb">מהבהבים</span></button>
     <button id="bWipe"><span class="ic">🌧️</span><span class="lb">מגבים</span></button>
-    <button id="bR"><span class="ic">➡️</span><span class="lb">איתות ימין</span></button>
     <button id="bRoof"><span class="ic">☀️</span><span class="lb" id="roofLb">גג נפתח</span></button>
     <button id="bTurbo"><span class="ic">🚀</span><span class="lb" id="turboLb">טורבו</span></button>
     <button id="b4x4"><span class="ic">🏔️</span><span class="lb">4x4</span></button>
@@ -950,29 +965,55 @@ $("mute").onclick = () => {
 
 // steering wheel: drag to rotate
 const wh = $("wheel");
+// The steering follows the ROTATION ANGLE of the finger around the hub (not pixel distance),
+// so a bigger wheel steers exactly like a small one. Grab anywhere on the rim or spokes.
+// Each move adds the small angle change since the last move, so going past 180° never jumps.
+// Lock = ±2.4 rad (about ±137°). Only the finger that grabbed the wheel turns it (multi-touch safe).
 wh.addEventListener("pointerdown", e => {
+  if (wheelDrag) return;                                      // a second finger on the wheel is ignored
   const r = wh.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-  wheelDrag = { cx, cy, a0: Math.atan2(e.clientY - cy, e.clientX - cx), s0: steer };
-  wh.setPointerCapture(e.pointerId);
+  wheelDrag = { id: e.pointerId, cx, cy, last: Math.atan2(e.clientY - cy, e.clientX - cx), dead: r.width * 0.06 };
+  try { wh.setPointerCapture(e.pointerId); } catch (er) {}
   engineOn();
 });
 wh.addEventListener("pointermove", e => {
-  if (!wheelDrag) return;
-  let d = Math.atan2(e.clientY - wheelDrag.cy, e.clientX - wheelDrag.cx) - wheelDrag.a0;
+  if (!wheelDrag || e.pointerId !== wheelDrag.id) return;
+  const dx = e.clientX - wheelDrag.cx, dy = e.clientY - wheelDrag.cy;
+  if (Math.hypot(dx, dy) < wheelDrag.dead) return;           // right on the hub the angle is too jumpy
+  const a = Math.atan2(dy, dx);
+  let d = a - wheelDrag.last;
   if (d > Math.PI) d -= 2 * Math.PI;
   if (d < -Math.PI) d += 2 * Math.PI;
-  steer = clamp(wheelDrag.s0 + d, -2.4, 2.4);
+  wheelDrag.last = a;
+  steer = clamp(steer + d, -2.4, 2.4);
 });
-const releaseWheel = () => { wheelDrag = null; };
+const releaseWheel = e => { if (wheelDrag && (!e || e.pointerId === wheelDrag.id)) wheelDrag = null; };
 wh.addEventListener("pointerup", releaseWheel);
 wh.addEventListener("pointercancel", releaseWheel);
+wh.addEventListener("lostpointercapture", releaseWheel);
+
+// the "⋯" drawer with the other buttons
+$("bMore").addEventListener("click", () => { $("app").classList.toggle("drawer"); $("bMore").blur(); });
+document.addEventListener("pointerdown", e => {
+  if (!$("app").classList.contains("drawer")) return;
+  if (e.target.closest && (e.target.closest("#controls") || e.target.closest("#bMore"))) return;
+  $("app").classList.remove("drawer");
+}, true);
 
 // small round buttons ON the wheel (they turn with it, the pictures stay upright)
 const wheelBtns = { wTurbo: "bTurbo", wLights: "bLights", wCam: "bCam", wMusic: "bMusic", wFunny: "bFunny" };
+// in the short-landscape overlay the buttons move to the lower half of the wheel (angle from the top, clockwise; radius / size)
+const WBTN_LOW = { wTurbo: [100, 0.36], wLights: [260, 0.36], wMusic: [215, 0.37], wFunny: [145, 0.37], wCam: [180, 0.25] };
+function placeWheelBtns(low) {
+  for (const id in wheelBtns) {
+    const b = $(id), p = low ? WBTN_LOW[id] : [+b.dataset.a, +b.dataset.r], a = p[0] * Math.PI / 180;
+    b.style.left = (50 + Math.sin(a) * p[1] * 100) + "%";
+    b.style.top = (50 - Math.cos(a) * p[1] * 100) + "%";
+  }
+}
+placeWheelBtns(false);
 for (const id in wheelBtns) {
-  const b = $(id), a = +b.dataset.a * Math.PI / 180, rad = +b.dataset.r;
-  b.style.left = (50 + Math.sin(a) * rad * 100) + "%";
-  b.style.top = (50 - Math.cos(a) * rad * 100) + "%";
+  const b = $(id);
   b.addEventListener("pointerdown", e => {
     e.stopPropagation(); e.preventDefault(); engineOn();       // a tap here never starts a steering drag
     b.classList.add("down"); setTimeout(() => b.classList.remove("down"), 160);
@@ -1112,6 +1153,7 @@ function resize() {
   carW = Math.min(laneW * 0.56, H * 0.12);
   carH = carW * 1.75;
   playerY = H - carH * 0.75 - 8;
+  if (wheelOver > 0) playerY = Math.min(playerY, H - wheelOver - carH * 0.62);   // overlay wheel: the whole jeep stays above the rim
   pxPerKmh = H * 0.009;            // pixels per second for each km/h
   sideW = Math.max(0, roadX - CURB); walkW = clamp(sideW * 0.22, 6, 16);
   const f = H / oldH;              // keep things in place after a resize
@@ -1119,16 +1161,71 @@ function resize() {
   if (G.world && f !== 1) scaleWorld(G.world, f);
   if (G.turn) G.turn = null;
 }
-function fitWheel() {
-  const r = $("wheelWrap").getBoundingClientRect();
-  const st = $("stSig").getBoundingClientRect().width || 48;
-  const s = Math.max(60, Math.floor(Math.min(r.width - st * 2 + 14, r.height)) - 4);   // the rim may cover the inner edge of the levers
-  wh.style.setProperty("--ws", s + "px");
+// Dashboard layout: the road on top and a BIG wheel centred under it, like a driver's view.
+// Portrait: wheel ~76% of the road width, pedals in the bottom corners beside it.
+// Landscape: road in the middle, gauges + a pedal in each side column; the wheel goes under
+// the road when there is room, otherwise it lies over the bottom of the road (see-through rim)
+// and the jeep moves up so it stays visible above the wheel hub.
+let wheelOver = 0;                 // px from the bottom of the road that the jeep must stay above
+function layout() {
+  const app = $("app"), main = $("main"), wrap = $("wheelWrap");
+  const land = window.innerWidth > window.innerHeight;
+  const side = land ? Math.round(clamp(window.innerWidth * 0.15, 104, 200)) : 0;
+  app.style.setProperty("--side", side + "px");
+  main.style.setProperty("--side", side + "px");
+  const r = main.getBoundingClientRect();
+  const w = Math.max(100, r.width - side * 2), h = Math.max(100, r.height);
+  let D, cy, wrapH, ovl = 0, pw, ph;
+  const over = land && h < 600;
+  if (!land) {
+    D = Math.floor(Math.min(w * 0.76, h * 0.48));
+    cy = D / 2 + 2;
+    pw = Math.round(clamp(w * 0.17, 58, 130));
+    const gap = w / 2 - pw - 6, R = D / 2;
+    const pedTop = cy + Math.sqrt(Math.max(0, R * R - gap * gap));      // where the round wheel leaves the corner free
+    const bottom = Math.max(cy + R + 2, pedTop + clamp(w * 0.26, 92, 210));
+    wrapH = Math.ceil(bottom); ph = Math.floor(bottom - pedTop);
+  } else {
+    if (over) {
+      // wheel centre ON the bottom edge of the road; below the road a short dash strip shows the hub
+      // and the lower buttons, the rest of the lower half is cut off
+      D = Math.floor(Math.min(w * 0.7, h * 0.6));
+      cy = D / 2;
+      ovl = Math.round(D / 2);
+      wrapH = ovl + Math.round(D * 0.41);
+    } else {
+      D = Math.floor(Math.min(w * 0.62, h * 0.5));
+      cy = D / 2 + 2;
+      wrapH = D + 6;
+    }
+    pw = side - 10;
+    let top = 0;
+    for (const id of ["stripL", "stripR"]) top = Math.max(top, $(id).getBoundingClientRect().bottom - r.top);
+    ph = Math.floor(clamp(h - top - 12, 70, 280));
+  }
+  main.classList.toggle("ovl", over);
+  main.style.setProperty("--wrapH", wrapH + "px");
+  main.style.setProperty("--ovl", ovl + "px");
+  main.style.setProperty("--rgap", over ? "0px" : "6px");
+  main.style.setProperty("--pw", pw + "px");
+  main.style.setProperty("--ph", ph + "px");
+  wrap.style.setProperty("--wcy", cy + "px");
+  wrap.style.setProperty("--sw", Math.round(clamp(D * 0.17, 40, 64)) + "px");
+  wrap.style.setProperty("--ws", D + "px");
+  wh.style.setProperty("--ws", D + "px");
+  wheelOver = over ? D / 2 + Math.max(10, D * 0.06) : 0;   // rim top + a clear gap
+  placeWheelBtns(over);
 }
-const onResize = () => { resize(); fitWheel(); };
+const onResize = () => { layout(); resize(); };
 if (window.ResizeObserver) {
   new ResizeObserver(onResize).observe(gameEl);
-  new ResizeObserver(fitWheel).observe($("wheelWrap"));
+  new ResizeObserver(onResize).observe($("main"));
+}
+// while a card (start / end / board / code) is open, the overlay wheel goes behind the road
+if (window.MutationObserver) {
+  const syncCard = () => $("main").classList.toggle("carded", ["over", "boardOver", "codeOver"].some(id => $(id).classList.contains("show")));
+  ["over", "boardOver", "codeOver"].forEach(id => new MutationObserver(syncCard).observe($(id), { attributes: true, attributeFilter: ["class"] }));
+  syncCard();
 }
 window.addEventListener("resize", onResize);
 
