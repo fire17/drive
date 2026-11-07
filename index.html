@@ -2,68 +2,163 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0f1117">
-<title>נהג צעיר · לוח מחוונים</title>
+<title>נהג צעיר</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
   :root{--bg:#0f1117;--panel:#1a1d27;--line:#2c3142;--ink:#eef1ff;--muted:#8e96b8;--blue:#4fc3ff;--green:#4ade80;--amber:#fbbf24;--red:#f43f5e}
-  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
-  html,body{height:100%;background:var(--bg);color:var(--ink);font-family:Rubik,system-ui,sans-serif;overflow:hidden;touch-action:none}
-  .app{height:100%;display:grid;grid-template-rows:auto 1fr auto;gap:10px;padding:12px;max-width:1100px;margin:0 auto}
-  header{display:flex;justify-content:space-between;align-items:center}
-  h1{font-size:20px;font-weight:900}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+  html,body{height:100%;background:var(--bg);color:var(--ink);font-family:Rubik,system-ui,sans-serif;overflow:hidden;touch-action:none;overscroll-behavior:none}
+  .app{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:10px;padding:10px 12px;max-width:1200px;margin:0 auto}
+
+  /* ---- header ---- */
+  header{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  h1{font-size:20px;font-weight:900;white-space:nowrap}
   h1 span{color:var(--blue)}
+  h1 small{font-size:10px;font-weight:500;color:var(--muted);margin-inline-start:6px}
+  .hdrEnd{display:flex;gap:8px;align-items:center;direction:ltr}
   .gear{display:flex;gap:6px}
-  .gear button{width:42px;height:42px;font-size:18px}
-  .main{direction:ltr;display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:12px;align-items:center;min-height:0}
-  .card{background:linear-gradient(180deg,#1e2230,#161922);border:1px solid var(--line);border-radius:22px;padding:14px;box-shadow:inset 0 1px 0 #ffffff10,0 10px 30px #0008}
-  .gauges{display:flex;flex-direction:column;align-items:center;gap:10px}
-  .speed{font-size:64px;font-weight:900;line-height:1;color:var(--blue);text-shadow:0 0 24px #4fc3ff66}
-  .unit{font-size:14px;color:var(--muted)}
-  .bar{width:100%;height:12px;border-radius:8px;background:#0b0d13;overflow:hidden;border:1px solid var(--line)}
+  .gear button,.mute{width:42px;height:42px;font-size:18px;padding:0;justify-content:center}
+
+  /* ---- main area: game + dashboard ---- */
+  .main{direction:ltr;display:grid;gap:10px;min-height:0;
+    grid-template-columns:minmax(150px,23%) minmax(0,1fr) minmax(110px,17%);
+    grid-template-rows:auto minmax(0,1fr);
+    grid-template-areas:"g game p" "w game p"}
+  .gauges{grid-area:g}.wheelWrap{grid-area:w}.pedalsCard{grid-area:p}.game{grid-area:game}
+  .card{background:linear-gradient(180deg,#1e2230,#161922);border:1px solid var(--line);border-radius:22px;padding:12px;box-shadow:inset 0 1px 0 #ffffff10,0 10px 30px #0008;min-height:0;min-width:0}
+  .gauges{display:flex;flex-direction:column;align-items:center;gap:8px}
+  .speed{font-size:48px;font-weight:900;line-height:1;color:var(--blue);text-shadow:0 0 24px #4fc3ff66}
+  .unit{font-size:13px;color:var(--muted);margin-top:-4px}
+  .bar{width:100%;height:10px;border-radius:8px;background:#0b0d13;overflow:hidden;border:1px solid var(--line)}
   .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--amber),var(--red));transition:width .1s}
-  .fuel{display:flex;align-items:center;gap:8px;width:100%;font-size:13px;color:var(--muted)}
-  .lights{direction:ltr;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-  .ind{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:#0b0d13;border:1px solid var(--line);opacity:.35;transition:all .15s}
+  .fuel{display:flex;align-items:center;gap:6px;width:100%;font-size:13px;color:var(--muted)}
+  .lights{direction:ltr;display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+  .ind{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:17px;background:#0b0d13;border:1px solid var(--line);opacity:.35;transition:all .15s}
   .ind.on{opacity:1;box-shadow:0 0 16px currentColor}
   .ind.l{color:var(--green)} .ind.h{color:var(--blue)} .ind.w{color:var(--amber)}
-  .wheelWrap{display:grid;place-items:center}
-  .wheel{width:min(38vw,300px);aspect-ratio:1;border-radius:50%;border:18px solid #2a2f40;background:radial-gradient(circle,#232838 0 22%,transparent 23%);position:relative;box-shadow:0 12px 40px #000a,inset 0 0 0 2px #ffffff10;cursor:grab;transition:transform .05s}
+
+  .wheelWrap{position:relative;min-height:0;min-width:0}
+  .wheel{--ws:200px;position:absolute;left:50%;top:50%;width:var(--ws);height:var(--ws);border-radius:50%;border:calc(var(--ws)*.06) solid #2a2f40;background:radial-gradient(circle,#232838 0 22%,transparent 23%);box-shadow:0 12px 40px #000a,inset 0 0 0 2px #ffffff10;cursor:grab;touch-action:none;transform:translate(-50%,-50%)}
   .wheel::before,.wheel::after{content:"";position:absolute;background:#2a2f40;border-radius:8px}
-  .wheel::before{left:50%;top:50%;width:84%;height:16px;transform:translate(-50%,-50%)}
-  .wheel::after{left:50%;top:50%;width:16px;height:42%;transform:translate(-50%,0)}
-  .hornBtn{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:30%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 40% 35%,#3b4258,#232838);border:2px solid #ffffff20;z-index:2;display:grid;place-items:center;font-size:clamp(18px,4vw,30px)}
-  .road{height:46px;border-radius:12px;background:#0b0d13;border:1px solid var(--line);position:relative;overflow:hidden;margin-top:12px}
-  .lane{position:absolute;top:50%;left:0;width:200%;height:4px;transform:translateY(-50%);background:repeating-linear-gradient(90deg,#fbbf24 0 26px,transparent 26px 52px)}
-  .car{position:absolute;top:50%;left:50%;font-size:26px;transform:translate(-50%,-50%) scaleX(-1);transition:left .1s}
-  .pedals{display:flex;gap:12px;justify-content:center;align-items:flex-end;height:100%}
-  .pedal{flex:1;max-width:120px;border-radius:18px;border:none;color:#111;font-weight:900;font-size:18px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:12px 6px;box-shadow:0 8px 0 #0009,0 14px 24px #0008;transition:transform .06s,box-shadow .06s}
-  .pedal.brake{height:min(30vh,170px);background:linear-gradient(180deg,#ff7a8c,var(--red))}
-  .pedal.gas{height:min(38vh,220px);background:linear-gradient(180deg,#86efac,var(--green))}
+  .wheel::before{left:50%;top:50%;width:84%;height:calc(var(--ws)*.055);transform:translate(-50%,-50%)}
+  .wheel::after{left:50%;top:50%;width:calc(var(--ws)*.055);height:42%;transform:translate(-50%,0)}
+  .hornBtn{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:32%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 40% 35%,#3b4258,#232838);border:2px solid #ffffff20;z-index:2;display:grid;place-items:center;font-size:calc(var(--ws)*.11);cursor:pointer}
+  .hornBtn.down{background:radial-gradient(circle at 40% 35%,#4b5577,#2a3045)}
+
+  .pedalsCard{display:flex}
+  .pedals{display:flex;gap:10px;justify-content:center;align-items:flex-end;width:100%;height:100%;min-height:0}
+  .pedal{flex:1;max-width:120px;border-radius:18px;border:none;color:#111;font-weight:900;font-size:17px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:10px 4px;box-shadow:0 8px 0 #0009,0 14px 24px #0008;transition:transform .06s,box-shadow .06s;touch-action:none;cursor:pointer;min-height:0}
+  .pedal.brake{height:min(76%,190px);background:linear-gradient(180deg,#ff7a8c,var(--red))}
+  .pedal.gas{height:min(96%,240px);background:linear-gradient(180deg,#86efac,var(--green))}
   .pedal.down{transform:translateY(6px);box-shadow:0 2px 0 #0009,0 6px 12px #0008}
-  .pedal .ic{font-size:30px;margin-bottom:6px}
+  .pedal .ic{font-size:28px;margin-bottom:4px}
+
+  /* ---- game view ---- */
+  .game{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:#24683c;box-shadow:0 10px 30px #0008;min-height:0;min-width:0;touch-action:none}
+  .game canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .hud{position:absolute;top:8px;left:8px;right:8px;direction:rtl;display:flex;gap:6px;justify-content:space-between;align-items:center;pointer-events:none;flex-wrap:wrap}
+  .hud span{background:#0f1117cc;border:1px solid #ffffff22;border-radius:12px;padding:4px 9px;font-size:15px;font-weight:700;white-space:nowrap}
+  .hud .timer{color:var(--amber);font-variant-numeric:tabular-nums;min-width:4.6em;text-align:center}
+  .hud .timer.end{color:var(--green);animation:tick 1s infinite}
+  @keyframes tick{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+  .hint{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);background:#0f1117dd;border:2px solid var(--blue);border-radius:16px;padding:10px 16px;font-size:18px;font-weight:900;white-space:nowrap;pointer-events:none;transition:opacity .3s;box-shadow:0 0 24px #4fc3ff44}
+  .hint.hide{opacity:0}
+  .over{position:absolute;inset:0;display:none;place-items:center;background:#0f111788;padding:10px}
+  .over.show{display:grid}
+  .overCard{direction:rtl;text-align:center;background:linear-gradient(180deg,#1e2230,#161922);border:2px solid var(--blue);border-radius:22px;padding:14px 18px;box-shadow:0 0 40px #4fc3ff44;display:flex;flex-direction:column;align-items:center;gap:8px;max-width:100%;animation:pop .35s ease-out}
+  @keyframes pop{from{transform:scale(.8)}to{transform:scale(1)}}
+  .overCard .big{font-size:40px;line-height:1}
+  .overCard h2{font-size:24px;font-weight:900}
+  .stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:15px;color:var(--muted)}
+  .stats b{color:var(--ink)}
+  .newBest{color:var(--amber);font-weight:900;font-size:17px;display:none}
+  .newBest.show{display:block}
+  .again{flex-direction:row;font-size:20px;font-weight:900;padding:10px 22px;background:var(--green);color:#06210f;border:none;box-shadow:0 6px 0 #0008}
+  .again.alt{background:var(--panel);color:var(--ink);border:1px solid var(--line);font-size:16px;padding:10px 14px}
+  .cardBtns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:2px}
+  .howto{display:flex;flex-direction:column;gap:4px;font-size:16px;text-align:start}
+  .howto b{color:var(--blue)}
+  .goal{font-size:15px;font-weight:700;color:var(--amber)}
+  .overCard.trophy{border-color:var(--amber);box-shadow:0 0 60px #fbbf2466}
+  .overCard.trophy .big{font-size:90px;animation:bounce 1.2s infinite}
+  .overCard.trophy h2{font-size:30px;color:var(--amber)}
+  @keyframes bounce{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-10px) rotate(6deg)}}
+  [hidden]{display:none!important}
+
+  /* ---- bottom buttons ---- */
   .controls{direction:ltr;display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
-  button{font-family:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 4px;font-size:13px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
-  button .ic{font-size:22px}
+  button{font-family:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px 4px;font-size:13px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+  button .ic{font-size:21px;line-height:1}
   button.on{background:#25304a;border-color:var(--blue);box-shadow:0 0 14px #4fc3ff55}
   .gear button.on{background:var(--blue);color:#06121c}
-  .ver{position:fixed;bottom:2px;left:8px;font-size:10px;color:var(--muted);opacity:.6}
+
+  /* phone / tablet portrait: game on top, dashboard row below */
   @media (orientation:portrait){
-    .main{grid-template-columns:1fr 1fr;grid-template-areas:"g p" "w w"}
-    .gauges{grid-area:g}.pedalsCard{grid-area:p}.wheelWrap{grid-area:w}
-    .wheel{width:min(62vw,300px)}
+    .main{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr) minmax(0,1.05fr);
+      grid-template-rows:minmax(0,1fr) clamp(140px,25vh,250px);
+      grid-template-areas:"game game game" "g w p"}
+    .gauges{justify-content:center;gap:6px;padding:10px 6px}
+    .lights{gap:3px;flex-wrap:nowrap}
+    .ind{width:22px;height:22px;font-size:12px;border-radius:7px}
+    .speed{font-size:34px}
+    .unit{font-size:11px}
+    .pedalsCard{padding:10px 8px}
+    .pedals{gap:8px}
+    .pedal{font-size:14px;border-radius:14px}
+    .pedal .ic{font-size:22px}
     .controls{grid-template-columns:repeat(3,1fr)}
+  }
+  /* wider portrait (tablet) gets bigger gauges */
+  @media (orientation:portrait) and (min-width:600px){
+    .ind{width:36px;height:36px;font-size:18px}
+    .speed{font-size:48px}
+    .pedal{font-size:17px}
+    .pedal .ic{font-size:28px}
+  }
+  /* short landscape (phone on its side) */
+  @media (orientation:landscape) and (max-height:500px){
+    .app{gap:6px;padding:6px 10px}
+    h1{font-size:16px}
+    .gear button,.mute{width:34px;height:34px;font-size:15px;border-radius:10px}
+    .main{gap:6px;grid-template-columns:minmax(130px,21%) minmax(0,1fr) minmax(100px,16%)}
+    .card{padding:8px;border-radius:16px}
+    .gauges{gap:4px}
+    .ind{width:26px;height:26px;font-size:13px;border-radius:8px}
+    .speed{font-size:28px}
+    .unit{font-size:10px}
+    .bar{height:7px}
+    .fuel{font-size:11px}
+    .controls{gap:6px}
+    .controls button{flex-direction:row;justify-content:center;padding:5px 4px;font-size:11px;gap:4px}
+    .controls button .ic{font-size:16px}
+    .hud span{font-size:12px;padding:2px 7px}
+    .hint{font-size:14px;padding:7px 12px}
+    .overCard{padding:8px 14px;gap:4px}
+    .overCard .big{font-size:24px}
+    .howto{font-size:12px;gap:1px}
+    .goal{font-size:12px}
+    .overCard.trophy .big{font-size:56px}
+    .overCard h2{font-size:19px}
+    .again{font-size:16px;padding:7px 16px}
+  }
+  @media (max-width:370px){
+    h1{font-size:16px}
+    .gear button,.mute{width:36px;height:36px}
   }
 </style>
 </head>
 <body>
 <div class="app">
   <header>
-    <h1>🚗 נהג <span>צעיר</span></h1>
-    <div class="gear" id="gear">
-      <button data-g="P">P</button><button data-g="R">R</button><button data-g="N">N</button><button data-g="D" class="on">D</button>
+    <h1>🚗 נהג <span>צעיר</span><small>גרסה 0.2</small></h1>
+    <div class="hdrEnd">
+      <button class="mute" id="mute" title="צלילים">🔊</button>
+      <div class="gear" id="gear">
+        <button data-g="P">P</button><button data-g="R">R</button><button data-g="N">N</button><button data-g="D" class="on">D</button>
+      </div>
     </div>
   </header>
 
@@ -79,10 +174,40 @@
       <div class="unit">קמ״ש</div>
       <div class="bar"><i id="rpm"></i></div>
       <div class="fuel">⛽ <div class="bar"><i id="fuel" style="width:100%;background:var(--green)"></i></div></div>
-      <div class="road" style="width:100%"><div class="lane" id="lane"></div><div class="car" id="car">🚙</div></div>
     </div>
 
-    <div class="wheelWrap">
+    <div class="game" id="game">
+      <canvas id="cv"></canvas>
+      <div class="hud">
+        <span class="timer" id="timer">⏱️ 3:00</span>
+        <span id="levelTag">שלב 1</span>
+        <span>🪙 <b id="coins">0</b></span>
+        <span>📏 <b id="meters">0</b> מ׳</span>
+      </div>
+      <div class="hint hide" id="hint"></div>
+      <div class="over show" id="over">
+        <div class="overCard" id="card">
+          <div class="big" id="cBig">🚗</div>
+          <h2 id="cTitle">איך משחקים?</h2>
+          <div class="howto" id="cHow">
+            <div><b>⚡ גז</b> = נוסעים</div>
+            <div><b>🛑 ברקס</b> = עוצרים</div>
+            <div><b>🎡 הגה</b> = ימינה ושמאלה</div>
+            <div><b>⏱️ 3 דקות</b> בלי להתנגש = עוברים שלב!</div>
+            <div><b>🪙 מטבעות</b> = עוד נקודות</div>
+          </div>
+          <div class="goal" id="cGoal">לומדים לנהוג טוב מגיל קטן 🚗</div>
+          <div class="stats" id="cStats"></div>
+          <div class="newBest" id="cBest">⭐ שיא חדש!</div>
+          <div class="cardBtns">
+            <button class="again alt" id="cBtn2"></button>
+            <button class="again" id="cBtn">🚦 יאללה, נוסעים!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wheelWrap" id="wheelWrap">
       <div class="wheel" id="wheel"><div class="hornBtn" id="horn">📯</div></div>
     </div>
 
@@ -103,61 +228,802 @@
     <button id="bR"><span class="ic">➡️</span>איתות ימין</button>
   </div>
 </div>
-<div class="ver">גרסה 0.1</div>
 
 <script>
-const $=id=>document.getElementById(id);
-let AC=null;
-function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}return AC}
-function beep(f,d,type="square",vol=.15){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type=type;o.frequency.value=f;g.gain.value=vol;o.connect(g);g.connect(a.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+d);o.stop(a.currentTime+d)}
-let engine=null;
-function engineOn(){const a=ac();if(!a||engine)return;const o=a.createOscillator(),g=a.createGain();o.type="sawtooth";o.frequency.value=40;g.gain.value=.03;o.connect(g);g.connect(a.destination);o.start();engine={o,g}}
-let speed=0,gas=false,brake=false,gear="D",fuel=100,steer=0,lane=0,carX=50;
-let sig={L:false,R:false,haz:false},lights=false,high=false,wipe=false,blink=false;
-function press(el,on){el.classList.toggle("down",on)}
-function hold(el,set){
-  const down=e=>{e.preventDefault();set(true);press(el,true);engineOn()};
-  const up=e=>{e.preventDefault();set(false);press(el,false)};
-  el.addEventListener("pointerdown",down);el.addEventListener("pointerup",up);el.addEventListener("pointerleave",up);el.addEventListener("pointercancel",up);
+"use strict";
+const $ = id => document.getElementById(id);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const rand = (a, b) => a + Math.random() * (b - a);
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+/* ================= Sound ================= */
+let AC = null, master = null, muted = false, engine = null;
+function ac() {
+  if (!AC) {
+    try {
+      AC = new (window.AudioContext || window.webkitAudioContext)();
+      master = AC.createGain();
+      master.connect(AC.destination);
+    } catch (e) { AC = null; }
+  }
+  if (AC && AC.state === "suspended") AC.resume().catch(() => {});
+  return AC;
 }
-hold($("gas"),v=>gas=v);hold($("brake"),v=>brake=v);
-let hornT=null;
-$("horn").addEventListener("pointerdown",e=>{e.stopPropagation();e.preventDefault();beep(420,.35,"sawtooth",.2);beep(520,.35,"sawtooth",.15);if(navigator.vibrate)navigator.vibrate(60)});
-document.querySelectorAll("#gear button").forEach(b=>b.onclick=()=>{gear=b.dataset.g;document.querySelectorAll("#gear button").forEach(x=>x.classList.toggle("on",x===b));beep(900,.05)});
-function tog(id,fn){$(id).onclick=()=>{fn();beep(1200,.04,"sine",.1)}}
-tog("bL",()=>{sig.L=!sig.L;sig.R=false});tog("bR",()=>{sig.R=!sig.R;sig.L=false});
-tog("bHaz",()=>{sig.haz=!sig.haz});tog("bLights",()=>{lights=!lights});tog("bHigh",()=>{high=!high});tog("bWipe",()=>{wipe=!wipe});
-const wh=$("wheel");let drag=null;
-wh.addEventListener("pointerdown",e=>{const r=wh.getBoundingClientRect();drag={cx:r.left+r.width/2,cy:r.top+r.height/2,a0:Math.atan2(e.clientY-(r.top+r.height/2),e.clientX-(r.left+r.width/2)),s0:steer};wh.setPointerCapture(e.pointerId)});
-wh.addEventListener("pointermove",e=>{if(!drag)return;const a=Math.atan2(e.clientY-drag.cy,e.clientX-drag.cx);let d=a-drag.a0;if(d>Math.PI)d-=2*Math.PI;if(d<-Math.PI)d+=2*Math.PI;steer=Math.max(-2.4,Math.min(2.4,drag.s0+d))});
-const rel=()=>{drag=null};wh.addEventListener("pointerup",rel);wh.addEventListener("pointercancel",rel);
-setInterval(()=>{blink=!blink;
-  const L=(sig.L||sig.haz)&&blink,R=(sig.R||sig.haz)&&blink;
-  $("iL").classList.toggle("on",L);$("iR").classList.toggle("on",R);
-  if(sig.L||sig.R||sig.haz)beep(blink?1800:1400,.03,"square",.05);
-  $("bL").classList.toggle("on",sig.L);$("bR").classList.toggle("on",sig.R);$("bHaz").classList.toggle("on",sig.haz);
-},450);
-function loop(){
-  const max=gear==="R"?20:gear==="D"?120:0;
-  if(gas&&max&&fuel>0){speed+= (max-speed)*0.012+0.15;fuel=Math.max(0,fuel-0.02)}
-  else speed-=0.12;
-  if(brake)speed-=1.6;
-  speed=Math.max(0,Math.min(max||speed,speed));
-  if(!drag)steer*=0.92;
-  $("wheel").style.transform="rotate("+steer+"rad)";
-  $("speed").textContent=Math.round(speed);
-  $("rpm").style.width=Math.min(100,(gas?30:8)+speed*0.6)+"%";
-  $("fuel").style.width=fuel+"%";$("fuel").style.background=fuel<20?"var(--red)":"var(--green)";
-  lane=(lane+speed*0.06*(gear==="R"?-1:1))%52;$("lane").style.transform="translate("+(-lane)+"px,-50%)";
-  carX=Math.max(12,Math.min(88,carX-steer*speed*0.006));$("car").style.left=carX+"%";
-  $("car").textContent=gear==="R"?"🚙":"🚙";
-  $("iLights").classList.toggle("on",lights);$("iHigh").classList.toggle("on",high);
-  $("bLights").classList.toggle("on",lights);$("bHigh").classList.toggle("on",high);$("bWipe").classList.toggle("on",wipe);
-  $("bWipe").querySelector(".ic").textContent=wipe?(Date.now()%800<400?"🌧️":"💦"):"🌧️";
-  if(engine){engine.o.frequency.value=40+speed*1.2+(gas?20:0);engine.g.gain.value=.02+(gas?.03:0)}
+function beep(freq, dur, type = "square", vol = 0.15, slideTo = 0) {
+  const a = ac();
+  if (!a || muted) return;
+  const o = a.createOscillator(), g = a.createGain(), t = a.currentTime;
+  o.type = type;
+  o.frequency.setValueAtTime(freq, t);
+  if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+  g.gain.setValueAtTime(vol, t);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(master);
+  o.start(t); o.stop(t + dur + 0.02);
+}
+const tune = (notes, gap, type, vol) => notes.forEach((f, i) => setTimeout(() => beep(f, gap / 1000 * 1.6, type, vol), i * gap));
+const sfx = {
+  horn()  { beep(420, .35, "sawtooth", .2); beep(520, .35, "sawtooth", .15); },
+  click() { beep(1200, .04, "sine", .1); },
+  gear()  { beep(900, .05); },
+  coin()  { beep(988, .07, "square", .07); setTimeout(() => beep(1319, .16, "square", .07), 65); },
+  fuel()  { tune([523, 659, 784], 70, "triangle", .15); },
+  bump()  { beep(320, .35, "sine", .3, 90); beep(180, .25, "triangle", .18, 70); },
+  over()  { tune([659, 587, 523, 659, 784], 140, "triangle", .15); },
+  best()  { tune([523, 659, 784, 1047, 784, 1047], 110, "square", .08); }
+};
+function engineOn() {
+  const a = ac();
+  if (!a || engine) return;
+  const o = a.createOscillator(), g = a.createGain();
+  o.type = "sawtooth"; o.frequency.value = 40; g.gain.value = .03;
+  o.connect(g); g.connect(master); o.start();
+  engine = { o, g };
+}
+function vibrate(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
+
+/* ================= Progress (localStorage) ================= */
+const SAVE_KEY = "youngDriverProgress";
+const LEVEL_TIME = 180;            // every level lasts exactly 3 minutes
+const LEVELS_PER_SEASON = 10, LAST_LEVEL = 20;
+function loadProgress() {
+  let p = null;
+  try { p = JSON.parse(localStorage.getItem(SAVE_KEY) || "null"); } catch (e) { p = null; }
+  p = p && typeof p === "object" ? p : {};
+  return {
+    level: clamp(parseInt(p.level, 10) || 1, 1, LAST_LEVEL),
+    trophy: !!p.trophy,
+    best: parseInt(p.best, 10) || 0
+  };
+}
+function saveProgress() {
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(progress)); } catch (e) {}
+}
+const seasonOf = level => level > LEVELS_PER_SEASON ? 2 : 1;
+
+/* ================= State ================= */
+let gear = "D", fuel = 100, steer = 0;
+let gasTouch = false, gasKey = false, brakeTouch = false, brakeKey = false;
+let keySteer = 0, touchSteer = 0, wheelDrag = null;
+let sig = { L: false, R: false, haz: false }, lights = false, high = false, wipe = false, blink = false;
+const progress = loadProgress();
+
+// how hard each level is: 1 = very easy (slow, few cars), 20 = still friendly
+function levelSettings(level) {
+  const t = (level - 1) / (LAST_LEVEL - 1);           // 0 .. 1
+  return {
+    topSpeed: Math.round(40 + t * 45),                 // player's top speed, km/h
+    gap: 150 - t * 100,                                // meters between traffic cars
+    carMin: 8 + t * 22, carMax: 16 + t * 34,           // traffic speed, km/h
+    trucks: level >= 4 ? 0.1 + t * 0.1 : 0
+  };
+}
+
+// G.mode: "menu" (card shown before driving), "play", "crash", "win"
+const G = {
+  mode: "menu", over: true, level: progress.level, set: levelSettings(progress.level),
+  v: 0, x: 1.5, meters: 0, coins: 0, timeLeft: LEVEL_TIME, shake: 0, flash: 0, time: 0,
+  cars: [], items: [], laneOffset: 0, grassOffset: 0
+};
+function startLevel(level) {
+  Object.assign(G, {
+    mode: "play", over: false, level, set: levelSettings(level),
+    v: 0, x: 1.5, meters: 0, coins: 0, timeLeft: LEVEL_TIME,
+    shake: 0, flash: 0, time: G.time || 0,
+    cars: [], items: [],
+    trafficAcc: 0, nextTraffic: 70, coinAcc: 0, nextCoin: 12, fuelAcc: 0,
+    laneOffset: G.laneOffset || 0, grassOffset: G.grassOffset || 0
+  });
+  fuel = 100;
+  setGear("D", true);
+  hideCard();
+  updateHud(true);
+}
+
+/* ================= Controls ================= */
+function press(el, on) { el.classList.toggle("down", on); }
+function hold(el, set) {
+  const down = e => { e.preventDefault(); set(true); press(el, true); engineOn(); };
+  const up = e => { e.preventDefault(); set(false); press(el, false); };
+  el.addEventListener("pointerdown", down);
+  el.addEventListener("pointerup", up);
+  el.addEventListener("pointerleave", up);
+  el.addEventListener("pointercancel", up);
+}
+hold($("gas"), v => gasTouch = v);
+hold($("brake"), v => brakeTouch = v);
+
+function honk() {
+  sfx.horn(); vibrate(60);
+  $("horn").classList.add("down");
+  setTimeout(() => $("horn").classList.remove("down"), 200);
+  hornMovesCars();
+}
+$("horn").addEventListener("pointerdown", e => { e.stopPropagation(); e.preventDefault(); engineOn(); honk(); });
+
+function setGear(g, silent) {
+  gear = g;
+  document.querySelectorAll("#gear button").forEach(x => x.classList.toggle("on", x.dataset.g === g));
+  if (!silent) sfx.gear();
+}
+document.querySelectorAll("#gear button").forEach(b => b.onclick = () => { setGear(b.dataset.g); b.blur(); });
+
+const toggles = {
+  bL:      () => { sig.L = !sig.L; sig.R = false; },
+  bR:      () => { sig.R = !sig.R; sig.L = false; },
+  bHaz:    () => { sig.haz = !sig.haz; },
+  bLights: () => { lights = !lights; },
+  bHigh:   () => { high = !high; },
+  bWipe:   () => { wipe = !wipe; }
+};
+for (const id in toggles) $(id).onclick = () => { toggles[id](); sfx.click(); $(id).blur(); };
+
+$("mute").onclick = () => {
+  muted = !muted;
+  $("mute").textContent = muted ? "🔇" : "🔊";
+  if (ac() && master) master.gain.value = muted ? 0 : 1;
+  $("mute").blur();
+};
+
+// steering wheel: drag to rotate
+const wh = $("wheel");
+wh.addEventListener("pointerdown", e => {
+  const r = wh.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+  wheelDrag = { cx, cy, a0: Math.atan2(e.clientY - cy, e.clientX - cx), s0: steer };
+  wh.setPointerCapture(e.pointerId);
+  engineOn();
+});
+wh.addEventListener("pointermove", e => {
+  if (!wheelDrag) return;
+  let d = Math.atan2(e.clientY - wheelDrag.cy, e.clientX - wheelDrag.cx) - wheelDrag.a0;
+  if (d > Math.PI) d -= 2 * Math.PI;
+  if (d < -Math.PI) d += 2 * Math.PI;
+  steer = clamp(wheelDrag.s0 + d, -2.4, 2.4);
+});
+const releaseWheel = () => { wheelDrag = null; };
+wh.addEventListener("pointerup", releaseWheel);
+wh.addEventListener("pointercancel", releaseWheel);
+
+// touching the road: left half steers left, right half steers right
+const gameEl = $("game"), cv = $("cv");
+const touches = new Map();
+function updateTouchSteer() {
+  let s = 0;
+  touches.forEach(v => s += v);
+  touchSteer = clamp(s, -1, 1);
+}
+cv.addEventListener("pointerdown", e => {
+  e.preventDefault(); engineOn();
+  const r = cv.getBoundingClientRect();
+  touches.set(e.pointerId, e.clientX < r.left + r.width / 2 ? -1 : 1);
+  cv.setPointerCapture(e.pointerId);
+  updateTouchSteer();
+});
+const endTouch = e => { touches.delete(e.pointerId); updateTouchSteer(); };
+cv.addEventListener("pointerup", endTouch);
+cv.addEventListener("pointercancel", endTouch);
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+// keyboard (uses e.code so it works with a Hebrew keyboard layout too)
+const keyDown = {
+  ArrowLeft:  () => keySteer = -1,
+  ArrowRight: () => keySteer = 1,
+  ArrowUp:    () => { gasKey = true; press($("gas"), true); },
+  ArrowDown:  () => { brakeKey = true; press($("brake"), true); },
+  Space:      () => honk(),
+  KeyP: () => setGear("P"), KeyR: () => setGear("R"), KeyN: () => setGear("N"), KeyD: () => setGear("D"),
+  KeyL: () => $("bLights").click(), KeyH: () => $("bHigh").click(), KeyW: () => $("bWipe").click(),
+  KeyQ: () => $("bL").click(), KeyE: () => $("bR").click(), KeyX: () => $("bHaz").click(),
+  KeyM: () => $("mute").click(),
+  Enter: () => { if (G.over) $("cBtn").click(); }
+};
+const keyUp = {
+  ArrowLeft:  () => { if (keySteer < 0) keySteer = 0; },
+  ArrowRight: () => { if (keySteer > 0) keySteer = 0; },
+  ArrowUp:    () => { gasKey = false; press($("gas"), false); },
+  ArrowDown:  () => { brakeKey = false; press($("brake"), false); }
+};
+document.addEventListener("keydown", e => {
+  const fn = keyDown[e.code];
+  if (!fn) return;
+  e.preventDefault();
+  engineOn();
+  if (!e.repeat || e.code.startsWith("Arrow")) fn();
+});
+document.addEventListener("keyup", e => {
+  if (keyDown[e.code]) e.preventDefault();
+  if (keyUp[e.code]) keyUp[e.code]();
+});
+window.addEventListener("blur", () => { keySteer = 0; gasKey = brakeKey = false; press($("gas"), false); press($("brake"), false); });
+
+// turn signals blink
+setInterval(() => {
+  blink = !blink;
+  const L = (sig.L || sig.haz) && blink, R = (sig.R || sig.haz) && blink;
+  $("iL").classList.toggle("on", L); $("iR").classList.toggle("on", R);
+  if (sig.L || sig.R || sig.haz) beep(blink ? 1800 : 1400, .03, "square", .05);
+  $("bL").classList.toggle("on", sig.L); $("bR").classList.toggle("on", sig.R); $("bHaz").classList.toggle("on", sig.haz);
+}, 450);
+
+/* ================= Layout / sizing ================= */
+const ctx = cv.getContext("2d");
+let W = 300, H = 300, roadX = 0, roadW = 200, laneW = 66, carW = 36, carH = 63, playerY = 250, pxPerKmh = 3;
+const deco = [];   // trees and bushes on the grass
+
+function resize() {
+  const r = gameEl.getBoundingClientRect();
+  const oldH = H;
+  W = Math.max(1, r.width); H = Math.max(1, r.height);
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  roadW = Math.min(W * 0.84, H * 0.8, 520);
+  roadX = (W - roadW) / 2;
+  laneW = roadW / 3;
+  carW = Math.min(laneW * 0.56, H * 0.12);
+  carH = carW * 1.75;
+  playerY = H - carH * 0.75 - 8;
+  pxPerKmh = H * 0.009;            // pixels per second for each km/h
+  const f = H / oldH;              // keep things in place after a resize
+  if (G.cars) G.cars.concat(G.items).forEach(o => o.y *= f);
+  makeDeco();
+}
+function makeDeco() {
+  deco.length = 0;
+  const side = roadX - 10;
+  if (side < 14) return;
+  const n = Math.ceil(H / 70) + 2;
+  for (const s of [-1, 1]) {
+    for (let i = 0; i < n; i++) {
+      deco.push({
+        side: s, y: i * 70 + rand(-15, 15),
+        off: rand(0.25, 0.75), size: rand(0.6, 1) * Math.min(side * 0.42, 22),
+        tree: Math.random() < 0.65, flower: pick(["#f472b6", "#fbbf24", "#ffffff"])
+      });
+    }
+  }
+}
+function fitWheel() {
+  const r = $("wheelWrap").getBoundingClientRect();
+  const s = Math.max(60, Math.floor(Math.min(r.width, r.height)) - 6);
+  wh.style.setProperty("--ws", s + "px");
+}
+const onResize = () => { resize(); fitWheel(); };
+if (window.ResizeObserver) {
+  new ResizeObserver(onResize).observe(gameEl);
+  new ResizeObserver(fitWheel).observe($("wheelWrap"));
+}
+window.addEventListener("resize", onResize);
+
+/* ================= Game logic ================= */
+const CAR_COLORS = ["#f43f5e", "#fbbf24", "#a78bfa", "#fb923c", "#f472b6", "#2dd4bf", "#e5e7eb", "#facc15"];
+const laneX = lane => roadX + lane * laneW;   // lane position 0.5 / 1.5 / 2.5 = lane centres
+
+function carSize(c) {
+  return { w: carW * (c.truck ? 1.12 : 1), h: carH * (c.truck ? 1.55 : 1) };
+}
+function laneBusy(lane, yTop, yBottom, except) {
+  return G.cars.some(c => c !== except && Math.abs(c.x - (lane + 0.5)) < 0.7 && c.y > yTop && c.y < yBottom);
+}
+
+function spawnTraffic() {
+  // never block all three lanes: if two lanes are busy near the top, wait
+  const band = carH * 3.6;
+  const busy = [0, 1, 2].filter(l => laneBusy(l, -carH * 4, band));
+  if (busy.length >= 2) return false;
+  const free = [0, 1, 2].filter(l => !busy.includes(l));
+  const lane = pick(free);
+  // traffic is always slower than us, so cars come down the screen towards us
+  const hi = Math.max(6, Math.min(G.set.carMax, G.v - 10));
+  const lo = Math.min(G.set.carMin, hi);
+  G.cars.push({
+    lane, x: lane + 0.5, y: -carH * 1.2, v: rand(lo, hi),
+    color: pick(CAR_COLORS), truck: Math.random() < G.set.trucks, hit: false, oops: 0
+  });
+  return true;
+}
+function spawnCoins() {
+  const lane = Math.floor(Math.random() * 3);
+  if (laneBusy(lane, -carH * 6, carH * 2)) return;
+  const n = 1 + Math.floor(Math.random() * 4);
+  for (let i = 0; i < n; i++) G.items.push({ kind: "coin", x: lane + 0.5, y: -carH * (0.6 + i * 0.75), spin: Math.random() * 6 });
+}
+function spawnFuel() {
+  const lane = Math.floor(Math.random() * 3);
+  if (laneBusy(lane, -carH * 5, carH * 2)) return false;
+  G.items.push({ kind: "fuel", x: lane + 0.5, y: -carH });
+  return true;
+}
+
+function hornMovesCars() {
+  if (G.over) return;
+  for (const c of G.cars) {
+    if (c.hit) continue;
+    const dy = playerY - c.y;
+    if (dy < -carH * 0.5 || dy > H * 0.65) continue;            // only cars near us, in front
+    if (Math.abs(c.x - G.x) > 1.2) continue;                     // same or next lane
+    const options = [c.lane - 1, c.lane + 1].filter(l =>
+      l >= 0 && l <= 2 && !laneBusy(l, c.y - carH * 1.6, c.y + carH * 1.6, c));
+    if (!options.length) continue;
+    options.sort((a, b) => Math.abs(b + 0.5 - G.x) - Math.abs(a + 0.5 - G.x)); // move away from us
+    c.lane = options[0];
+    c.oops = 1;
+  }
+}
+
+// a crash is a soft bump that ends the level kindly
+function crash(c) {
+  c.hit = true;
+  c.v += 18;                          // the other car drives off happily
+  G.mode = "crash"; G.over = true;
+  G.shake = 0.45; G.flash = 0.3;
+  G.v *= 0.3;
+  sfx.bump(); vibrate(120);
+  const score = levelScore(), isBest = score > progress.best;
+  if (isBest) { progress.best = score; saveProgress(); }
+  setTimeout(() => {
+    if (G.mode !== "crash") return;
+    showCard("crash", { score, isBest });
+    sfx.over();
+  }, 800);
+}
+function winLevel() {
+  G.mode = "win"; G.over = true;
+  const done = G.level, score = levelScore(), isBest = score > progress.best;
+  if (isBest) progress.best = score;
+  let kind = "win";
+  if (done >= LAST_LEVEL) { progress.trophy = true; progress.level = 1; kind = "trophy"; }
+  else {
+    progress.level = Math.max(progress.level, done + 1);
+    if (done === LEVELS_PER_SEASON) kind = "season";
+  }
+  saveProgress();
+  showCard(kind, { score, isBest, done });
+  sfx.best(); vibrate(200);
+}
+const levelScore = () => Math.floor(G.meters) + G.coins * 10;
+
+/* ================= Cards (start / crash / win / trophy) ================= */
+function hideCard() { $("over").classList.remove("show"); }
+function showCard(kind, info = {}) {
+  const card = $("card"), lvl = G.level;
+  const stats = info.score !== undefined
+    ? `<span>📏 <b>${Math.floor(G.meters)}</b> מ׳</span><span>🪙 <b>${G.coins}</b></span><span>⭐ <b>${info.score}</b> נקודות</span>`
+    : `<span>שלב <b>${lvl}</b> · עונה <b>${seasonOf(lvl)}</b></span>` +
+      (progress.trophy ? `<span>🏆 יש לך גביע!</span>` : "");
+  const set = (big, title, btn, btn2, how) => {
+    $("cBig").textContent = big;
+    $("cTitle").textContent = title;
+    $("cBtn").textContent = btn;
+    $("cBtn2").textContent = btn2 || "";
+    $("cBtn2").hidden = !btn2;
+    $("cHow").hidden = !how;
+    $("cGoal").hidden = !how;
+  };
+  card.classList.toggle("trophy", kind === "trophy");
+  if (kind === "start")       set("🚗", "איך משחקים?", "🚦 יאללה, נוסעים!", "", true);
+  else if (kind === "crash")  set("😅", "אופס! עוד פעם?", "🔄 עוד פעם!", "❓ איך משחקים", false);
+  else if (kind === "win")    set("🎉", `כל הכבוד! עברת שלב ${info.done}`, `➡️ לשלב ${info.done + 1}`, "🔄 שוב אותו שלב", false);
+  else if (kind === "season") set("🌟", "עונה 2 נפתחה!", "➡️ לעונה 2", "🔄 שוב אותו שלב", false);
+  else if (kind === "trophy") set("🏆", "קיבלת גביע!", "🚗 מתחילים שוב", "", false);
+  $("cStats").innerHTML = stats;
+  $("cBest").classList.toggle("show", !!info.isBest);
+  card.dataset.kind = kind;
+  $("over").classList.add("show");
+  card.style.animation = "none"; void card.offsetWidth; card.style.animation = "";
+}
+$("cBtn").onclick = () => {
+  const kind = $("card").dataset.kind;
+  sfx.click(); $("cBtn").blur(); engineOn();
+  if (kind === "crash") startLevel(G.level);
+  else if (kind === "win" || kind === "season") startLevel(G.level + 1);
+  else if (kind === "trophy") startLevel(1);   // a new round after the trophy
+  else startLevel(G.level);                    // the start card
+};
+$("cBtn2").onclick = () => {
+  const kind = $("card").dataset.kind;
+  sfx.click(); $("cBtn2").blur();
+  if (kind === "crash") showCard("start");
+  else startLevel(G.level);                    // replay the level just won
+};
+
+function updateCar(dt) {
+  const gas = (gasTouch || gasKey) && !G.over;
+  const brake = brakeTouch || brakeKey || G.over;
+  const maxF = fuel > 0 ? (G.set ? G.set.topSpeed : 40) : 20, maxR = 15;
+  let v = G.v;
+  const toward0 = amt => { v = v > 0 ? Math.max(0, v - amt) : Math.min(0, v + amt); };
+
+  if (gas && gear === "D") {
+    if (v < 0) v += 50 * dt;
+    else v += ((maxF - v) * 0.4 + 5) * dt;
+    if (v > maxF) v = Math.max(maxF, v - 25 * dt);
+  } else if (gas && gear === "R") {
+    if (v > 0) v -= 50 * dt;
+    else v = Math.max(-maxR, v - ((maxR + v) * 0.8 + 3) * dt);
+  } else {
+    toward0(7 * dt);                        // rolling slowly to a stop
+  }
+  if (gas && (gear === "D" || gear === "R")) fuel = Math.max(0, fuel - 0.4 * dt);
+  if (brake) toward0(90 * dt);
+  if (gear === "P") toward0(140 * dt);
+  G.v = v;
+
+  // steering: wheel drag, arrow keys or touching the road
+  const wanted = keySteer || touchSteer;
+  if (!wheelDrag) {
+    if (wanted) steer += (wanted * 1.6 - steer) * Math.min(1, dt * 10);
+    else steer *= Math.pow(0.92, dt * 60);
+  }
+  const grip = Math.abs(v) < 1 ? 0 : 0.45 + 0.55 * Math.min(1, Math.abs(v) / 50);
+  if (!G.over) G.x = clamp(G.x + steer * 0.95 * grip * dt, 0.42, 2.58);
+}
+
+function update(dt) {
+  G.time += dt;
+  updateCar(dt);
+  const scroll = G.v * pxPerKmh * dt;        // how far the road moves this frame
+  const fwdMeters = Math.max(0, G.v) / 3.6 * dt;
+  G.laneOffset += scroll; G.grassOffset += scroll;
+  for (const d of deco) {
+    d.y += scroll;
+    if (d.y > H + 40) d.y -= H + 80; else if (d.y < -40) d.y += H + 80;
+  }
+
+  if (G.mode === "play") {
+    G.meters += fwdMeters;
+    // the level clock runs while the car is driving forward
+    if (G.v > 3) {
+      G.timeLeft = Math.max(0, G.timeLeft - dt);
+      if (G.timeLeft <= 0) { winLevel(); return; }
+    }
+    // traffic: higher levels have a bit more cars (see levelSettings)
+    G.trafficAcc += fwdMeters;
+    if (G.v > 15 && G.trafficAcc >= G.nextTraffic) {
+      if (spawnTraffic()) {
+        const base = G.set.gap;
+        G.trafficAcc = 0; G.nextTraffic = rand(base * 0.7, base * 1.3);
+      } else G.trafficAcc = G.nextTraffic * 0.8;
+    }
+    G.coinAcc += fwdMeters;
+    if (G.coinAcc >= G.nextCoin) { spawnCoins(); G.coinAcc = 0; G.nextCoin = rand(18, 38); }
+    G.fuelAcc += fwdMeters;
+    if (fuel < 75 && G.fuelAcc > 220 && spawnFuel()) G.fuelAcc = 0;
+  }
+
+  // traffic cars
+  for (const c of G.cars) {
+    c.y += (G.v - c.v) * pxPerKmh * dt;
+    c.x += (c.lane + 0.5 - c.x) * Math.min(1, dt * 3);
+    c.oops = Math.max(0, c.oops - dt * 0.8);
+  }
+  G.cars = G.cars.filter(c => c.y > -carH * 4 && c.y < H + carH * 3);
+
+  // items on the road
+  for (const it of G.items) { it.y += scroll; it.spin = (it.spin || 0) + dt * 5; }
+  G.items = G.items.filter(it => !it.taken && it.y < H + carH && it.y > -carH * 8);
+
+  G.shake = Math.max(0, G.shake - dt);
+  G.flash = Math.max(0, G.flash - dt);
+  if (G.mode !== "play") return;
+
+  // collisions: a soft bump ends the level
+  const px = G.x, pw = carW * 0.8, ph = carH * 0.85;
+  for (const c of G.cars) {
+    if (c.hit) continue;
+    const s = carSize(c);
+    if (Math.abs((c.x - px) * laneW) < (pw + s.w * 0.85) / 2 && Math.abs(c.y - playerY) < (ph + s.h * 0.88) / 2) { crash(c); return; }
+  }
+  // pick-ups
+  for (const it of G.items) {
+    if (Math.abs((it.x - px) * laneW) < carW * 0.75 && Math.abs(it.y - playerY) < carH * 0.6) {
+      it.taken = true;
+      if (it.kind === "coin") { G.coins++; sfx.coin(); }
+      else { fuel = 100; sfx.fuel(); }
+    }
+  }
+}
+
+/* ================= Drawing ================= */
+function rr(x, y, w, h, r) {          // rounded rectangle path
+  r = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+function circle(x, y, r, color) { ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fillStyle = color; ctx.fill(); }
+
+function drawGrass() {
+  const band = 60, off = ((G.grassOffset % (band * 2)) + band * 2) % (band * 2);
+  ctx.fillStyle = "#2f8a4c"; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = "#2a7d45";
+  for (let y = -band * 2 + off; y < H; y += band * 2) ctx.fillRect(0, y, W, band);
+  for (const d of deco) {
+    const x = d.side < 0 ? roadX - 10 - (roadX - 10) * d.off : roadX + roadW + 10 + (roadX - 10) * d.off;
+    if (d.tree) {
+      circle(x + 3, d.y + 4, d.size, "#00000033");
+      circle(x, d.y, d.size, "#1f6b38");
+      circle(x - d.size * 0.3, d.y - d.size * 0.3, d.size * 0.55, "#3fae5f");
+    } else {
+      circle(x, d.y, d.size * 0.25, d.flower);
+      circle(x + d.size * 0.5, d.y + d.size * 0.3, d.size * 0.2, d.flower);
+    }
+  }
+}
+function drawRoad() {
+  // curbs
+  const seg = 18, cOff = ((G.laneOffset % (seg * 2)) + seg * 2) % (seg * 2);
+  for (let y = -seg * 2 + cOff, i = 0; y < H; y += seg, i++) {
+    ctx.fillStyle = i % 2 ? "#f43f5e" : "#f3f4f6";
+    ctx.fillRect(roadX - 7, y, 7, seg); ctx.fillRect(roadX + roadW, y, 7, seg);
+  }
+  ctx.fillStyle = "#3a3f4d"; ctx.fillRect(roadX, 0, roadW, H);
+  ctx.fillStyle = "#f3f4f6";
+  ctx.fillRect(roadX + 4, 0, 4, H); ctx.fillRect(roadX + roadW - 8, 0, 4, H);
+  // moving lane markings
+  const dash = carH * 0.55, period = dash * 2;
+  const off = ((G.laneOffset % period) + period) % period;
+  ctx.fillStyle = "#fbbf24";
+  for (let l = 1; l < 3; l++) {
+    const x = roadX + l * laneW - 2.5;
+    for (let y = -period + off; y < H; y += period) ctx.fillRect(x, y, 5, dash);
+  }
+}
+function drawCoin(it) {
+  const x = laneX(it.x), r = carW * 0.3, sx = Math.abs(Math.cos(it.spin)) * 0.7 + 0.3;
+  ctx.save(); ctx.translate(x, it.y); ctx.scale(sx, 1);
+  circle(0, 0, r, "#b7791f"); circle(0, 0, r * 0.82, "#fcd34d");
+  ctx.fillStyle = "#b7791f"; ctx.font = `900 ${r * 1.1}px Rubik, sans-serif`;
+  ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("₪", 0, r * 0.06);
+  ctx.restore();
+}
+function drawFuelCan(it) {
+  const x = laneX(it.x), w = carW * 0.6, h = carW * 0.75;
+  const pulse = 1 + Math.sin(G.time * 6) * 0.06;
+  ctx.save(); ctx.translate(x, it.y); ctx.scale(pulse, pulse);
+  circle(0, 0, w * 0.95, "#4ade8033");
+  rr(-w / 2, -h / 2, w, h, w * 0.18); ctx.fillStyle = "#ef4444"; ctx.fill();
+  ctx.lineWidth = 2; ctx.strokeStyle = "#7f1d1d"; ctx.stroke();
+  rr(-w * 0.3, -h / 2 - w * 0.18, w * 0.6, w * 0.24, 3); ctx.fillStyle = "#7f1d1d"; ctx.fill();
+  ctx.fillStyle = "#fff"; ctx.font = `900 ${w * 0.55}px Rubik, sans-serif`;
+  ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("⛽", 0, h * 0.06);
+  ctx.restore();
+}
+
+// a cartoon car seen from above, front pointing up
+function drawCar(cx, cy, w, h, color, o) {
+  const x = cx - w / 2, y = cy - h / 2;
+  ctx.save();
+  if (o.alpha !== undefined) ctx.globalAlpha = o.alpha;
+  rr(x + 3, y + 5, w, h, w * 0.3); ctx.fillStyle = "#00000044"; ctx.fill();          // shadow
+  ctx.fillStyle = "#15171d";                                                           // wheels
+  for (const wy of [y + h * 0.16, y + h * 0.66]) { rr(x - w * 0.08, wy, w * 0.16, h * 0.2, 3); ctx.fill(); rr(x + w * 0.92, wy, w * 0.16, h * 0.2, 3); ctx.fill(); }
+  rr(x, y, w, h, w * 0.3); ctx.fillStyle = color; ctx.fill();                           // body
+  ctx.lineWidth = 2; ctx.strokeStyle = "#00000055"; ctx.stroke();
+  rr(x + w * 0.15, y + h * 0.36, w * 0.7, h * 0.32, w * 0.15); ctx.fillStyle = "#ffffff30"; ctx.fill(); // roof shine
+  rr(x + w * 0.12, y + h * 0.17, w * 0.76, h * 0.2, w * 0.12); ctx.fillStyle = "#1e293b"; ctx.fill(); // windshield
+  rr(x + w * 0.16, y + h * 0.72, w * 0.68, h * 0.12, w * 0.1); ctx.fillStyle = "#1e293b"; ctx.fill(); // rear window
+  // big cartoon eyes on the windshield
+  const ey = y + h * 0.27, er = w * 0.15, look = o.lookDown ? er * 0.35 : -er * 0.35;
+  for (const ex of [cx - w * 0.19, cx + w * 0.19]) {
+    circle(ex, ey, er, "#fff");
+    circle(ex, ey + look, er * 0.5, "#111827");
+  }
+  // headlights + tail lights
+  circle(x + w * 0.2, y + h * 0.05, w * 0.09, "#fef9c3");
+  circle(x + w * 0.8, y + h * 0.05, w * 0.09, "#fef9c3");
+  ctx.fillStyle = o.brake ? "#ff2d55" : "#9f1239";
+  rr(x + w * 0.1, y + h * 0.93, w * 0.22, h * 0.05, 2); ctx.fill();
+  rr(x + w * 0.68, y + h * 0.93, w * 0.22, h * 0.05, 2); ctx.fill();
+  if (o.brake) { ctx.globalAlpha = 0.35; circle(x + w * 0.21, y + h, w * 0.2, "#ff2d55"); circle(x + w * 0.79, y + h, w * 0.2, "#ff2d55"); ctx.globalAlpha = 1; }
+  // turn signals blink on the corners
+  const sigDot = (sx, sy) => { circle(sx, sy, w * 0.11, "#fbbf24"); ctx.globalAlpha = 0.4; circle(sx, sy, w * 0.24, "#fbbf24"); ctx.globalAlpha = o.alpha !== undefined ? o.alpha : 1; };
+  if (o.sigL) { sigDot(x + w * 0.02, y + h * 0.1); sigDot(x + w * 0.02, y + h * 0.9); }
+  if (o.sigR) { sigDot(x + w * 0.98, y + h * 0.1); sigDot(x + w * 0.98, y + h * 0.9); }
+  ctx.restore();
+}
+function drawTruck(cx, cy, w, h, color, o) {
+  const x = cx - w / 2, y = cy - h / 2, cab = h * 0.3;
+  ctx.save();
+  rr(x + 3, y + 5, w, h, w * 0.2); ctx.fillStyle = "#00000044"; ctx.fill();
+  ctx.fillStyle = "#15171d";
+  for (const wy of [y + h * 0.1, y + h * 0.55, y + h * 0.78]) { rr(x - w * 0.07, wy, w * 0.14, h * 0.12, 3); ctx.fill(); rr(x + w * 0.93, wy, w * 0.14, h * 0.12, 3); ctx.fill(); }
+  rr(x, y + cab + 3, w, h - cab - 3, w * 0.1); ctx.fillStyle = "#e5e7eb"; ctx.fill();     // cargo box
+  ctx.lineWidth = 2; ctx.strokeStyle = "#00000055"; ctx.stroke();
+  ctx.fillStyle = color; ctx.fillRect(x + w * 0.1, y + cab + h * 0.25, w * 0.8, h * 0.08);  // stripe
+  rr(x + w * 0.04, y, w * 0.92, cab, w * 0.25); ctx.fillStyle = color; ctx.fill();         // cab
+  ctx.stroke();
+  rr(x + w * 0.14, y + cab * 0.3, w * 0.72, cab * 0.42, w * 0.1); ctx.fillStyle = "#1e293b"; ctx.fill();
+  const ey = y + cab * 0.51, er = w * 0.13;
+  for (const ex of [cx - w * 0.18, cx + w * 0.18]) { circle(ex, ey, er, "#fff"); circle(ex, ey + er * 0.35, er * 0.5, "#111827"); }
+  circle(x + w * 0.2, y + cab * 0.1, w * 0.08, "#fef9c3"); circle(x + w * 0.8, y + cab * 0.1, w * 0.08, "#fef9c3");
+  ctx.fillStyle = "#9f1239";
+  ctx.fillRect(x + w * 0.08, y + h - 5, w * 0.2, 4); ctx.fillRect(x + w * 0.72, y + h - 5, w * 0.2, 4);
+  if (o.sigL) circle(x + w * 0.04, y + h * 0.95, w * 0.11, "#fbbf24");
+  if (o.sigR) circle(x + w * 0.96, y + h * 0.95, w * 0.11, "#fbbf24");
+  ctx.restore();
+}
+function drawTraffic() {
+  for (const c of G.cars) {
+    const s = carSize(c), cx = laneX(c.x);
+    const moving = c.lane + 0.5 - c.x;
+    const o = { lookDown: true, sigL: blink && moving < -0.05, sigR: blink && moving > 0.05, alpha: c.hit ? 0.6 : undefined };
+    if (c.truck) drawTruck(cx, c.y, s.w, s.h, c.color, o);
+    else drawCar(cx, c.y, s.w, s.h, c.color, o);
+    if (c.oops > 0) {              // little "!" bubble after the horn
+      ctx.save(); ctx.globalAlpha = Math.min(1, c.oops * 2);
+      const bx = cx + s.w * 0.6, by = c.y - s.h * 0.55, br = carW * 0.28;
+      circle(bx, by, br, "#fff");
+      ctx.fillStyle = "#f43f5e"; ctx.font = `900 ${br * 1.5}px Rubik, sans-serif`;
+      ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("!", bx, by + 1);
+      ctx.restore();
+    }
+  }
+}
+function drawHeadlights() {
+  if (!lights && !high) return;
+  const len = high ? H * 0.75 : H * 0.36, top = playerY - carH / 2;
+  ctx.save();
+  ctx.globalCompositeOperation = "lighter";
+  for (const side of [-1, 1]) {
+    const hx = laneX(G.x) + side * carW * 0.3;
+    const g = ctx.createLinearGradient(0, top, 0, top - len);
+    g.addColorStop(0, high ? "rgba(255,248,200,.55)" : "rgba(255,240,170,.45)");
+    g.addColorStop(1, "rgba(255,240,170,0)");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(hx - carW * 0.1, top);
+    ctx.lineTo(hx + carW * 0.1, top);
+    ctx.lineTo(hx + side * carW * 0.25 + carW * (high ? 0.9 : 0.7), top - len);
+    ctx.lineTo(hx + side * carW * 0.25 - carW * (high ? 0.9 : 0.7), top - len);
+    ctx.closePath(); ctx.fill();
+  }
+  ctx.restore();
+}
+function drawPlayer() {
+  const L = (sig.L || sig.haz) && blink, R = (sig.R || sig.haz) && blink;
+  const braking = brakeTouch || brakeKey;
+  ctx.save();
+  ctx.translate(laneX(G.x), playerY);
+  ctx.rotate(clamp(steer, -1.6, 1.6) * 0.06 * Math.min(1, Math.abs(G.v) / 20) * Math.sign(G.v || 1));
+  drawCar(0, 0, carW, carH, "#4fc3ff", { sigL: L, sigR: R, brake: braking || gear === "R" });
+  // racing stripe
+  ctx.fillStyle = "#ffffffaa";
+  ctx.fillRect(-carW * 0.06, -carH * 0.5 + 3, carW * 0.12, carH * 0.15);
+  ctx.restore();
+}
+
+// rain on the glass + a big wiper sweeping it away
+const drops = [];
+let wiperA = 0, wiperPrev = 0;
+function drawRain(dt) {
+  if (!wipe) { drops.length = 0; return; }
+  ctx.save();
+  ctx.strokeStyle = "#cfe8ff55"; ctx.lineWidth = 1.5; ctx.beginPath();
+  for (let i = 0; i < 40; i++) {
+    const rx = (i * 97.3 + G.time * 40) % W, ry = (i * 53.7 + G.time * 700) % H;
+    ctx.moveTo(rx, ry); ctx.lineTo(rx - 3, ry + 14);
+  }
+  ctx.stroke();
+  if (drops.length < 70 && Math.random() < dt * 40) drops.push({ x: Math.random() * W, y: Math.random() * H * 0.95, r: rand(2, 4.5) });
+  const pvx = W / 2, pvy = H + 12, len = Math.hypot(W / 2, H) + 10;
+  wiperPrev = wiperA;
+  wiperA = Math.sin(G.time * 2.6) * 1.2;
+  const lo = Math.min(wiperPrev, wiperA), hi = Math.max(wiperPrev, wiperA);
+  for (let i = drops.length - 1; i >= 0; i--) {
+    const d = drops[i], a = Math.atan2(d.x - pvx, pvy - d.y);
+    if (a >= lo - 0.03 && a <= hi + 0.03) drops.splice(i, 1);
+  }
+  for (const d of drops) { circle(d.x, d.y, d.r, "#dbeafe66"); circle(d.x - d.r * 0.3, d.y - d.r * 0.3, d.r * 0.35, "#ffffffaa"); }
+  ctx.translate(pvx, pvy); ctx.rotate(wiperA);
+  ctx.lineCap = "round";
+  ctx.strokeStyle = "#11131acc"; ctx.lineWidth = 7;
+  ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -len); ctx.stroke();
+  ctx.strokeStyle = "#3b4258"; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(0, -len * 0.15); ctx.lineTo(0, -len); ctx.stroke();
+  ctx.restore();
+}
+
+function draw(dt) {
+  ctx.save();
+  if (G.shake > 0) {
+    const m = G.shake * 22;
+    ctx.translate(rand(-m, m), rand(-m, m));
+  }
+  drawGrass();
+  drawRoad();
+  if (lights || high) { ctx.fillStyle = "rgba(10,15,40,.22)"; ctx.fillRect(-20, -20, W + 40, H + 40); }
+  for (const it of G.items) it.kind === "coin" ? drawCoin(it) : drawFuelCan(it);
+  drawHeadlights();
+  drawTraffic();
+  drawPlayer();
+  ctx.restore();
+  drawRain(dt);
+  if (G.flash > 0) { ctx.fillStyle = `rgba(255,255,255,${G.flash})`; ctx.fillRect(0, 0, W, H); }
+}
+
+/* ================= HUD + dashboard ================= */
+let lastHud = "";
+function updateHud(force) {
+  const meters = Math.floor(G.meters || 0);
+  const secs = Math.ceil(G.timeLeft === undefined ? LEVEL_TIME : G.timeLeft);
+  const clock = Math.floor(secs / 60) + ":" + String(secs % 60).padStart(2, "0");
+  const key = [meters, G.coins || 0, clock, G.level].join("|");
+  if (key === lastHud && !force) return;
+  lastHud = key;
+  $("timer").textContent = "⏱️ " + clock;
+  $("timer").classList.toggle("end", secs <= 10 && G.mode === "play");
+  $("levelTag").textContent = `שלב ${G.level} · עונה ${seasonOf(G.level)}` + (progress.trophy ? " 🏆" : "");
+  $("meters").textContent = meters;
+  $("coins").textContent = G.coins || 0;
+}
+function updateHint() {
+  let text = "";
+  if (G.mode === "play") {
+    if (gear === "P" || gear === "N") text = "בחר הילוך D 👆";
+    else if (Math.abs(G.v) < 3 && !(gasTouch || gasKey)) text = "לחץ על גז ⚡";
+    else if (fuel <= 0) text = "אסוף דלק ⛽";
+  }
+  const h = $("hint");
+  if (text) h.textContent = text;
+  h.classList.toggle("hide", !text);
+}
+function updateDashboard() {
+  const gas = gasTouch || gasKey, sp = Math.abs(G.v);
+  wh.style.transform = "translate(-50%,-50%) rotate(" + steer + "rad)";
+  $("speed").textContent = Math.round(sp);
+  $("rpm").style.width = Math.min(100, (gas ? 30 : 8) + sp * 0.7) + "%";
+  $("fuel").style.width = fuel + "%";
+  $("fuel").style.background = fuel < 20 ? "var(--red)" : "var(--green)";
+  $("iLights").classList.toggle("on", lights); $("iHigh").classList.toggle("on", high);
+  $("bLights").classList.toggle("on", lights); $("bHigh").classList.toggle("on", high); $("bWipe").classList.toggle("on", wipe);
+  $("bWipe").querySelector(".ic").textContent = wipe ? (Date.now() % 800 < 400 ? "🌧️" : "💦") : "🌧️";
+  if (engine) {
+    engine.o.frequency.value = 40 + sp * 1.3 + (gas ? 20 : 0);
+    engine.g.gain.value = muted ? 0 : .02 + (gas ? .03 : 0);
+  }
+}
+
+/* ================= Main loop ================= */
+let lastT = performance.now();
+function loop(now) {
+  const dt = Math.min(0.05, Math.max(0, (now - lastT) / 1000));
+  lastT = now;
+  update(dt);
+  draw(dt);
+  updateHud();
+  updateHint();
+  updateDashboard();
   requestAnimationFrame(loop);
 }
-loop();
+onResize();
+updateHud(true);
+showCard("start");
+requestAnimationFrame(t => { lastT = t; loop(t); });
 </script>
 </body>
 </html>
