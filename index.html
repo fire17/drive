@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0f1117">
 <title>נהג צעיר</title>
@@ -1447,6 +1449,9 @@ onResize();
 updateHud(true);
 showCard("start");
 requestAnimationFrame(t => { lastT = t; loop(t); });
+</script>
+<script>
+if("serviceWorker" in navigator){try{navigator.serviceWorker.register("./sw.js").catch(()=>{})}catch(e){}}
 </script>
 </body>
 </html>
