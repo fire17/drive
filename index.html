@@ -142,6 +142,16 @@
   .pen.go{animation:penUp 1.6s ease-out}
   .plus{position:absolute;top:44px;right:8px;z-index:4;color:#06210f;background:var(--green);border:2px solid #fff;border-radius:12px;padding:2px 10px;font-size:20px;font-weight:900;direction:rtl;pointer-events:none;
     box-shadow:0 0 16px #4ade80;opacity:0}
+.praise{position:absolute;left:50%;top:92px;transform:translate(-50%,-50%) scale(.6);z-index:6;pointer-events:none;opacity:0;
+    background:linear-gradient(135deg,#fde68a,#4ade80);color:#062012;border:3px solid #fff;border-radius:20px;padding:10px 18px;
+    font-size:18px;font-weight:900;text-align:center;box-shadow:0 0 22px #4ade80cc;white-space:nowrap}
+  .praise{line-height:1.25}
+  .praise .pT{font-size:16px;font-weight:900;color:#065f2b}
+  .praise small{display:block;font-size:15px;font-weight:700;margin-top:2px}
+  .praise.go{animation:praiseUp 1.7s ease-out}
+  @keyframes praiseUp{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}15%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}80%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-70%) scale(.95)}}
+  .spark{position:absolute;z-index:6;pointer-events:none;font-size:20px;animation:sparkFly 1s ease-out forwards}
+  @keyframes sparkFly{0%{opacity:1;transform:translate(0,0) scale(.6)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.2)}}
   .plus.go{animation:penUp 1.6s ease-out}
   .hud .timer.plus-hit{color:#06210f;background:var(--green);border-color:#fff}
   @keyframes penUp{0%{opacity:0;transform:translateY(-6px) scale(.7)}15%{opacity:1;transform:translateY(0) scale(1.25)}70%{opacity:1;transform:translateY(14px) scale(1)}100%{opacity:0;transform:translateY(26px)}}
@@ -323,7 +333,7 @@
 <body>
 <div class="app">
   <header>
-    <h1>🚙 נהג <span>צעיר</span><small>גרסה 0.7</small></h1>
+    <h1>🚙 נהג <span>צעיר</span><small>גרסה 0.7.1</small></h1>
     <div class="hdrEnd">
       <button class="mute" id="mute" title="צלילים">🔊</button>
       <div class="gear" id="gear">
@@ -358,6 +368,7 @@
       <div class="alert hide" id="alert"></div>
       <div class="pen" id="pen"><bdi dir="ltr">−10</bdi> שניות</div>
       <div class="plus" id="plus"><bdi dir="ltr">+5</bdi></div>
+      <div class="praise" id="praise"></div>
       <div class="over show" id="over">
         <div class="overCard" id="card">
           <div class="who" id="who" hidden>
@@ -374,6 +385,7 @@
           <div class="aim" id="cAim">
             <div class="a1">🎯 המטרה: לנסוע כמה שיותר רחוק!</div>
             <div class="a2" id="cAim2">⏱️ יש לך 3 דקות. כל טעות נהיגה = מינוס 10 שניות</div>
+<div class="a2">🌟 נהיגה טובה מוסיפה זמן!</div>
           </div>
           <div class="dist" id="cDist" hidden><small>📏 נסעת</small><b><span id="cDistN">0</span><i>מ׳</i></b></div>
           <div class="howto" id="cHow">
@@ -488,9 +500,9 @@ const RULES = {
   START_TIME: 180,          // 3:00 on the clock
   PENALTY: 10,              // seconds off for every driving mistake
   BONUS_CLEAN_DIST: 400,    // meters in a row with no mistake for the clean-driving bonus
-  BONUS_CLEAN: 0,           // seconds for that (0 = off; e.g. 5)
-  BONUS_TURN: 0,            // seconds for each correct turn at a junction (0 = off; e.g. 3)
-  BONUS_LIGHT: 0,           // seconds for each correct stop at a red light (0 = off; e.g. 3)
+  BONUS_CLEAN: 5,           // seconds for that (0 = off)
+  BONUS_TURN: 3,            // seconds for each correct turn at a junction (0 = off)
+  BONUS_LIGHT: 3,           // seconds for each correct stop at a red light (0 = off)
   LEVEL_DIST: 300,          // every 300 m the road gets a little harder ("רמה" in the HUD)
   MAX_LEVEL: 30
 };
@@ -719,7 +731,23 @@ function penalty() {
   updateHud(true);
 }
 // bonus time for good driving; a bonus of 0 is OFF: nothing is added and nothing is shown
-function addTime(secs) {
+const PRAISE = ["כל הכבוד!", "נהיגה מצוינת!", "אלוף!", "וואו, איזה נהג!", "מעולה!", "נהג אמיתי!"];
+function praise(secs, why) {
+  const el = $("praise"); if (!el) return;
+  el.innerHTML = `<div>⭐ ${pick(PRAISE)}</div><div class="pT">⏱️ עוד <bdi>${secs}</bdi> שניות</div><small><bdi>${why}</bdi></small>`;
+  el.classList.remove("go"); void el.offsetWidth; el.classList.add("go");
+  const host = el.parentElement, r = el.getBoundingClientRect(), hr = host.getBoundingClientRect();
+  const cx = r.left - hr.left + r.width / 2, cy = r.top - hr.top + r.height / 2;
+  for (let i = 0; i < 6; i++) {
+    const s = document.createElement("div"); s.className = "spark"; s.textContent = i % 2 ? "✨" : "⭐";
+    const a = i / 6 * Math.PI * 2, d = 45 + Math.random() * 20;
+    s.style.left = cx + "px"; s.style.top = cy + "px";
+    s.style.setProperty("--dx", Math.cos(a) * d + "px"); s.style.setProperty("--dy", Math.sin(a) * d + "px");
+    host.appendChild(s); setTimeout(() => s.remove(), 1100);
+  }
+  try { beep(660, 0.09, "sine", 0.12); setTimeout(() => beep(880, 0.09, "sine", 0.12), 90); setTimeout(() => beep(1175, 0.16, "sine", 0.12), 180); } catch (e) {}
+}
+function addTime(secs, why) {
   if (!(secs > 0) || G.mode !== "play") return false;
   G.timeLeft += secs; G.bonusT = (G.bonusT || 0) + secs;
   const p = $("plus");
@@ -727,6 +755,7 @@ function addTime(secs) {
   p.classList.remove("go"); void p.offsetWidth; p.classList.add("go");
   $("timer").classList.add("plus-hit"); clearTimeout(addTime.t);
   addTime.t = setTimeout(() => $("timer").classList.remove("plus-hit"), 900);
+  if (why) praise(secs, why);
   updateHud(true);
   return true;
 }
@@ -734,9 +763,8 @@ function cleanBonus(fwd) {
   G.cleanM += fwd;
   if (G.cleanM < RULES.BONUS_CLEAN_DIST) return;
   G.cleanM -= RULES.BONUS_CLEAN_DIST;
-  if (addTime(RULES.BONUS_CLEAN)) {
-    G.cleanBonus++; sfx.best();
-    showAlert(`⏱️ +${RULES.BONUS_CLEAN} שניות! נהיגה מצוינת`, true);
+  if (addTime(RULES.BONUS_CLEAN, `${RULES.BONUS_CLEAN_DIST} מטר בלי טעות`)) {
+    G.cleanBonus++;
   }
 }
 function onLaneChange(from, to) {
@@ -1769,7 +1797,7 @@ function lightTick(j, dt, front) {
       if (!L.stopShown && L.waitT > 0.25) { L.stopShown = true; showAlert("👍 עצרת ברמזור! <small>מחכים לאור ירוק 🟢</small>", true); }
       if (L.waitT >= LIGHT_WAIT) {
         L.red = false; L.done = true; G.lightGood++; sfx.coin();
-        toast(addTime(RULES.BONUS_LIGHT) ? `🟢 ירוק! נוסעים · ⏱️ +${RULES.BONUS_LIGHT} שניות` : "🟢 ירוק! נוסעים", 1.5);
+        addTime(RULES.BONUS_LIGHT, "עצרת יפה ברמזור 🚦"); toast("🟢 ירוק! נוסעים", 1.5);
       }
     }
   } else {                                               // we drove over the line on red
@@ -1797,8 +1825,8 @@ function decideJunction(j) {
       }
     } else {
       G.turnGood++; G.coins += 2; sfx.coin(); setTimeout(() => sfx.coin(), 120);
-      const b = addTime(RULES.BONUS_TURN);
-      showAlert(`👍 פנית נכון! <small>+2 🪙${b ? ` · ⏱️ +${RULES.BONUS_TURN} שניות` : ""}</small>`, true);
+      addTime(RULES.BONUS_TURN, "פנית נכון ↩️");
+      showAlert("👍 פנית נכון! <small>+2 🪙</small>", true);
     }
     startTurn(j, take === "R" ? 1 : -1);
   } else if (take) {
@@ -1808,8 +1836,8 @@ function decideJunction(j) {
   } else if (j.instr === "S") {
     if (j.light && j.light.ran) { G.turnAll--; return; }      // the red light mistake was already counted
     G.turnGood++; G.coins += 2; sfx.coin();
-    const b = addTime(RULES.BONUS_TURN);
-    showAlert(`👍 ישר, נכון! <small>+2 🪙${b ? ` · ⏱️ +${RULES.BONUS_TURN} שניות` : ""}</small>`, true);
+    addTime(RULES.BONUS_TURN, "המשכת ישר, נכון ⬆️");
+    showAlert("👍 ישר, נכון! <small>+2 🪙</small>", true);
   } else {
     G.turnBad++;
     showAlert(`😮 פספסת את הפנייה! <small>השלט אמר: ${DIR_TEXT[j.instr]}</small>`);
