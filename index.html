@@ -369,12 +369,47 @@
     .steerPick button{font-size:14px;padding:3px 10px}
     .steerPick .spT{font-size:12px}
   }
+  /* ---- settings panel (v0.9): volume per sound family + steering ---- */
+  .setOver{position:fixed;inset:0;z-index:100;display:none;place-items:center;background:#0f1117cc;padding:10px;touch-action:none}
+  .setOver.show{display:grid}
+  .setCard{direction:rtl;width:min(560px,100%);max-height:100%;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch;
+    background:linear-gradient(180deg,#1e2230,#161922);border:2px solid var(--blue);border-radius:22px;padding:12px 16px 0;box-shadow:0 0 40px #4fc3ff44;display:flex;flex-direction:column;gap:8px;animation:pop .3s ease-out}
+  .setCard h2{font-size:22px;font-weight:900;text-align:center}
+  .setGrid{display:flex;flex-direction:column;gap:6px}
+  .setRow{display:grid;grid-template-columns:auto minmax(0,1fr) 3.4em;align-items:center;gap:6px 10px;background:#0f111766;border:1px solid var(--line);border-radius:16px;padding:6px 10px}
+  .setRow .sLb{font-size:16px;font-weight:700;white-space:nowrap;min-width:8.5em}
+  .setRow .sLb .ic{font-size:22px;margin-inline-end:4px}
+  .setRow output{font-size:16px;font-weight:900;color:var(--blue);text-align:center;font-variant-numeric:tabular-nums;direction:ltr}
+  .setRow.master{border-color:var(--blue)}
+  .setRng{-webkit-appearance:none;appearance:none;width:100%;height:44px;background:transparent;margin:0;cursor:pointer;touch-action:none;direction:rtl;--p:50%}
+  .setRng:focus{outline:none}
+  .setRng::-webkit-slider-runnable-track{height:14px;border-radius:8px;background:linear-gradient(to left,var(--green) var(--p),#2c3142 var(--p))}
+  .setRng::-moz-range-track{height:14px;border-radius:8px;background:#2c3142}
+  .setRng::-moz-range-progress{height:14px;border-radius:8px;background:var(--green)}
+  .setRng::-webkit-slider-thumb{-webkit-appearance:none;width:36px;height:36px;margin-top:-11px;border-radius:50%;background:#fff;border:4px solid var(--blue);box-shadow:0 2px 8px #000a}
+  .setRng::-moz-range-thumb{width:30px;height:30px;border-radius:50%;background:#fff;border:4px solid var(--blue);box-shadow:0 2px 8px #000a}
+  .setRng:disabled{opacity:.45}
+  .setBtns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .setBtns button{flex-direction:row;gap:6px;font-size:16px;padding:8px 14px}
+  .setSub{font-size:14px;font-weight:700;color:var(--muted);text-align:center}
+  .setCard > .cardBtns{position:sticky;bottom:0;padding:8px 0 12px;background:linear-gradient(180deg,#16192200,#161922 30%);width:100%;margin-top:0}
+  #setClose{font-size:22px;padding:10px 34px}
+  @media (orientation:landscape) and (max-height:500px){
+    .setCard{width:min(820px,100%);padding:8px 12px 0;gap:6px}
+    .setCard h2{font-size:18px}
+    .setGrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+    .setRow{padding:2px 8px}
+    .setRow .sLb{font-size:14px;min-width:7.5em}
+    .setRng{height:38px}
+    #setClose{font-size:18px;padding:7px 28px}
+    .setCard > .cardBtns{padding:6px 0 8px}
+  }
 </style>
 </head>
 <body>
 <div class="app" id="app">
   <header>
-    <h1>🚙 נהג <span>צעיר</span><small>גרסה 0.8</small></h1>
+    <h1>🚙 נהג <span>צעיר</span><small>גרסה 0.9</small></h1>
     <div class="hdrEnd">
       <button class="mute" id="bCenter" title="🎯 מרכז: ההגה חוזר לאמצע" hidden>🎯</button>
       <button class="mute" id="mute" title="צלילים">🔊</button>
@@ -466,6 +501,7 @@
             <button class="again alt" id="cBtn2"></button>
             <button class="again" id="cBtn">🚦 יאללה, נוסעים!</button>
             <button class="again alt" id="cBoard">🏆 טבלת האלופים</button>
+            <button class="again alt" id="cSet">⚙️ הגדרות</button>
           </div>
         </div>
       </div>
@@ -544,6 +580,26 @@
     <button id="bCam"><span class="ic">📷</span><span class="lb">מצלמה אחורית</span></button>
     <button id="bTilt" hidden><span class="ic" id="tiltIc">📱</span><span class="lb" id="tiltLb">הטיה</span></button>
     <button id="bCenter2" hidden><span class="ic">🎯</span><span class="lb">מרכז</span></button>
+    <button id="bSet"><span class="ic">⚙️</span><span class="lb">הגדרות</span></button>
+  </div>
+
+  <!-- settings (v0.9): a volume slider per sound family + the steering choice -->
+  <div class="setOver" id="setOver">
+    <div class="setCard" id="setCard" role="dialog" aria-labelledby="setTitle">
+      <h2 id="setTitle">⚙️ הגדרות</h2>
+      <div class="setGrid" id="setGrid"></div>
+      <div class="setBtns">
+        <button id="setMute"><span class="ic">🔊</span><span id="setMuteLb">צלילים פועלים</span></button>
+        <button id="setReset"><span class="ic">↺</span>ברירת מחדל</button>
+      </div>
+      <div class="setSub">איך נוהגים?</div>
+      <div class="setBtns">
+        <button id="setTilt"><span class="ic">📱</span>הטיה</button>
+        <button id="setWheel"><span class="ic">🎡</span>הגה</button>
+        <button id="setCenter" hidden><span class="ic">🎯</span>מרכז</button>
+      </div>
+      <div class="cardBtns"><button class="again" id="setClose">✔️ סגור</button></div>
+    </div>
   </div>
 </div>
 
@@ -575,7 +631,17 @@ const RULES = {
   // ---- tilt steering (v0.8): the whole tablet / phone is the wheel ----
   TILT_DEAD_DEG: 3,         // tilt (degrees from the calibrated centre) that still counts as "straight": steer is exactly 0
   TILT_FULL_DEG: 30,        // tilt (degrees) that reaches full lock (±STEER_LOCK)
-  TILT_SMOOTH: 12           // smoothing rate per second (higher = follows the tilt faster, lower = calmer)
+  TILT_SMOOTH: 12,          // smoothing rate per second (higher = follows the tilt faster, lower = calmer)
+  // ---- sound volumes (v0.9): the starting level of each slider in ⚙️ הגדרות, in percent (0-100) ----
+  SOUND_DEFAULTS: {
+    master: 30,             // 🔊 ווליום כללי (everything goes through it)
+    engine: 30,             // 🚙 מנוע: the engine hum + the wind with the roof open
+    horn: 50,               // 📯 צופר: the horn + the funny horn
+    music: 40,              // 🎵 מוזיקה: the chiptune music loop
+    fx: 50,                 // 🔔 איתות וביפים: signals, buttons, gears, stalks, turbo, roof, 4x4, the junction chime
+    crash: 40,              // 💥 התנגשות וטעויות: the crash bump + the mistake ding-dong
+    praise: 60              // 🌟 שבחים ובונוסים: the praise chimes, coins, fuel, the drive-over tunes
+  }
 };
 const STEER_LOCK = RULES.FULL_LOCK_DEG * Math.PI / 180 * RULES.STEER_GAIN;   // max steering (rad), about 2.36
 const $ = id => document.getElementById(id);
@@ -585,18 +651,52 @@ const pick = arr => arr[Math.floor(Math.random() * arr.length)];
 
 /* ================= Sound ================= */
 let AC = null, master = null, muted = false, engine = null;
+// every sound family has its own GainNode ("bus") -> master -> speakers; the sliders in ⚙️ הגדרות set them
+const SOUND_BUSES = ["engine", "horn", "music", "fx", "crash", "praise"];
+const bus = {};
+/* ---- settings (v0.9), saved on this device as JSON under SETTINGS_KEY ---- */
+const SETTINGS_KEY = "youngDriverSettings";
+function soundDefaults() { const v = {}; for (const k in RULES.SOUND_DEFAULTS) v[k] = RULES.SOUND_DEFAULTS[k]; return v; }
+const settings = { vol: soundDefaults(), muted: false, steer: null };
+(function loadSettings() {                  // runs before any sound can play; bad or missing data = the defaults
+  let d = null;
+  try { d = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "null"); } catch (e) { d = null; }
+  if (!d || typeof d !== "object") return;
+  const v = d.vol && typeof d.vol === "object" ? d.vol : {};
+  for (const k in settings.vol) {
+    const n = Number(v[k]);
+    if (v[k] !== null && v[k] !== "" && isFinite(n)) settings.vol[k] = clamp(Math.round(n), 0, 100);
+  }
+  settings.muted = d.muted === true;
+  if (d.steer === "tilt" || d.steer === "wheel") settings.steer = d.steer;
+})();
+muted = settings.muted;
+function saveSettings() {
+  try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); } catch (e) {}
+}
+// slider percent -> gain (100% = the full level of v0.8); a family plays at master × its own slider
+const volGain = pct => clamp(pct, 0, 100) / 100;
+function applyVolumes() {
+  if (!AC || !master) return;
+  const t = AC.currentTime;
+  const set = (node, v) => { try { node.gain.cancelScheduledValues(t); node.gain.setValueAtTime(v, t); } catch (e) { node.gain.value = v; } };
+  set(master, muted ? 0 : volGain(settings.vol.master));
+  SOUND_BUSES.forEach(k => { if (bus[k]) set(bus[k], volGain(settings.vol[k])); });
+}
 function ac() {
   if (!AC) {
     try {
       AC = new (window.AudioContext || window.webkitAudioContext)();
       master = AC.createGain();
       master.connect(AC.destination);
+      SOUND_BUSES.forEach(k => { bus[k] = AC.createGain(); bus[k].connect(master); });
+      applyVolumes();
     } catch (e) { AC = null; }
   }
   if (AC && AC.state === "suspended") AC.resume().catch(() => {});
   return AC;
 }
-function beep(freq, dur, type = "square", vol = 0.15, slideTo = 0) {
+function beep(freq, dur, type = "square", vol = 0.15, slideTo = 0, to = "fx") {
   const a = ac();
   if (!a || muted) return;
   const o = a.createOscillator(), g = a.createGain(), t = a.currentTime;
@@ -605,29 +705,33 @@ function beep(freq, dur, type = "square", vol = 0.15, slideTo = 0) {
   if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
   g.gain.setValueAtTime(vol, t);
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  o.connect(g); g.connect(master);
+  o.connect(g); g.connect(to === "master" ? master : (bus[to] || bus.fx));
   o.start(t); o.stop(t + dur + 0.02);
 }
-const tune = (notes, gap, type, vol) => notes.forEach((f, i) => setTimeout(() => beep(f, gap / 1000 * 1.6, type, vol), i * gap));
+const tune = (notes, gap, type, vol, to) => notes.forEach((f, i) => setTimeout(() => beep(f, gap / 1000 * 1.6, type, vol, 0, to), i * gap));
+// the last argument of beep / tune / noiseBurst is the sound family (bus); see RULES.SOUND_DEFAULTS
 const sfx = {
-  horn()  { beep(420, .35, "sawtooth", .2); beep(520, .35, "sawtooth", .15); },
-  click() { beep(1200, .04, "sine", .1); },
-  gear()  { beep(900, .05); },
-  coin()  { beep(988, .07, "square", .07); setTimeout(() => beep(1319, .16, "square", .07), 65); },
-  fuel()  { tune([523, 659, 784], 70, "triangle", .15); },
-  bump()  { beep(320, .35, "sine", .3, 90); beep(180, .25, "triangle", .18, 70); },
-  over()  { tune([659, 587, 523, 659, 784], 140, "triangle", .15); },
-  best()  { tune([523, 659, 784, 1047, 784, 1047], 110, "square", .08); },
+  horn()  { beep(420, .35, "sawtooth", .2, 0, "horn"); beep(520, .35, "sawtooth", .15, 0, "horn"); },
+  click() { beep(1200, .04, "sine", .1, 0, "fx"); },
+  gear()  { beep(900, .05, "square", .15, 0, "fx"); },
+  coin()  { beep(988, .07, "square", .07, 0, "praise"); setTimeout(() => beep(1319, .16, "square", .07, 0, "praise"), 65); },
+  fuel()  { tune([523, 659, 784], 70, "triangle", .15, "praise"); },
+  bump()  { beep(320, .35, "sine", .3, 90, "crash"); beep(180, .25, "triangle", .18, 70, "crash"); },
+  over()  { tune([659, 587, 523, 659, 784], 140, "triangle", .15, "praise"); },
+  best()  { tune([523, 659, 784, 1047, 784, 1047], 110, "square", .08, "praise"); },
   funny() {                                   // a silly slide-whistle honk: "hoo-wee-boing!"
-    beep(300, .22, "square", .12, 900);
-    setTimeout(() => beep(900, .22, "square", .12, 260), 200);
-    setTimeout(() => { beep(180, .3, "triangle", .2, 520); beep(240, .3, "sine", .12, 700); }, 420);
+    beep(300, .22, "square", .12, 900, "horn");
+    setTimeout(() => beep(900, .22, "square", .12, 260, "horn"), 200);
+    setTimeout(() => { beep(180, .3, "triangle", .2, 520, "horn"); beep(240, .3, "sine", .12, 700, "horn"); }, 420);
   },
-  turbo() { beep(120, .9, "sawtooth", .12, 900); beep(200, .7, "square", .05, 1400); noiseBurst(.8, .25); },
-  roof()  { beep(500, .25, "triangle", .1, 900); noiseBurst(.6, .2); },
-  four()  { beep(140, .12, "square", .14); setTimeout(() => beep(190, .18, "square", .14), 110); },
-  chime() { beep(880, .14, "sine", .12); setTimeout(() => beep(1175, .14, "sine", .12), 120); setTimeout(() => beep(1568, .3, "sine", .1), 240); },
-  dingDong() { beep(784, .45, "sine", .2); beep(1568, .2, "sine", .03); setTimeout(() => beep(622, .6, "sine", .2), 320); }
+  turbo() { beep(120, .9, "sawtooth", .12, 900, "fx"); beep(200, .7, "square", .05, 1400, "fx"); noiseBurst(.8, .25, "fx"); },
+  roof()  { beep(500, .25, "triangle", .1, 900, "fx"); noiseBurst(.6, .2, "fx"); },
+  four()  { beep(140, .12, "square", .14, 0, "fx"); setTimeout(() => beep(190, .18, "square", .14, 0, "fx"), 110); },
+  chime() { beep(880, .14, "sine", .12, 0, "fx"); setTimeout(() => beep(1175, .14, "sine", .12, 0, "fx"), 120); setTimeout(() => beep(1568, .3, "sine", .1, 0, "fx"), 240); },
+  dingDong() { beep(784, .45, "sine", .2, 0, "crash"); beep(1568, .2, "sine", .03, 0, "crash"); setTimeout(() => beep(622, .6, "sine", .2, 0, "crash"), 320); },
+  signal(on) { beep(on ? 1800 : 1400, .03, "square", .05, 0, "fx"); },
+  stalk() { beep(1500, .03, "square", .08, 0, "fx"); beep(700, .05, "square", .05, 0, "fx"); },
+  praise() { beep(660, 0.09, "sine", 0.12, 0, "praise"); setTimeout(() => beep(880, 0.09, "sine", 0.12, 0, "praise"), 90); setTimeout(() => beep(1175, 0.16, "sine", 0.12, 0, "praise"), 180); }
 };
 let noiseBuf = null;
 function getNoise() {
@@ -640,7 +744,7 @@ function getNoise() {
   }
   return noiseBuf;
 }
-function noiseBurst(dur, vol) {               // a short "whoosh"
+function noiseBurst(dur, vol, to = "fx") {               // a short "whoosh"
   const a = ac(), buf = getNoise();
   if (!a || !buf || muted) return;
   const src = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain(), t = a.currentTime;
@@ -648,7 +752,7 @@ function noiseBurst(dur, vol) {               // a short "whoosh"
   f.frequency.setValueAtTime(400, t); f.frequency.exponentialRampToValueAtTime(2500, t + dur);
   g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + dur * 0.3);
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  src.connect(f); f.connect(g); g.connect(master);
+  src.connect(f); f.connect(g); g.connect(bus[to] || bus.fx);
   src.start(t); src.stop(t + dur + 0.05);
 }
 // soft wind that plays while the roof is open (louder when driving faster)
@@ -660,7 +764,7 @@ function windOn() {
   src.buffer = buf; src.loop = true;
   f.type = "bandpass"; f.frequency.value = 700; f.Q.value = 0.6;
   g.gain.value = 0;
-  src.connect(f); f.connect(g); g.connect(master); src.start();
+  src.connect(f); f.connect(g); g.connect(bus.engine); src.start();
   wind = { src, f, g };
 }
 // happy chiptune music loop (made right here with WebAudio, no files)
@@ -670,9 +774,9 @@ const BASS = [131, 131, 175, 175, 196, 196, 131, 131];
 let musicOn = false, musicTimer = null, musicStep = 0;
 function musicTick() {
   const i = musicStep++ % MELODY.length;
-  if (MELODY[i]) beep(MELODY[i], .13, "square", .045);
-  if (i % 4 === 0) beep(BASS[(i / 4) % BASS.length], .3, "triangle", .12);
-  if (i % 2 === 1) beep(2400 + (i % 4) * 300, .02, "square", .015);   // little hi-hat tick
+  if (MELODY[i]) beep(MELODY[i], .13, "square", .045, 0, "music");
+  if (i % 4 === 0) beep(BASS[(i / 4) % BASS.length], .3, "triangle", .12, 0, "music");
+  if (i % 2 === 1) beep(2400 + (i % 4) * 300, .02, "square", .015, 0, "music");   // little hi-hat tick
 }
 function setMusic(on) {
   musicOn = on;
@@ -684,7 +788,7 @@ function engineOn() {
   if (!a || engine) return;
   const o = a.createOscillator(), g = a.createGain();
   o.type = "sawtooth"; o.frequency.value = 40; g.gain.value = .03;
-  o.connect(g); g.connect(master); o.start();
+  o.connect(g); g.connect(bus.engine); o.start();
   engine = { o, g };
 }
 function vibrate(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
@@ -818,7 +922,7 @@ function praise(secs, why) {
     s.style.setProperty("--dx", Math.cos(a) * d + "px"); s.style.setProperty("--dy", Math.sin(a) * d + "px");
     host.appendChild(s); setTimeout(() => s.remove(), 1100);
   }
-  try { beep(660, 0.09, "sine", 0.12); setTimeout(() => beep(880, 0.09, "sine", 0.12), 90); setTimeout(() => beep(1175, 0.16, "sine", 0.12), 180); } catch (e) {}
+  try { sfx.praise(); } catch (e) {}
 }
 function addTime(secs, why) {
   if (!(secs > 0) || G.mode !== "play") return false;
@@ -1020,12 +1124,18 @@ $("bFunny").onclick = () => {
   $("bFunny").blur();
 };
 
-$("mute").onclick = () => {
-  muted = !muted;
+function setMuted(m) {                       // the header 🔊 button and the 🔇 button in ⚙️ הגדרות stay in sync
+  muted = settings.muted = !!m;
+  ac(); applyVolumes(); saveSettings(); syncMuteUI();
+}
+function syncMuteUI() {
   $("mute").textContent = muted ? "🔇" : "🔊";
-  if (ac() && master) master.gain.value = muted ? 0 : 1;
-  $("mute").blur();
-};
+  $("setMute").querySelector(".ic").textContent = muted ? "🔇" : "🔊";
+  $("setMuteLb").textContent = muted ? "השתקה: הצלילים כבויים" : "צלילים פועלים";
+  $("setMute").classList.toggle("on", muted);
+}
+$("mute").onclick = () => { setMuted(!muted); $("mute").blur(); };
+syncMuteUI();
 
 // steering wheel: drag to rotate
 const wh = $("wheel");
@@ -1082,9 +1192,13 @@ const tiltNeedsPerm = tiltCoarse && typeof DeviceOrientationEvent !== "undefined
 const tiltLoadAt = performance.now();
 let tiltPref = null;
 try { const v = localStorage.getItem(TILT_KEY); if (v === "tilt" || v === "wheel") tiltPref = v; } catch (e) { tiltPref = null; }
+if (tiltPref === null && settings.steer) tiltPref = settings.steer;   // the old key wins; else the one in the settings
 let tiltMode = tiltPref === "tilt" || (tiltPref === null && tiltNeedsPerm);   // what the user wants (iOS: asked on the start tap)
 let tiltSeen = false, tiltAt = -1e9, tiltRaw = 0, tiltCenter = null, tiltPerm = tiltNeedsPerm ? "ask" : "none", tiltCheckT = 0;
-function tiltSave(v) { try { localStorage.setItem(TILT_KEY, v); } catch (e) {} }
+function tiltSave(v) {                       // kept under the old key too, so nothing is lost
+  try { localStorage.setItem(TILT_KEY, v); } catch (e) {}
+  settings.steer = v; saveSettings();
+}
 function screenAngle() {
   let a = 0;
   try {
@@ -1186,6 +1300,9 @@ function syncTiltUI() {
   $("sTilt").classList.toggle("on", tiltMode);
   $("sWheel").classList.toggle("on", !tiltMode);
   $("sCenter").hidden = !tiltMode;
+  $("setTilt").classList.toggle("on", tiltMode);
+  $("setWheel").classList.toggle("on", !tiltMode);
+  $("setCenter").hidden = !tiltMode;
   $("bCenter").hidden = $("bCenter2").hidden = !(tiltMode && avail);
   $("bTilt").classList.toggle("on", tiltMode);
   $("tiltIc").textContent = tiltMode ? "📱" : "🎡";
@@ -1203,6 +1320,9 @@ $("bTilt").onclick = () => { sfx.click(); $("bTilt").blur(); setTiltMode(!tiltMo
 $("sCenter").onclick = () => recentre($("sCenter"));
 $("bCenter").onclick = () => recentre($("bCenter"));
 $("bCenter2").onclick = () => recentre($("bCenter2"));
+$("setTilt").onclick = () => { sfx.click(); $("setTilt").blur(); setTiltMode(true); };
+$("setWheel").onclick = () => { sfx.click(); $("setWheel").blur(); setTiltMode(false); };
+$("setCenter").onclick = () => recentre($("setCenter"));
 // the screen turned: the axis changed, so the centre is taken again from the next reading
 try { if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener("change", tiltCalibrate); } catch (e) {}
 window.addEventListener("orientationchange", tiltCalibrate);
@@ -1217,6 +1337,90 @@ document.addEventListener("pointerdown", e => {
   if (e.target.closest && (e.target.closest("#controls") || e.target.closest("#bMore"))) return;
   $("app").classList.remove("drawer");
 }, true);
+
+/* ================= ⚙️ Settings (v0.9): volume per sound family, mute, steering ================= */
+const SET_ROWS = [
+  ["master", "🔊", "ווליום כללי"],
+  ["engine", "🚙", "מנוע ורוח"],
+  ["horn",   "📯", "צופר"],
+  ["music",  "🎵", "מוזיקה"],
+  ["fx",     "🔔", "איתות וביפים"],
+  ["crash",  "💥", "התנגשות וטעויות"],
+  ["praise", "🌟", "שבחים ובונוסים"]
+];
+// a short sample of each family, so the child hears the new level right away
+const SET_SAMPLE = {
+  master() { beep(784, .12, "sine", .12, 0, "master"); setTimeout(() => beep(1047, .14, "sine", .1, 0, "master"), 90); },
+  engine() {
+    const a = ac(); if (!a || muted) return;
+    const o = a.createOscillator(), g = a.createGain(), t = a.currentTime;
+    o.type = "sawtooth"; o.frequency.setValueAtTime(45, t); o.frequency.linearRampToValueAtTime(110, t + .35);
+    g.gain.setValueAtTime(.05, t); g.gain.linearRampToValueAtTime(0.0001, t + .45);
+    o.connect(g); g.connect(bus.engine); o.start(t); o.stop(t + .5);
+  },
+  horn()   { beep(420, .18, "sawtooth", .2, 0, "horn"); beep(520, .18, "sawtooth", .15, 0, "horn"); },
+  music()  { [523, 659, 784].forEach((f, i) => setTimeout(() => beep(f, .12, "square", .045, 0, "music"), i * 110)); },
+  fx()     { sfx.signal(true); setTimeout(() => sfx.signal(false), 120); },
+  crash()  { beep(320, .2, "sine", .3, 90, "crash"); beep(180, .16, "triangle", .18, 70, "crash"); },
+  praise() { sfx.coin(); }
+};
+const setOpen = () => $("setOver").classList.contains("show");
+let setSampleAt = 0;
+(function buildSettings() {
+  const grid = $("setGrid");
+  SET_ROWS.forEach(([k, ic, lb]) => {
+    const row = document.createElement("label");
+    row.className = "setRow" + (k === "master" ? " master" : "");
+    row.innerHTML = `<span class="sLb"><span class="ic">${ic}</span>${lb}</span>` +
+      `<input type="range" class="setRng" id="vol_${k}" min="0" max="100" step="5" aria-label="${lb}">` +
+      `<output id="volOut_${k}"></output>`;
+    grid.appendChild(row);
+    const r = row.querySelector("input");
+    r.addEventListener("input", () => {
+      settings.vol[k] = clamp(Math.round(+r.value), 0, 100);
+      if (muted) { muted = settings.muted = false; syncMuteUI(); }   // moving a slider turns the sound back on
+      ac(); applyVolumes(); saveSettings(); syncSetSliders();
+      const now = performance.now();
+      if (now - setSampleAt > 110) { setSampleAt = now; try { SET_SAMPLE[k](); } catch (e) {} }
+    });
+  });
+})();
+function syncSetSliders() {
+  SET_ROWS.forEach(([k]) => {
+    const r = $("vol_" + k), o = $("volOut_" + k);
+    if (!r || !o) return;
+    const v = settings.vol[k];
+    if (+r.value !== v) r.value = v;
+    r.style.setProperty("--p", v + "%");
+    o.textContent = v + "%";
+  });
+}
+function openSettings() {
+  ac();
+  $("app").classList.remove("drawer");
+  // nothing keeps driving while the panel is open
+  gasTouch = gasKey = brakeTouch = brakeKey = false; keySteer = 0; touches.clear(); updateTouchSteer(); wheelDrag = null;
+  press($("gas"), false); press($("brake"), false);
+  syncSetSliders(); syncMuteUI(); syncTiltUI();
+  $("setOver").classList.add("show");
+  const c = $("setCard"); c.scrollTop = 0; c.style.animation = "none"; void c.offsetWidth; c.style.animation = "";
+}
+function closeSettings() {
+  $("setOver").classList.remove("show");
+  lastT = performance.now();                  // no jump in time after the pause
+}
+$("bSet").onclick = () => { sfx.click(); $("bSet").blur(); openSettings(); };
+$("cSet").onclick = () => { sfx.click(); $("cSet").blur(); openSettings(); };
+$("setClose").onclick = () => { sfx.click(); closeSettings(); };
+$("setOver").addEventListener("click", e => { if (e.target === $("setOver")) { sfx.click(); closeSettings(); } });
+$("setMute").onclick = () => { setMuted(!muted); $("setMute").blur(); if (!muted) SET_SAMPLE.master(); };
+$("setReset").onclick = () => {
+  settings.vol = soundDefaults();
+  muted = settings.muted = false;
+  ac(); applyVolumes(); saveSettings(); syncMuteUI(); syncSetSliders();
+  SET_SAMPLE.master(); $("setReset").blur();
+};
+syncSetSliders();
 
 // small round buttons ON the wheel (they turn with it, the pictures stay upright)
 const wheelBtns = { wTurbo: "bTurbo", wLights: "bLights", wCam: "bCam", wMusic: "bMusic", wFunny: "bFunny" };
@@ -1257,7 +1461,7 @@ function stalkAct(id, dir) {          // dir: 1 = up, -1 = down
       clearTimeout(b.kt); b.kt = setTimeout(() => { b.kick = false; syncStalks(); }, 320);
     }
   }
-  beep(1500, .03, "square", .08); beep(700, .05, "square", .05); vibrate(20);
+  sfx.stalk(); vibrate(20);
   syncStalks();
 }
 for (const id of ["stSig", "stWipe"]) {
@@ -1329,6 +1533,7 @@ const keyUp = {
 const typing = e => e.target && e.target.tagName === "INPUT";
 document.addEventListener("keydown", e => {
   if (typing(e)) { if (e.key === "Enter") { e.preventDefault(); if (e.target.id === "codeIn") saveCode(); else savePlayer(); } return; }
+  if (setOpen()) { if (e.code === "Escape" || (e.code === "Enter" && !(e.target && e.target.closest && e.target.closest("#setCard button")))) { e.preventDefault(); closeSettings(); } return; }
   if ($("codeOver").classList.contains("show")) { if (e.code === "Escape") closeCode(); return; }
   if ($("boardOver").classList.contains("show") && (e.code === "Enter" || e.code === "Escape")) { e.preventDefault(); closeBoard(); return; }
   const fn = keyDown[e.code];
@@ -1349,7 +1554,7 @@ setInterval(() => {
   blink = !blink;
   const L = (sig.L || sig.haz) && blink, R = (sig.R || sig.haz) && blink;
   $("iL").classList.toggle("on", L); $("iR").classList.toggle("on", R);
-  if (sig.L || sig.R || sig.haz) beep(blink ? 1800 : 1400, .03, "square", .05);
+  if (sig.L || sig.R || sig.haz) sfx.signal(blink);
   $("bL").classList.toggle("on", sig.L); $("bR").classList.toggle("on", sig.R); $("bHaz").classList.toggle("on", sig.haz);
   syncStalks();
 }, 450);
@@ -3077,8 +3282,10 @@ let lastT = performance.now();
 function loop(now) {
   const dt = Math.min(0.05, Math.max(0, (now - lastT) / 1000));
   lastT = now;
-  update(dt);
-  tickAlerts(dt);
+  if (!setOpen()) {                           // ⚙️ הגדרות open: the drive waits (the road is still drawn)
+    update(dt);
+    tickAlerts(dt);
+  }
   draw(dt);
   updateHud();
   updateHint();
