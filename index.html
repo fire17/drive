@@ -358,13 +358,25 @@
   @keyframes assistP{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.07)}}
   .main.ovl .assist{top:118px;font-size:18px;padding:4px 12px}
   .main.ovl .assist b{font-size:30px}
+  /* ---- tilt / wheel picker (v0.8) ---- */
+  .steerPick{display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap}
+  .steerPick .spT{font-size:14px;font-weight:700;color:var(--muted)}
+  .steerPick button{flex-direction:row;gap:5px;font-size:16px;padding:5px 12px}
+  .steerPick button .ic{font-size:18px}
+  .steerPick #sCenter{font-size:13px;padding:5px 9px}
+  .tiltMsg{font-size:14px;font-weight:700;color:var(--amber)}
+  @media (orientation:landscape) and (max-height:500px){
+    .steerPick button{font-size:14px;padding:3px 10px}
+    .steerPick .spT{font-size:12px}
+  }
 </style>
 </head>
 <body>
 <div class="app" id="app">
   <header>
-    <h1>🚙 נהג <span>צעיר</span><small>גרסה 0.7.3</small></h1>
+    <h1>🚙 נהג <span>צעיר</span><small>גרסה 0.8</small></h1>
     <div class="hdrEnd">
+      <button class="mute" id="bCenter" title="🎯 מרכז: ההגה חוזר לאמצע" hidden>🎯</button>
       <button class="mute" id="mute" title="צלילים">🔊</button>
       <div class="gear" id="gear">
         <button data-g="P">P</button><button data-g="R">R</button><button data-g="N">N</button><button data-g="D" class="on">D</button>
@@ -421,6 +433,13 @@
           </div>
           <div class="big" id="cBig">🚙</div>
           <h2 id="cTitle">איך משחקים?</h2>
+          <div class="steerPick" id="steerPick" hidden>
+            <span class="spT">איך נוהגים?</span>
+            <button id="sTilt"><span class="ic">📱</span>הטיה</button>
+            <button id="sWheel"><span class="ic">🎡</span>הגה</button>
+            <button id="sCenter" hidden>🎯 מרכז</button>
+          </div>
+          <div class="tiltMsg" id="tiltMsg" hidden></div>
           <div class="aim" id="cAim">
             <div class="a1">🎯 המטרה: לנסוע כמה שיותר רחוק!</div>
             <div class="a2" id="cAim2">⏱️ יש לך 3 דקות. כל טעות נהיגה = מינוס 10 שניות</div>
@@ -429,7 +448,8 @@
           <div class="dist" id="cDist" hidden><small>📏 נסעת</small><b><span id="cDistN">0</span><i>מ׳</i></b></div>
           <div class="howto" id="cHow">
             <div><b>⚡ גז</b> = נוסעים · <b>🛑 ברקס</b> = עוצרים</div>
-            <div><b>🎡 הגה</b> = ימינה ושמאלה</div>
+            <div id="howWheel"><b>🎡 הגה</b> = ימינה ושמאלה</div>
+            <div id="howTilt" hidden><b>📱 הטיה</b> = הטו את הטאבלט ימינה ושמאלה כדי לנהוג</div>
             <div><b>⬅️ ➡️ איתות</b> = לפני שעוברים נתיב</div>
             <div><b>🚗↔️ מרחק</b> = לא צמוד לרכב שלפניך</div>
             <div><b>🚫 50</b> = לא מהר יותר מהשלט</div>
@@ -522,6 +542,8 @@
     <button id="bMusic"><span class="ic" id="musicIc">🎵</span><span class="lb">מוזיקה</span></button>
     <button id="bFunny"><span class="ic">🤡</span><span class="lb">צופר מצחיק</span></button>
     <button id="bCam"><span class="ic">📷</span><span class="lb">מצלמה אחורית</span></button>
+    <button id="bTilt" hidden><span class="ic" id="tiltIc">📱</span><span class="lb" id="tiltLb">הטיה</span></button>
+    <button id="bCenter2" hidden><span class="ic">🎯</span><span class="lb">מרכז</span></button>
   </div>
 </div>
 
@@ -549,7 +571,11 @@ const RULES = {
   LANE_SNAP_STEER: 0.18,    // "near neutral": steering below this (rad) lets the lane snap work
   TURN_ASSIST_DIST: 150,    // meters: a correct signal this close to a junction starts the turn assist
   TURN_ASSIST_TIME: 1.0,    // seconds the assist takes to ease the jeep into the turning lane
-  SIGN_EARLY: 1.5           // the blue direction sign shows up this many times earlier than in drive11
+  SIGN_EARLY: 1.5,          // the blue direction sign shows up this many times earlier than in drive11
+  // ---- tilt steering (v0.8): the whole tablet / phone is the wheel ----
+  TILT_DEAD_DEG: 3,         // tilt (degrees from the calibrated centre) that still counts as "straight": steer is exactly 0
+  TILT_FULL_DEG: 30,        // tilt (degrees) that reaches full lock (±STEER_LOCK)
+  TILT_SMOOTH: 12           // smoothing rate per second (higher = follows the tilt faster, lower = calmer)
 };
 const STEER_LOCK = RULES.FULL_LOCK_DEG * Math.PI / 180 * RULES.STEER_GAIN;   // max steering (rad), about 2.36
 const $ = id => document.getElementById(id);
@@ -1030,6 +1056,159 @@ const releaseWheel = e => { if (wheelDrag && (!e || e.pointerId === wheelDrag.id
 wh.addEventListener("pointerup", releaseWheel);
 wh.addEventListener("pointercancel", releaseWheel);
 wh.addEventListener("lostpointercapture", releaseWheel);
+
+/* ================= Tilt steering (v0.8): the whole tablet / phone is the wheel ================= */
+// The angle we use is "how far the user's RIGHT edge of the screen has gone down", in degrees
+// (positive = steer right, like steer > 0; negative = steer left, like the left arrow key).
+// From the DeviceOrientation angles (beta = front/back about the device x axis, gamma = left/right
+// about the device y axis) the world "up" direction seen from the device is
+//   up = (-sin(gamma)·cos(beta), sin(beta), cos(gamma)·cos(beta))   (device x = right, y = top, z = out of the screen)
+// so  rightDown = sin(gamma)·cos(beta)  is how much the device's own right edge points down, and
+//     topUp     = sin(beta)              is how much the device's own top edge points up.
+// Which device edge is the user's right depends on how the screen is rotated (screen.orientation.angle,
+// or the older window.orientation; the angle is how far the device was turned counter-clockwise):
+//   0   portrait            : user's right = device right  -> asin(rightDown)   (= gamma when held flat-ish)
+//   180 portrait upside-down: user's right = device left   -> -asin(rightDown)  (= -gamma)
+//   90  landscape, top edge on the user's LEFT : user's right = device bottom -> right side down = top up
+//                                                -> asin(topUp)   (= beta)
+//   270 (-90) landscape, top edge on the user's RIGHT : user's right = device top -> -asin(topUp)  (= -beta)
+// In every case: turning the device like a wheel with its top edge to the LEFT lowers the user's left side,
+// so the value goes negative = steer left. For small tilts this is exactly gamma / beta as above, but
+// unlike raw beta/gamma it does not jump when the tablet is held upright (where the Euler angles flip).
+const TILT_KEY = "youngDriverSteer";                    // "tilt" or "wheel" (only a choice the user tapped)
+const tiltCoarse = (() => { try { return matchMedia("(pointer:coarse)").matches; } catch (e) { return false; } })();   // a touch screen
+// iOS / iPadOS 13+ needs a permission tap (desktop Safari also has the function but no sensor, so touch screens only)
+const tiltNeedsPerm = tiltCoarse && typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function";
+const tiltLoadAt = performance.now();
+let tiltPref = null;
+try { const v = localStorage.getItem(TILT_KEY); if (v === "tilt" || v === "wheel") tiltPref = v; } catch (e) { tiltPref = null; }
+let tiltMode = tiltPref === "tilt" || (tiltPref === null && tiltNeedsPerm);   // what the user wants (iOS: asked on the start tap)
+let tiltSeen = false, tiltAt = -1e9, tiltRaw = 0, tiltCenter = null, tiltPerm = tiltNeedsPerm ? "ask" : "none", tiltCheckT = 0;
+function tiltSave(v) { try { localStorage.setItem(TILT_KEY, v); } catch (e) {} }
+function screenAngle() {
+  let a = 0;
+  try {
+    if (screen.orientation && typeof screen.orientation.angle === "number") a = screen.orientation.angle;
+    else if (typeof window.orientation === "number") a = window.orientation;   // older iOS: 0, 90, -90, 180
+  } catch (e) { a = 0; }
+  return ((Math.round(a / 90) * 90) % 360 + 360) % 360;   // 0 / 90 / 180 / 270
+}
+function onTilt(e) {
+  const b = e && e.beta, g = e && e.gamma;
+  if (typeof b !== "number" || typeof g !== "number" || !isFinite(b) || !isFinite(g)) return;   // desktop: nulls, ignore
+  const D = Math.PI / 180, ang = screenAngle();
+  const rightDown = clamp(Math.sin(g * D) * Math.cos(b * D), -1, 1), topUp = clamp(Math.sin(b * D), -1, 1);
+  const deg = (ang === 0 ? Math.asin(rightDown) : ang === 180 ? -Math.asin(rightDown)
+             : ang === 90 ? Math.asin(topUp) : -Math.asin(topUp)) / D;
+  tiltRaw = deg; tiltAt = performance.now();
+  if (tiltPerm === "ask") tiltPerm = "granted";              // readings arrive without a prompt (Android / Samsung)
+  if (tiltCenter === null) tiltCenter = deg;               // calibration: this reading is "straight ahead"
+  if (!tiltSeen) {
+    tiltSeen = true;
+    if (tiltPref === null && tiltAt - tiltLoadAt < 1500) tiltMode = true;   // default: tilt ON when the sensor answers
+    syncTiltUI();
+  }
+}
+window.addEventListener("deviceorientation", onTilt);
+function tiltCalibrate() { tiltCenter = null; }            // the next reading becomes the new centre
+// only after a real reading (desktop: never); if the sensor goes quiet for 2 s the wheel springs back as usual
+const tiltActive = () => tiltMode && tiltCenter !== null && performance.now() - tiltAt < 2000;
+// the steering the tilt asks for: exactly 0 inside the dead zone (so the lane snap and turn assist keep working)
+function tiltTarget() {
+  if (tiltCenter === null) return 0;
+  const d = tiltRaw - tiltCenter, a = Math.abs(d);
+  if (a <= RULES.TILT_DEAD_DEG) return 0;
+  return Math.sign(d) * clamp((a - RULES.TILT_DEAD_DEG) / (RULES.TILT_FULL_DEG - RULES.TILT_DEAD_DEG), 0, 1) * STEER_LOCK;
+}
+// exponential smoothing toward the target; back inside the dead zone it lands on exactly 0
+function tiltStep(s, dt) {
+  const t = tiltTarget();
+  s += (t - s) * (1 - Math.exp(-dt * RULES.TILT_SMOOTH));
+  if (t === 0 && Math.abs(s) < 0.03) s = 0;
+  return clamp(s, -STEER_LOCK, STEER_LOCK);
+}
+function tiltMsg(text) {
+  const m = $("tiltMsg");
+  m.textContent = text || ""; m.hidden = !text;
+  if (text) toast(text, 2.5);
+}
+function tiltFallback(text) {                              // back to the on-screen wheel
+  tiltMode = false; tiltSave("wheel"); tiltUnlock(); tiltMsg(text); syncTiltUI();
+}
+// no reading soon after tilt was chosen = no sensor on this device (loud = the user tapped "tilt" just now)
+function tiltWatch(loud) {
+  clearTimeout(tiltCheckT);
+  tiltCheckT = setTimeout(() => {
+    if (tiltMode && !tiltSeen) tiltFallback(loud ? "📱 אין חיישן הטיה במכשיר הזה, נוהגים עם ההגה 🎡" : "");
+  }, 1300);
+}
+// iOS 13+: must be called straight from a tap (the toggle or the start button).
+// Newer Chrome also has this function: if readings already arrive, no prompt is needed at all.
+const TILT_DENIED = "📱 אין אישור להטיה, נוהגים עם ההגה 🎡";
+function tiltAskPermission(loud) {
+  if (!tiltNeedsPerm || tiltSeen || tiltPerm === "granted") { if (!tiltSeen) tiltWatch(loud); return; }
+  let p;
+  try { p = DeviceOrientationEvent.requestPermission(); } catch (e) { p = null; }
+  if (!p || !p.then) { tiltWatch(loud); return; }
+  p.then(r => {
+    if (r === "denied") { tiltPerm = "denied"; tiltFallback(TILT_DENIED); return; }
+    if (r === "granted") tiltPerm = "granted";
+    tiltCalibrate(); tiltWatch(loud); syncTiltUI();       // "granted" (or an unknown answer): wait for a real reading
+  }).catch(() => { tiltPerm = "denied"; tiltFallback(TILT_DENIED); });
+}
+// nice to have: when installed / fullscreen, keep the screen from rotating while the device is tilted.
+// It locks the orientation the user is already in (landscape stays landscape). Failing is fine.
+function tryLockOrientation() {
+  try {
+    const fs = document.fullscreenElement || document.webkitFullscreenElement;
+    const inst = (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone;
+    if (!(fs || inst) || !screen.orientation || typeof screen.orientation.lock !== "function") return;
+    const type = String(screen.orientation.type || "").indexOf("portrait") === 0 ? "portrait" : "landscape";
+    const p = screen.orientation.lock(type);
+    if (p && p.catch) p.catch(() => {});
+  } catch (e) {}
+}
+function tiltUnlock() { try { if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch (e) {} }
+function setTiltMode(on) {
+  tiltMsg("");
+  tiltSave(on ? "tilt" : "wheel");
+  tiltMode = on;
+  if (on) {
+    tiltAskPermission(true);
+    tiltCalibrate(); tryLockOrientation();
+  } else tiltUnlock();
+  syncTiltUI();
+}
+function syncTiltUI() {
+  const avail = tiltSeen || tiltNeedsPerm || tiltCoarse;   // desktop with no sensor: nothing is shown
+  $("steerPick").hidden = !avail;
+  $("bTilt").hidden = !avail;
+  $("sTilt").classList.toggle("on", tiltMode);
+  $("sWheel").classList.toggle("on", !tiltMode);
+  $("sCenter").hidden = !tiltMode;
+  $("bCenter").hidden = $("bCenter2").hidden = !(tiltMode && avail);
+  $("bTilt").classList.toggle("on", tiltMode);
+  $("tiltIc").textContent = tiltMode ? "📱" : "🎡";
+  $("tiltLb").textContent = tiltMode ? "הטיה" : "הגה";
+  $("howTilt").hidden = !tiltMode;
+  $("howWheel").hidden = tiltMode;
+}
+function recentre(btn) {
+  sfx.click(); tiltCalibrate(); toast("🎯 ההגה באמצע", 1.2);
+  if (btn) btn.blur();
+}
+$("sTilt").onclick = () => { sfx.click(); $("sTilt").blur(); setTiltMode(true); };
+$("sWheel").onclick = () => { sfx.click(); $("sWheel").blur(); setTiltMode(false); };
+$("bTilt").onclick = () => { sfx.click(); $("bTilt").blur(); setTiltMode(!tiltMode); };
+$("sCenter").onclick = () => recentre($("sCenter"));
+$("bCenter").onclick = () => recentre($("bCenter"));
+$("bCenter2").onclick = () => recentre($("bCenter2"));
+// the screen turned: the axis changed, so the centre is taken again from the next reading
+try { if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener("change", tiltCalibrate); } catch (e) {}
+window.addEventListener("orientationchange", tiltCalibrate);
+// stored "tilt" but no sensor answers (for example a desktop): quietly use the wheel, keep the choice
+setTimeout(() => { if (tiltMode && !tiltSeen && !tiltNeedsPerm) { tiltMode = false; syncTiltUI(); } }, 1500);
+syncTiltUI();
 
 // the "⋯" drawer with the other buttons
 $("bMore").addEventListener("click", () => { $("app").classList.toggle("drawer"); $("bMore").blur(); });
@@ -1621,7 +1800,9 @@ function showCard(kind, info = {}) {
 }
 $("cBtn").onclick = () => {
   sfx.click(); $("cBtn").blur(); engineOn();
+  if (tiltMode) { tiltAskPermission(); tryLockOrientation(); }   // iOS: the permission prompt may only come from a tap
   startRun();                                  // the start card and the end card both start a new drive
+  tiltCalibrate();                             // the way the tablet is held right now = straight ahead
 };
 $("cBtn2").onclick = () => { sfx.click(); $("cBtn2").blur(); showCard("start"); };   // pick another driver
 
@@ -1657,8 +1838,9 @@ function updateCar(dt) {
 
   // steering: wheel drag, arrow keys or touching the road
   const wanted = keySteer || touchSteer;
-  if (!wheelDrag) {
+  if (!wheelDrag) {                                         // a finger on the wheel always wins (also in tilt mode)
     if (wanted) steer += (wanted * 1.6 - steer) * Math.min(1, dt * 10);
+    else if (tiltActive()) steer = tiltStep(steer, dt);     // tilt mode: steer follows the device, no spring-back
     else steer *= Math.pow(RULES.STEER_RETURN, dt * 60);
   }
   const grip = Math.abs(v) < 1 ? 0 : 0.45 + 0.55 * Math.min(1, Math.abs(v) / 50);
