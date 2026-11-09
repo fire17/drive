@@ -91,7 +91,7 @@
   #wTurbo{background:radial-gradient(circle at 40% 35%,#ffb15e,#d9480f)}
   #wTurbo.cool{filter:grayscale(.8) brightness(.8)}
   /* stalk levers beside the wheel */
-  .stalk{position:absolute;top:calc(var(--wcy,50%) - var(--ws,200px)*.12);transform:translateY(-50%);width:var(--sw,48px);height:clamp(90px,calc(var(--ws,200px)*.42),170px);display:flex;flex-direction:column;align-items:center;touch-action:none;cursor:ns-resize;z-index:1}
+  .stalk{position:absolute;top:calc(var(--wcy,50%) - var(--ws,200px)*.12);transform:translateY(-50%);width:var(--sw,48px);height:clamp(115px,calc(var(--ws,200px)*.54),218px);display:flex;flex-direction:column;align-items:center;touch-action:none;cursor:ns-resize;z-index:1}
   .stalk.sL{left:calc(50% - var(--ws,200px)/2 - var(--sw,48px) + 12px)}.stalk.sR{right:calc(50% - var(--ws,200px)/2 - var(--sw,48px) + 12px)}
   .stLb{font-size:11px;font-weight:900;color:var(--muted);white-space:nowrap;direction:rtl}
   .stTrack{position:relative;flex:1;width:100%;min-height:0;border-radius:14px;background:#0b0d13aa;border:1px solid var(--line);display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:3px 0}
@@ -99,7 +99,7 @@
   .stA i{font-style:normal;font-size:9px;font-weight:700;color:var(--muted);direction:rtl}
   .stalk.up .stA:first-child,.stalk.dn .stA:last-child{opacity:1}
   .stalk.up .stA:first-child i,.stalk.dn .stA:last-child i{color:var(--amber)}
-  .arm{position:absolute;top:50%;height:12px;width:calc(100% + 18px);margin-top:-6px;border-radius:6px;background:linear-gradient(180deg,#5b6380,#2b3043);box-shadow:0 3px 6px #000a;transition:transform .18s cubic-bezier(.3,1.6,.5,1)}
+  .arm{position:absolute;top:50%;height:13px;width:calc((100% + 18px) * 1.28);margin-top:-6px;border-radius:6px;background:linear-gradient(180deg,#5b6380,#2b3043);box-shadow:0 3px 6px #000a;transition:transform .18s cubic-bezier(.3,1.6,.5,1)}
   .arm b{position:absolute;top:50%;width:20px;height:20px;margin-top:-10px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#8b93b3,#3b4258);border:2px solid #ffffff30}
   .sL .arm{left:4px;transform-origin:calc(100% - 6px) 50%}.sL .arm b{left:-6px}
   .sR .arm{right:4px;transform-origin:6px 50%}.sR .arm b{right:-6px}
@@ -404,12 +404,31 @@
     #setClose{font-size:18px;padding:7px 28px}
     .setCard > .cardBtns{padding:6px 0 8px}
   }
+  /* ---- v0.10: the name step, the end-of-drive table, rain ---- */
+  .newP input{font-size:26px;padding:10px 14px;width:280px;border-width:3px}
+  .newP .pAv{font-size:46px;line-height:1}
+  .overCard.adding .whoT{font-size:24px}
+  .overCard.adding .avs button{width:48px;height:48px;font-size:26px}
+  .who.need .whoList{animation:needP .5s 2}
+  @keyframes needP{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .whoNeed{font-size:15px;font-weight:900;color:var(--red)}
+  .lb tr.now td{background:#4fc3ff33;color:#fff;font-weight:900}
+  .lb tr.now td.nm{color:var(--blue)}
+  .lb tr.now{outline:2px solid var(--blue);outline-offset:-2px;animation:nowP 1s ease-in-out 3}
+  @keyframes nowP{50%{outline-color:#fff}}
+  .lb .nowTag{display:inline-block;font-size:11px;font-weight:900;color:#06121c;background:var(--blue);border-radius:8px;padding:0 6px;margin-inline-start:4px;vertical-align:middle}
+  .lbRun{font-size:17px;font-weight:900;color:var(--blue);text-align:center}
+  .rainLim{flex:none;display:flex;align-items:center;gap:1px;height:30px;padding:0 5px;border-radius:10px;background:#1d4ed8;color:#fff;font-weight:900;font-size:13px;border:2px solid #93c5fd;direction:ltr}
+  .rainLim.warn{animation:warnP .5s infinite;box-shadow:0 0 18px #f43f5e;border-color:#f43f5e}
+  .rainBadge{position:absolute;top:44px;left:8px;z-index:3;direction:rtl;pointer-events:none;background:#1d4ed8ee;color:#fff;border:2px solid #93c5fd;border-radius:12px;padding:2px 10px;font-size:16px;font-weight:900;white-space:nowrap;box-shadow:0 0 14px #3b82f688}
+  .rainBadge.warn{border-color:#f43f5e;box-shadow:0 0 18px #f43f5e}
+  @media (orientation:landscape) and (max-height:500px){ .rainBadge{top:32px;font-size:13px;padding:1px 8px} .newP input{font-size:20px;padding:6px 12px} .newP .pAv{font-size:30px} }
 </style>
 </head>
 <body>
 <div class="app" id="app">
   <header>
-    <h1>🚙 נהג <span>צעיר</span><small>גרסה 0.9</small></h1>
+    <h1>🚙 נהג <span>צעיר</span><small>גרסה 0.10</small></h1>
     <div class="hdrEnd">
       <button class="mute" id="bCenter" title="🎯 מרכז: ההגה חוזר לאמצע" hidden>🎯</button>
       <button class="mute" id="mute" title="צלילים">🔊</button>
@@ -427,7 +446,7 @@
           <div class="ind h" id="iHigh">🔦</div>
           <div class="ind w" id="iR">➡️</div>
         </div>
-        <div class="spdRow"><div class="lim" id="limit" title="המהירות המותרת">50</div><div class="speed" id="speed">0</div><div class="unit">קמ״ש</div></div>
+        <div class="spdRow"><div class="lim" id="limit" title="המהירות המותרת">50</div><div class="rainLim" id="rainLim" title="בגשם נוסעים לאט יותר" hidden>🌧️<b id="rainLimN">30</b></div><div class="speed" id="speed">0</div><div class="unit">קמ״ש</div></div>
       </div>
       <div class="stripR" id="stripR">
         <div class="bars">
@@ -450,6 +469,7 @@
         <span>📏 <b id="meters">0</b> מ׳</span>
       </div>
       <div class="hint hide" id="hint"></div>
+      <div class="rainBadge" id="rainBadge" hidden>🌧️ בגשם: עד <bdi id="rainBadgeN">30</bdi></div>
       <div class="alert hide" id="alert"></div>
       <div class="pen" id="pen"><bdi dir="ltr">−10</bdi> שניות</div>
       <div class="plus" id="plus"><bdi dir="ltr">+5</bdi></div>
@@ -458,10 +478,12 @@
       <div class="over show" id="over">
         <div class="overCard" id="card">
           <div class="who" id="who" hidden>
-            <div class="whoT" id="whoT">מי נוהג?</div>
+            <div class="whoT" id="whoT">👤 מי נוהג?</div>
             <div class="whoList" id="whoList"></div>
+            <div class="whoNeed" id="whoNeed" hidden>👆 קודם בוחרים מי נוהג</div>
             <div class="newP" id="newP" hidden>
-              <input id="pName" maxlength="14" placeholder="מה השם?" autocomplete="off" enterkeyhint="done">
+              <div class="pAv" id="pAv">🚙</div>
+              <input id="pName" maxlength="14" placeholder="מה השם שלך?" autocomplete="off" enterkeyhint="done" aria-label="השם של הנהג">
               <div class="avs" id="avs"></div>
               <div class="cardBtns"><button class="again alt" id="pCancel">ביטול</button><button class="again" id="pSave">✔️ שמור</button></div>
             </div>
@@ -490,6 +512,7 @@
             <div><b>🚫 50</b> = לא מהר יותר מהשלט</div>
             <div><b>↪️ שלט כחול</b> = פונים לאן שהוא מראה</div>
             <div><b>🚦 אדום</b> = עוצרים לפני הקו</div>
+            <div><b>🌧️ גשם</b> = נוסעים לאט יותר ומדליקים מגבים</div>
             <div><b>🪙 מטבעות</b> = אוספים בדרך</div>
           </div>
           <div class="goal" id="cGoal">משחק לילדים מגיל 5-6 ומעלה 🚙</div>
@@ -508,6 +531,7 @@
       <div class="over" id="boardOver">
         <div class="overCard board">
           <h2 id="lbTitle">🏆 טבלת האלופים</h2>
+          <div class="lbRun" id="lbRun" hidden></div>
           <div class="lbTabs" id="lbTabs" hidden>
             <button id="tabDev" class="on">📱 במכשיר הזה</button>
             <button id="tabFam">👨‍👩‍👦 המשפחה</button>
@@ -518,7 +542,7 @@
             <tbody id="lbBody"></tbody>
           </table>
           <div class="lbNote" id="lbEmpty" hidden>עוד אין שחקנים. לוחצים על ➕ שחקן חדש!</div>
-          <div class="lbNote">מי שנסע הכי רחוק עם הכי מעט טעויות מנצח · הטבלה שמורה במכשיר הזה</div>
+          <div class="lbNote">מי שנסע הכי רחוק מנצח (בתיקו: פחות טעויות) · הטבלה שמורה רק במכשיר הזה</div>
           </div>
           <div class="famBox" id="famBox" hidden>
             <div class="spin" id="famSpin"></div>
@@ -598,6 +622,12 @@
         <button id="setWheel"><span class="ic">🎡</span>הגה</button>
         <button id="setCenter" hidden><span class="ic">🎯</span>מרכז</button>
       </div>
+      <div class="setSub">🌧️ גשם</div>
+      <div class="setBtns">
+        <button id="setRainAuto"><span class="ic">🌦️</span>לפעמים</button>
+        <button id="setRainOn"><span class="ic">🌧️</span>תמיד גשם</button>
+        <button id="setRainOff"><span class="ic">☀️</span>בלי גשם</button>
+      </div>
       <div class="cardBtns"><button class="again" id="setClose">✔️ סגור</button></div>
     </div>
   </div>
@@ -632,6 +662,37 @@ const RULES = {
   TILT_DEAD_DEG: 3,         // tilt (degrees from the calibrated centre) that still counts as "straight": steer is exactly 0
   TILT_FULL_DEG: 30,        // tilt (degrees) that reaches full lock (±STEER_LOCK)
   TILT_SMOOTH: 12,          // smoothing rate per second (higher = follows the tilt faster, lower = calmer)
+  // ---- speed (v0.10): the jeep CAN go faster than the sign, so slowing down is the driver's job ----
+  SPEED_TOP_OVER: 25,       // top speed is always at least the posted limit + this (km/h), at every level
+  SPEED_OVER: 5,            // km/h over the limit (in rain: over the rain limit) before it counts
+  SPEED_PEN_T: 1.5,         // seconds too fast before it is a driving mistake (-PENALTY)
+  SPEED_COOL: 4,            // seconds between two speed mistakes
+  // ---- rain (v0.10): in rain the safe limit is lower, the road is slippery and the wipers matter ----
+  RAIN_MODE: "auto",        // the default of ⚙️ הגדרות › גשם: "auto" = sometimes, "on" = always, "off" = never
+  RAIN_CHANCE: 0.75,        // "auto": the chance that a drive gets rain at all
+  RAIN_FIRST: [25, 60],     // "auto": the first rain starts this many seconds into the drive (random in the range)
+  RAIN_LEN: [30, 50],       // seconds one rain lasts
+  RAIN_GAP: [40, 70],       // seconds of dry road before it may rain again
+  RAIN_LIMIT_DROP: 20,      // in rain the safe limit = the sign minus this ...
+  RAIN_LIMIT_MIN: 30,       // ... but never below this
+  RAIN_GRACE: 4,            // seconds after the rain starts to slow down before the speed rule counts
+  RAIN_GRIP: 2.5,           // how fast the jeep follows the wheel in rain (dry: 5, 4x4: 18; lower = more slide)
+  RAIN_BRAKE: 0.75,         // the brakes work this much in rain (a longer stopping distance)
+  RAIN_WIPER_REMIND: 3,     // seconds of rain with the wipers off before a kind reminder (never a penalty)
+  // ---- turns (v0.10) ----
+  LEFT_FROM_LEVEL: 1,       // left turns come from this level on, balanced with the right turns
+  // ---- pedestrians (v0.10): stop at the crossing; the jeep NEVER touches anyone ----
+  PED_EVENTS_PER_DRIVE: 3,  // about this many pedestrian moments per drive (one more if bonus time makes it long)
+  PED_FIRST_AFTER: 20,      // seconds: none in the first part of the drive
+  PED_CROSSWALK_SHARE: 0.85,// the share of the moments that are at a zebra crossing (the rest: someone steps out)
+  PED_PEOPLE_SHARE: 0.7,    // at a crossing: the chance that people are crossing (else the road is clear)
+  PED_SIGN_DIST: 120,       // meters: the "⚠️ מעבר חצייה" sign stands this far before the crossing
+  PED_WALK_DIST: 30,        // meters: people at the crossing step off when the jeep is this close (or stopped)
+  PED_PENALTY: 30,          // seconds off for an emergency brake (a normal mistake is PENALTY)
+  PED_STOP_BONUS: 3,        // seconds for stopping and waiting for the people (0 = off)
+  PED_STOP_GAP: 1.5,        // meters: the jeep always stays at least this far before the crossing / the person
+  PED_EMERG_MARGIN: 2,      // meters of extra room: the emergency brake starts this much before the last moment
+  PED_DART_MAX_LIMIT: 50,   // someone steps out only where the safe limit is at most this (else it is a crossing)
   // ---- sound volumes (v0.9): the starting level of each slider in ⚙️ הגדרות, in percent (0-100) ----
   SOUND_DEFAULTS: {
     master: 30,             // 🔊 ווליום כללי (everything goes through it)
@@ -657,7 +718,8 @@ const bus = {};
 /* ---- settings (v0.9), saved on this device as JSON under SETTINGS_KEY ---- */
 const SETTINGS_KEY = "youngDriverSettings";
 function soundDefaults() { const v = {}; for (const k in RULES.SOUND_DEFAULTS) v[k] = RULES.SOUND_DEFAULTS[k]; return v; }
-const settings = { vol: soundDefaults(), muted: false, steer: null };
+const RAIN_MODES = ["auto", "on", "off"];
+const settings = { vol: soundDefaults(), muted: false, steer: null, rain: RAIN_MODES.includes(RULES.RAIN_MODE) ? RULES.RAIN_MODE : "auto" };
 (function loadSettings() {                  // runs before any sound can play; bad or missing data = the defaults
   let d = null;
   try { d = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "null"); } catch (e) { d = null; }
@@ -669,6 +731,7 @@ const settings = { vol: soundDefaults(), muted: false, steer: null };
   }
   settings.muted = d.muted === true;
   if (d.steer === "tilt" || d.steer === "wheel") settings.steer = d.steer;
+  if (RAIN_MODES.includes(d.rain)) settings.rain = d.rain;
 })();
 muted = settings.muted;
 function saveSettings() {
@@ -731,6 +794,7 @@ const sfx = {
   dingDong() { beep(784, .45, "sine", .2, 0, "crash"); beep(1568, .2, "sine", .03, 0, "crash"); setTimeout(() => beep(622, .6, "sine", .2, 0, "crash"), 320); },
   signal(on) { beep(on ? 1800 : 1400, .03, "square", .05, 0, "fx"); },
   stalk() { beep(1500, .03, "square", .08, 0, "fx"); beep(700, .05, "square", .05, 0, "fx"); },
+  screech() { beep(1900, .75, "sawtooth", .045, 1100, "crash"); beep(2400, .6, "square", .02, 1500, "crash"); noiseBurst(.75, .22, "crash"); },
   praise() { beep(660, 0.09, "sine", 0.12, 0, "praise"); setTimeout(() => beep(880, 0.09, "sine", 0.12, 0, "praise"), 90); setTimeout(() => beep(1175, 0.16, "sine", 0.12, 0, "praise"), 180); }
 };
 let noiseBuf = null;
@@ -896,10 +960,10 @@ function tickAlerts(dt) {
   if (alertT <= 0) nextAlert();
 }
 function clearAlerts() { alertQ.length = 0; alertCur = null; $("alert").classList.add("hide"); }
-function penalty() {
-  G.timeLeft = Math.max(0, G.timeLeft - RULES.PENALTY);   // every mistake takes 10 s off the clock
+function penalty(secs = RULES.PENALTY) {
+  G.timeLeft = Math.max(0, G.timeLeft - secs);            // every mistake takes 10 s off the clock (an emergency brake: PED_PENALTY)
   G.cleanM = 0;                                           // the clean-driving counter starts again
-  $("pen").firstElementChild.textContent = "−" + RULES.PENALTY;
+  $("pen").firstElementChild.textContent = "−" + secs;
   const p = $("pen");
   p.classList.remove("go"); void p.offsetWidth; p.classList.add("go");
   $("timer").classList.add("pen-hit"); clearTimeout(penalty.t);
@@ -956,8 +1020,11 @@ function onLaneChange(from, to) {
     showAlert("👍 איתות מצוין! <small>+1 🪙</small>", true);
     // like a real car the signal lever snaps back after the lane change,
     // unless a junction just ahead needs a turn to that side
+    // v0.10: a signalled move into the turning lane counts for that turn (left and right the same), and the lever stays on
     const nj = G.world && nextJunction();
-    if (sig[dir] && !(nj && nj.instr === dir && (nj.y > -H * 1.2 || juncDist(nj) <= JUNC_AHEAD + 5))) { sig[dir] = false; sigOffAt[dir] = G.time; sigPrev[dir] = false; syncStalks(); }
+    const forTurn = nj && nj.instr === dir && juncDist(nj) > 0 && juncDist(nj) <= JUNC_APPROACH;
+    if (forTurn) nj.sigOk = true;
+    if (sig[dir] && !forTurn) { sig[dir] = false; sigOffAt[dir] = G.time; sigPrev[dir] = false; syncStalks(); }
   } else {
     // one mistake = one penalty: an unsignalled lane change toward the turn of the junction ahead is THE
     // forgot-to-signal mistake for that turn, so the turn itself won't add a second one
@@ -989,18 +1056,23 @@ function updateRules(dt) {
   if (G.mode !== "play") { G.closeCar = null; G.speedWarn = false; return; }
   const ln = G.x < 1 ? 0 : (G.x < 2 ? 1 : 2);
   if (!G.turn && ln !== G.laneNow) { const from = G.laneNow; G.laneNow = ln; onLaneChange(from, ln); }
-  // speed limit: a little over is ok, more than 5 km/h over for 1.5 s = penalty
+  // speed limit (the rain limit in rain): a little over is ok, more than RULES.SPEED_OVER over for RULES.SPEED_PEN_T s = a mistake
   G.speedCD = Math.max(0, G.speedCD - dt);
-  G.speedWarn = G.v > G.limit + 1;
-  if (G.v > G.limit + SPEED_OVER) {
+  const L = effLimit(), wet = rainOn();
+  G.speedWarn = G.v > L + 1;
+  if (G.v > ruleLimit() + RULES.SPEED_OVER && !G.emerg) {
     G.overT += dt;
-    if (G.overT > 0.35 && !G.slowShown) { G.slowShown = true; showAlert(`🐢 לאט יותר! <small>מותר רק ${G.limit} · לוחצים 🛑 ברקס</small>`, "info"); }
-    if (G.overT >= SPEED_PEN_T && G.speedCD <= 0) {
-      G.speedPen++; G.speedCD = SPEED_COOL; G.overT = 0;
-      showAlert(`🚫 נסעת מהר מדי! <small>המהירות המותרת: ${G.limit}</small>`);
+    if (G.overT > 0.35 && !G.slowShown) {
+      G.slowShown = true;
+      showAlert(wet ? `🌧️ בגשם נוסעים לאט! <small>בגשם מותר רק ${L} · לוחצים 🛑 ברקס</small>` : `🐢 לאט יותר! <small>מותר רק ${L} · לוחצים 🛑 ברקס</small>`, "info");
+    }
+    if (G.overT >= RULES.SPEED_PEN_T && G.speedCD <= 0) {
+      G.speedPen++; if (wet) G.rainPen++;
+      G.speedCD = RULES.SPEED_COOL; G.overT = 0;
+      showAlert(wet ? `🚫 מהר מדי בגשם! <small>בגשם מותר רק ${L} קמ״ש</small>` : `🚫 נסעת מהר מדי! <small>המהירות המותרת: ${L}</small>`);
       penalty();
     }
-  } else { G.overT = 0; if (G.v < G.limit) G.slowShown = false; }
+  } else { G.overT = 0; if (G.v < L) G.slowShown = false; }
   G.distCD = Math.max(0, G.distCD - dt);
   const a = carAhead();
   const close = G.v > 10 && a.car && a.gap < safeGap(G.v);
@@ -1019,7 +1091,7 @@ function updateRules(dt) {
 function levelSettings(level) {
   const t = (level - 1) / (RULES.MAX_LEVEL - 1);      // 0 .. 1
   return {
-    topSpeed: Math.round(40 + t * 45),                 // player's top speed, km/h
+    topSpeed: Math.round(75 + t * 20),                 // player's top speed, km/h (v0.10: always over the limit, see SPEED_TOP_OVER)
     gap: 150 - t * 100,                                // meters between traffic cars
     carMin: 8 + t * 22, carMax: 16 + t * 34,           // traffic speed, km/h
     trucks: level >= 4 ? 0.1 + t * 0.1 : 0
@@ -1047,7 +1119,9 @@ function startRun() {
     laneOffset: G.laneOffset || 0, grassOffset: G.grassOffset || 0,
     speedPen: 0, speedCD: 0, overT: 0, speedWarn: false, slowShown: false, limFlash: 0,
     turnGood: 0, turnBad: 0, turnAll: 0, lightGood: 0, lightPen: 0, turn: null, assist: null,
-    secAt: sectionLen(), nextJ: level <= 1 ? rand(220, 300) : rand(140, 240)
+    secAt: sectionLen(), nextJ: level <= 1 ? rand(220, 300) : rand(140, 240),
+    playT: 0, rainPen: 0, rain: newRain(), turnBal: 0,
+    pedN: 0, pedNext: RULES.PED_FIRST_AFTER + rand(0, 8), pedGood: 0, pedPen: 0, pedHaz: null, emerg: null, skids: []
   });
   G.secKind = level % 2 ? "country" : "city";
   G.limit = limitFor(G.secKind, level);
@@ -1401,7 +1475,7 @@ function openSettings() {
   // nothing keeps driving while the panel is open
   gasTouch = gasKey = brakeTouch = brakeKey = false; keySteer = 0; touches.clear(); updateTouchSteer(); wheelDrag = null;
   press($("gas"), false); press($("brake"), false);
-  syncSetSliders(); syncMuteUI(); syncTiltUI();
+  syncSetSliders(); syncMuteUI(); syncTiltUI(); syncRainUI();
   $("setOver").classList.add("show");
   const c = $("setCard"); c.scrollTop = 0; c.style.animation = "none"; void c.offsetWidth; c.style.animation = "";
 }
@@ -1522,7 +1596,7 @@ const keyDown = {
   KeyT: () => $("bTurbo").click(), KeyO: () => $("bRoof").click(), KeyF: () => $("bFog").click(),
   KeyG: () => $("b4x4").click(), KeyU: () => $("bMusic").click(), KeyK: () => $("bFunny").click(),
   KeyC: () => $("bCam").click(),
-  Enter: () => { if (G.over) $("cBtn").click(); }
+  Enter: () => { if (G.over && $("over").classList.contains("show")) $("cBtn").click(); }
 };
 const keyUp = {
   ArrowLeft:  () => { if (keySteer < 0) keySteer = 0; },
@@ -1725,7 +1799,7 @@ function crash(c) {
   showAlert("💥 בום! התנגשת <small>שומרים מרחק ונוהגים לאט ובזהירות</small>");
   penalty();
 }
-const mistakesNow = () => (G.sigMiss || 0) + (G.distPen || 0) + (G.speedPen || 0) + (G.turnBad || 0) + (G.lightPen || 0) + (G.crashes || 0);
+const mistakesNow = () => (G.sigMiss || 0) + (G.distPen || 0) + (G.speedPen || 0) + (G.turnBad || 0) + (G.lightPen || 0) + (G.crashes || 0) + (G.pedPen || 0);
 // the clock reached 0:00: the drive is over, the distance is the result
 function endRun() {
   G.mode = "end"; G.over = true;
@@ -1737,6 +1811,7 @@ function endRun() {
   showCard("end", { m, mist, isBest });
   if (isBest) sfx.best(); else sfx.over();
   vibrate(200);
+  if (!progress.guest) openBoard({ m, mist, isBest });   // v0.10: every drive ends in the 🏆 table, this drive highlighted
 }
 // champions table: the farthest drive counts, fewer mistakes breaks a tie
 function recordRun() {
@@ -1768,13 +1843,7 @@ function renderWho() {
     b.onclick = () => { sfx.click(); selectPlayer(p.id); };
     box.appendChild(b);
   }
-  if (players.list.length) {                  // a guest can still drive without a name
-    const g = document.createElement("button");
-    g.className = "pBtn" + (progress.guest ? " on" : "");
-    g.textContent = "🚙 אורח";
-    g.onclick = () => { sfx.click(); selectPlayer("guest"); };
-    box.appendChild(g);
-  }
+  // v0.10: no "guest" button any more: every drive has a name, so it can go into the 🏆 table
   if (players.list.length < MAX_PLAYERS) {
     const add = document.createElement("button");
     add.className = "pBtn add"; add.textContent = "➕ שחקן חדש";
@@ -1788,59 +1857,83 @@ function renderAvatars() {
   for (const av of AVATARS) {
     const b = document.createElement("button");
     b.textContent = av; b.classList.toggle("on", av === newAv);
-    b.onclick = () => { newAv = av; sfx.click(); renderAvatars(); };
+    b.onclick = () => { newAv = av; sfx.click(); renderAvatars(); $("pAv").textContent = av; };
     box.appendChild(b);
   }
 }
-function openNewPlayer() {
-  sfx.click();
+function openNewPlayer(first) {
+  if (first !== true) sfx.click();
   newAv = AVATARS[players.list.length % AVATARS.length];
   $("pName").value = "";
-  renderAvatars();
-  $("newP").hidden = false; $("whoT").textContent = "➕ שחקן חדש";
+  renderAvatars(); $("pAv").textContent = newAv;
+  $("who").hidden = false; $("whoNeed").hidden = true;
+  $("newP").hidden = false; $("whoT").textContent = players.list.length ? "➕ נהג חדש: מה השם?" : "👋 שלום! מה השם שלך?";
+  $("pCancel").hidden = !players.list.length;      // the very first driver has to type a name
   $("card").classList.add("adding");
   setTimeout(() => { try { $("pName").focus(); } catch (e) {} }, 50);
 }
 function closeNewPlayer() {
-  $("newP").hidden = true; $("whoT").textContent = "מי נוהג?";
+  $("newP").hidden = true; $("whoT").textContent = "👤 מי נוהג?";
   $("card").classList.remove("adding");
   try { $("pName").blur(); } catch (e) {}
 }
 function savePlayer() {
   const name = $("pName").value.trim().slice(0, 14);
-  if (!name) { try { $("pName").focus(); } catch (e) {} sfx.gear(); return; }
+  if (!name) { try { $("pName").focus(); } catch (e) {} sfx.gear(); $("pName").placeholder = "✏️ כותבים כאן את השם"; return; }
   const p = cleanPlayer({ id: "p" + Date.now().toString(36) + Math.floor(Math.random() * 1e4), name, av: newAv }, players.list.length);
   players.list.push(p);
   closeNewPlayer();
   selectPlayer(p.id);
 }
-$("pSave").onclick = savePlayer;
+$("pSave").onclick = () => { sfx.click(); savePlayer(); };
 $("pCancel").onclick = () => { sfx.click(); closeNewPlayer(); };
 $("pName").addEventListener("pointerdown", e => e.stopPropagation());
 
-function openBoard() {
-  const rows = players.list.slice().sort((a, b) => b.bestM - a.bestM || a.bestMist - b.bestMist || b.runs - a.runs);
+// the device table: each player's farthest drive, farthest first (a tie: fewer mistakes).
+// run = this drive (from the end of a drive): it is put in its place and highlighted; when it is not the
+// player's record it gets its own row ("הנסיעה הזאת") right where it ranks
+function boardRows(run) {
+  const rows = players.list.map(p => ({ p, m: p.bestM, mist: p.bestMist, runs: p.runs, now: false }));
+  if (run) {
+    const me = rows.find(r => r.p.id === progress.id);
+    if (me && run.m === me.m && run.mist === me.mist) me.now = true;
+    else if (me) rows.push({ p: me.p, m: run.m, mist: run.mist, runs: null, now: true, extra: true });
+  }
+  rows.sort((a, b) => b.m - a.m || a.mist - b.mist || (a.extra ? 1 : 0) - (b.extra ? 1 : 0) || (b.runs || 0) - (a.runs || 0));
+  return rows;
+}
+function openBoard(run) {
+  const rows = boardRows(run && typeof run === "object" ? run : null);
   const body = $("lbBody");
   body.textContent = "";
-  rows.forEach((p, i) => {
-    const tr = document.createElement("tr");
-    const played = p.bestM > 0;
-    tr.className = (played && i < 3 ? "g" + (i + 1) : "") + (p.id === players.cur ? " me" : "");
+  let nowRank = 0;
+  rows.forEach((r, i) => {
+    const tr = document.createElement("tr"), p = r.p;
+    const played = r.m > 0 || r.extra || r.now;
+    tr.className = (played && i < 3 ? "g" + (i + 1) : "") + (p.id === players.cur ? " me" : "") + (r.now ? " now" : "");
+    if (r.now) nowRank = i + 1;
     const cells = [played && i < 3 ? ["🥇", "🥈", "🥉"][i] : String(i + 1), p.av, p.name,
-      played ? p.bestM + " מ׳" : "—", played ? String(p.bestMist) : "—", String(p.runs)];
+      played ? r.m + " מ׳" : "—", played ? String(r.mist) : "—", r.runs === null ? "" : String(r.runs)];
     cells.forEach((t, k) => {
       const td = document.createElement("td");
       td.textContent = t;
       if (k === 0) td.className = "md";
-      if (k === 2) td.className = "nm";
+      if (k === 2) {
+        td.className = "nm";
+        if (r.now) { const tag = document.createElement("span"); tag.className = "nowTag"; tag.textContent = r.extra ? "הנסיעה הזאת" : "עכשיו!"; td.appendChild(tag); }
+      }
       tr.appendChild(td);
     });
     body.appendChild(tr);
   });
+  $("lbRun").hidden = !nowRank;
+  if (nowRank) $("lbRun").textContent = `🏁 נסעת ${run.m} מ׳ · מקום ${nowRank} מתוך ${rows.length}` + (run.isBest ? " · 🏆 שיא חדש!" : "");
   $("lbEmpty").hidden = rows.length > 0;
   $("lbTabs").hidden = !familyOn();
   showTab("dev");
   $("boardOver").classList.add("show");
+  const nr = body.querySelector("tr.now");
+  if (nr) setTimeout(() => { try { nr.scrollIntoView({ block: "nearest" }); } catch (e) {} }, 60);
 }
 function closeBoard() { $("boardOver").classList.remove("show"); }
 
@@ -1961,7 +2054,7 @@ $("lbTitle").onclick = () => {
   titleTaps = now - titleT < 1500 ? titleTaps + 1 : 1; titleT = now;
   if (titleTaps >= 5) { titleTaps = 0; openCode(); }
 };
-$("cBoard").onclick = () => { sfx.click(); $("cBoard").blur(); openBoard(); };
+$("cBoard").onclick = () => { sfx.click(); $("cBoard").blur(); openBoard(null); };
 $("lbClose").onclick = () => { sfx.click(); closeBoard(); };
 
 /* ================= Cards (start / end of the drive) ================= */
@@ -1972,6 +2065,7 @@ function showCard(kind, info = {}) {
   G.assist = null; showAssist();
   closeNewPlayer();
   $("who").hidden = ended;
+  $("whoNeed").hidden = true;
   if (!ended) renderWho();
   $("cBig").hidden = true;                    // the player buttons / the big distance take its place
   $("cTitle").textContent = ended ? "🏁 הנסיעה הסתיימה!" : "איך משחקים?";
@@ -1987,8 +2081,11 @@ function showCard(kind, info = {}) {
       (G.bonusT ? `<span>🌟 זמן בונוס: <b>+${G.bonusT}</b> שניות</span>` : "") +
       (progress.bestM > 0 && !info.isBest ? `<span>🏆 השיא: <b>${progress.bestM}</b> מ׳</span>` : "");
     $("cHabits").innerHTML = `איתותים נכונים: <b>${G.sigGood || 0}</b> · שכחת לאותת: <b>${G.sigMiss || 0}</b> · שמירת מרחק: <b>${G.distPen || 0}</b> · 💥 התנגשויות: <b>${G.crashes || 0}</b><br>` +
-      `🚫 מהירות: <b>${G.speedPen || 0}</b> · ↪️ פניות נכונות: <b>${G.turnGood || 0}</b>${G.turnBad ? ` (טעויות: <b>${G.turnBad}</b>)` : ""} · 🚦 רמזורים: <b>${G.lightGood || 0}</b>${G.lightPen ? ` (באדום: <b>${G.lightPen}</b>)` : ""}`;
-    $("cTip").textContent = G.crashes ? "💡 טיפ: רואים רכב מקדימה? ברקס 🛑 או עוקפים עם איתות"
+      `🚫 מהירות: <b>${G.speedPen || 0}</b>${G.rainPen ? ` (🌧️ בגשם: <b>${G.rainPen}</b>)` : ""} · ↪️ פניות נכונות: <b>${G.turnGood || 0}</b>${G.turnBad ? ` (טעויות: <b>${G.turnBad}</b>)` : ""} · 🚦 רמזורים: <b>${G.lightGood || 0}</b>${G.lightPen ? ` (באדום: <b>${G.lightPen}</b>)` : ""}` +
+      (G.pedGood || G.pedPen ? ` · 🚸 הולכי רגל: <b>${G.pedGood || 0}</b>${G.pedPen ? ` (🛑 בלימות חירום: <b>${G.pedPen}</b>)` : ""}` : "");
+    $("cTip").textContent = G.pedPen ? "💡 טיפ: רואים ⚠️ מעבר חצייה? מאטים ועוצרים להולכי הרגל 🚸"
+      : G.rainPen ? "💡 טיפ: בגשם 🌧️ הכביש מחליק, נוסעים לאט יותר מהשלט"
+      : G.crashes ? "💡 טיפ: רואים רכב מקדימה? ברקס 🛑 או עוקפים עם איתות"
       : G.lightPen ? "💡 טיפ: רמזור אדום 🔴 = עוצרים לפני הקו הלבן"
       : G.speedPen ? "💡 טיפ: מסתכלים על השלט העגול 🚫 ולא נוסעים מהר ממנו"
       : G.turnBad ? "💡 טיפ: השלט הכחול אומר לאן לפנות: מאותתים ועוברים לנתיב"
@@ -2002,8 +2099,19 @@ function showCard(kind, info = {}) {
   card.dataset.kind = kind;
   $("over").classList.add("show");
   card.style.animation = "none"; void card.offsetWidth; card.style.animation = "";
+  if (!ended && !players.list.length) openNewPlayer(true);   // a new device: the name is the first step
+}
+const needPlayer = () => !progress || progress.guest || !players.list.some(p => p.id === progress.id);
+// START without a driver: show the name step / ask to pick a name, never drive as a silent guest
+function askPlayer() {
+  sfx.gear();
+  if (!players.list.length) { openNewPlayer(true); return; }
+  $("who").hidden = false; $("whoNeed").hidden = false;
+  const w = $("who"); w.classList.remove("need"); void w.offsetWidth; w.classList.add("need");
 }
 $("cBtn").onclick = () => {
+  if ($("card").classList.contains("adding")) { savePlayer(); return; }   // the form is open: ✔️ = save
+  if (needPlayer()) { askPlayer(); return; }
   sfx.click(); $("cBtn").blur(); engineOn();
   if (tiltMode) { tiltAskPermission(); tryLockOrientation(); }   // iOS: the permission prompt may only come from a tap
   startRun();                                  // the start card and the end card both start a new drive
@@ -2012,20 +2120,23 @@ $("cBtn").onclick = () => {
 $("cBtn2").onclick = () => { sfx.click(); $("cBtn2").blur(); showCard("start"); };   // pick another driver
 
 function updateCar(dt) {
-  const gas = (gasTouch || gasKey) && !G.over;
-  const brake = brakeTouch || brakeKey || G.over;
-  // no fuel only slows the jeep a little (never a crawl); turbo adds a big burst
-  const top = G.set ? G.set.topSpeed : 40;
-  // turbo gives a big burst, but never above the speed limit (good drivers!)
-  const boost = turboT > 0 ? Math.max(0, Math.min(35, (G.limit || 50) + 4 - top)) : 0;
-  const maxF = (fuel > 0 ? top : Math.max(28, top * 0.8)) + boost, maxR = 15;
-  if (brakeTouch || brakeKey || G.over) turboT = 0;   // the brake always wins
+  const gas = (gasTouch || gasKey) && !G.over && !G.emerg;      // an emergency brake holds the jeep
+  const brake = brakeTouch || brakeKey || G.over || !!G.emerg;
+  // v0.10: the top speed is always clearly over the posted limit (RULES.SPEED_TOP_OVER), so keeping
+  // to the limit is the driver's job; no fuel only slows the jeep a little (never a crawl)
+  const top = Math.max(G.set ? G.set.topSpeed : 75, (G.limit || 50) + RULES.SPEED_TOP_OVER);
+  const maxF = fuel > 0 ? top : Math.max(28, top * 0.8), maxR = 15;
+  // turbo gives a big burst, but only up to the safe limit (good drivers!)
+  const tTop = Math.max(0, Math.min(maxF, effLimit()));
+  if (brake) turboT = 0;                              // the brake always wins
   let v = G.v;
   const toward0 = amt => { v = v > 0 ? Math.max(0, v - amt) : Math.min(0, v + amt); };
+  const turboOn = turboT > 0 && gear === "D" && !G.over;
 
-  if (turboT > 0 && gear === "D" && !G.over) {
-    if (v < maxF) v = Math.min(maxF, v + 45 * dt);   // turbo pushes even without the gas pedal
-    else if (!gas) v = Math.max(maxF, v - 7 * dt);
+  if (turboOn && v < tTop) {
+    v = Math.min(tTop, v + 45 * dt);                // turbo pushes even without the gas pedal
+  } else if (turboOn && !gas) {
+    if (v > tTop) v = Math.max(tTop, v - 7 * dt);  // at the limit the turbo just holds the speed
   } else if (gas && gear === "D") {
     if (v < 0) v += 50 * dt;
     else v += ((maxF - v) * 0.4 + 5) * dt;
@@ -2037,8 +2148,12 @@ function updateCar(dt) {
     toward0(7 * dt);                        // rolling slowly to a stop
   }
   if (gas && (gear === "D" || gear === "R")) fuel = Math.max(0, fuel - 0.3 * dt);
-  if (brake) toward0(90 * dt);
+  if (brake) toward0(BRAKE_KMHS * (rainOn() ? RULES.RAIN_BRAKE : 1) * dt);   // a longer stopping distance in rain
   if (gear === "P") toward0(140 * dt);
+  if (G.emerg && G.pedHaz && v > 0) {                // emergency brake: hard enough to stop before the person, always
+    const room = Math.max(0.05, G.pedHaz.gapM), ms = v / 3.6;
+    toward0(Math.max(BRAKE_KMHS, ms * ms / (2 * room) * 3.6 * 1.3) * dt);
+  }
   G.v = v;
 
   // steering: wheel drag, arrow keys or touching the road
@@ -2052,7 +2167,7 @@ function updateCar(dt) {
   // sliding: the jeep follows the wheel with a small delay (more in the rain);
   // 4x4 grips the road so it follows right away
   const want = G.over ? 0 : steer * 0.95 * grip * RULES.LANE_SPEED;
-  const k = four ? 18 : (wipe ? 3 : 5);
+  const k = four ? 18 : (rainOn() ? RULES.RAIN_GRIP : 5);
   G.lv = (G.lv || 0) + (want - (G.lv || 0)) * Math.min(1, dt * k);
   G.slide = want - G.lv;
   if (G.assist && !G.over) { assistMove(dt); return; }      // the turn assist drives the jeep into the lane
@@ -2089,11 +2204,23 @@ function update(dt) {
   turboCD = Math.max(0, turboCD - dt);
   toastT = Math.max(0, toastT - dt);
   updateCar(dt);
+  if (G.mode === "play") { G.playT += dt; rainTick(dt); }
   updateRules(dt);
-  const scroll = G.v * pxPerKmh * dt;        // how far the road moves this frame
-  const fwdMeters = Math.max(0, G.v) / 3.6 * dt;
+  pedTick(dt);
+  let scroll = G.v * pxPerKmh * dt;          // how far the road moves this frame
+  // ABSOLUTE: while someone is crossing, the jeep's bumper never passes the stop point before them
+  if (G.pedHaz && scroll > 0) {
+    const room = Math.max(0, G.pedHaz.gapM * PX_PER_M());
+    if (scroll >= room) { scroll = room; G.v = 0; }
+  }
+  const fwdMeters = Math.max(0, scroll) / PX_PER_M();
   G.laneOffset += scroll; G.grassOffset += scroll;
   scrollWorld(G.world, scroll);
+  if (G.skids) {
+    for (const k of G.skids) k.y += scroll;
+    if (G.emerg && scroll > 0) addSkids(scroll);
+    G.skids = G.skids.filter(k => k.y < H + 40);
+  }
   if (G.turn) updateTurn(dt);
   G.limFlash = Math.max(0, (G.limFlash || 0) - dt);
 
@@ -2162,9 +2289,6 @@ function update(dt) {
 const CURB = 7, ASPH = "#3a3f4d";
 let sideW = 60, walkW = 14;                 // set in resize()
 const BLD_COLORS = ["#e0a040", "#5b8def", "#e46b6b", "#9b7be0", "#3fb68b", "#ef8a3c", "#d06ac0", "#8a97ab", "#4cc3c9"];
-const SPEED_OVER = 5;        // km/h over the limit before it counts
-const SPEED_PEN_T = 1.5;     // seconds too fast before the penalty
-const SPEED_COOL = 5;        // seconds between two speed penalties
 const LIGHT_WAIT = 1.8;      // seconds of waiting at a red light before it turns green
 const TURN_ROT = 1.15, TURN_FADE0 = 0.85, TURN_END = 1.4;   // the turning animation (seconds)
 const DIR_TEXT = { R: "פנה ימינה", L: "פנה שמאלה", S: "ישר" };
@@ -2256,7 +2380,7 @@ function scrollWorld(S, dy) {
 function scaleWorld(S, f) {
   S.scenes.forEach(s => s.y *= f);
   S.side.forEach(o => { o.y *= f; o.h *= f; });
-  S.feats.forEach(o => { o.y *= f; if (o.type === "junc") jGeom(o); });
+  S.feats.forEach(o => { o.y *= f; if (o.type === "junc") jGeom(o); if (o.type === "zebra") o.zh = zebraH(); });
   S.top = S.top.map(t => t * f);
 }
 
@@ -2270,23 +2394,32 @@ function startSection() {
   S.feats.push({ type: "limit", y: y - 8, val: limitFor(G.secKind, G.level), seen: false });
   G.secAt = G.meters + sectionLen();
 }
+// v0.10: left turns from the first level, balanced with the right ones (G.turnBal = rights - lefts so far)
+function turnSide(level) {
+  if (level < RULES.LEFT_FROM_LEVEL) return "R";
+  const pL = clamp(0.5 + (G.turnBal || 0) * 0.25, 0.15, 0.85);
+  return Math.random() < pL ? "L" : "R";
+}
 function makeJunction(level, kind) {
   const j = { type: "junc", L: null, R: null, instr: "R", light: null, decided: false, city: kind === "city" };
-  if (level <= 1) j.R = "ok";                                   // level 1: one easy right turn
+  const side = turnSide(level), other = side === "R" ? "L" : "R";
+  if (level <= 1) { j.instr = side; j[side] = "ok"; }          // level 1: one easy turn, right or left
   else if (level <= 3) {
-    j.instr = Math.random() < 0.65 ? "R" : "S";
-    if (j.instr === "R") { j.R = "ok"; if (level === 3 && Math.random() < 0.4) j.L = "no"; }
-    else j.R = "no";
+    j.instr = Math.random() < 0.7 ? side : "S";
+    if (j.instr !== "S") { j[side] = "ok"; if (level === 3 && Math.random() < 0.4) j[other] = "no"; }
+    else j[side] = "no";
   } else {
-    j.instr = pick(["R", "R", "L", "L", "S"]);
+    j.instr = Math.random() < 0.8 ? side : "S";
     if (j.instr !== "S") {
-      j[j.instr] = "ok";
-      if (Math.random() < 0.6) j[j.instr === "R" ? "L" : "R"] = Math.random() < 0.6 ? "no" : "ok";
+      j[side] = "ok";
+      if (Math.random() < 0.6) j[other] = Math.random() < 0.6 ? "no" : "ok";
     } else {
       j.R = Math.random() < 0.6 ? "no" : "ok";
       if (Math.random() < 0.6) j.L = Math.random() < 0.6 ? "no" : "ok";
     }
   }
+  if (j.instr === "R") G.turnBal = (G.turnBal || 0) + 1;
+  else if (j.instr === "L") G.turnBal = (G.turnBal || 0) - 1;
   if (j.city && level >= 3 && Math.random() < 0.45 + Math.min(0.3, level * 0.01))
     j.light = { red: Math.random() < 0.7, waitT: 0, done: false, alerted: false, stopShown: false };
   jGeom(j);
@@ -2312,8 +2445,8 @@ const sigOn = d => sig[d] || G.time - sigOffAt[d] < SIG_GRACE;
 
 function dirAlert(j) {
   if (G.assist && G.assist.j === j) return;                       // the big assist arrow already shows the way
-  if (j.instr === "R") showAlert("↪️ בצומת: פנה ימינה! <small>מאותתים ➡️ ועוברים לנתיב הימני</small>", "info");
-  else if (j.instr === "L") showAlert("↩️ בצומת: פנה שמאלה! <small>מאותתים ⬅️ ועוברים לנתיב השמאלי</small>", "info");
+  if (j.instr === "R") showAlert("➡️ בצומת: פנה ימינה! <small>מאותתים ➡️ ועוברים לנתיב הימני</small>", "info");
+  else if (j.instr === "L") showAlert("⬅️ בצומת: פנה שמאלה! <small>מאותתים ⬅️ ועוברים לנתיב השמאלי</small>", "info");
   else showAlert("⬆️ בצומת: ממשיכים ישר! <small>לא פונים לשום צד</small>", "info");
 }
 function worldEvents(dt) {
@@ -2324,7 +2457,10 @@ function worldEvents(dt) {
     if (f.type === "limit") {
       if (!f.seen && f.y >= front) {
         f.seen = true;
-        if (f.val !== G.limit) { G.limit = f.val; G.limFlash = 1.5; showAlert(`🚫 מהירות מותרת: ${f.val} <small>לא נוסעים מהר יותר מהשלט</small>`, "info"); }
+        if (f.val !== G.limit) {
+          G.limit = f.val; G.limFlash = 1.5;
+          showAlert(rainOn() ? `🚫 מהירות מותרת: ${f.val} <small>🌧️ בגשם: עד ${effLimit()}</small>` : `🚫 מהירות מותרת: ${f.val} <small>לא נוסעים מהר יותר מהשלט</small>`, "info");
+        }
       }
     } else if (f.type === "dir") {
       if (!f.shown && f.y > 10) { f.shown = true; dirAlert(f.j); }
@@ -2337,7 +2473,7 @@ function worldEvents(dt) {
         if (!ready && !alertCur) showAlert(d === "R" ? "➡️ מאותתים ימינה ועוברים לנתיב הימני!" : "⬅️ מאותתים שמאלה ועוברים לנתיב השמאלי!", "info");
       }
       if (f.light) lightTick(f, dt, front);
-      if (!f.decided && f.y >= playerY && G.v > 0) { f.decided = true; decideJunction(f); }
+      if (!f.decided && f.y >= juncTriggerY(f) && G.v > 0) { f.decided = true; decideJunction(f); }
     }
   }
 }
@@ -2364,7 +2500,8 @@ function assistCheck(j) {
 function showAssist() {
   const el = $("assist"), A = G.assist;
   el.hidden = !A;
-  if (A) el.innerHTML = A.dir === "R" ? "<b>↪️</b> פונים ימינה!" : "<b>↩️</b> פונים שמאלה!";
+  // the arrow sits on the side of the turn (the banner is right-to-left: first = right)
+  if (A) el.innerHTML = A.dir === "R" ? "<b>➡️</b><span>פונים ימינה!</span>" : "<span>פונים שמאלה!</span><b>⬅️</b>";
 }
 // while the assist drives, cars in the turning lane make way: the ones ahead speed off, the ones beside us drop back
 function makeWay(x) {
@@ -2405,7 +2542,7 @@ function decideJunction(j) {
   const nearIns = ins === "R" ? (G.x > 1.7 || (G.x > 1.5 && G.lv > 0.15)) : (G.x < 1.3 || (G.x < 1.5 && G.lv < -0.15));
   if (ins !== "S" && j[ins] && (assisted || nearIns)) {
     take = ins;
-    noSig = !assisted && !sigOn(ins);                                       // turning without a signal
+    noSig = !assisted && !sigOn(ins) && !j.sigOk;                           // turning without a signal
   } else {
     for (const d of ["R", "L"]) {                                           // any other side: the old strict rule
       if (!j[d] || !(d === "R" ? G.x > 2 : G.x < 1)) continue;
@@ -2442,14 +2579,20 @@ function decideJunction(j) {
     penalty();
   }
 }
+// v0.10 precise turns: the jeep drives a quarter circle that ends in the right-hand lane of the side street
+// (right turn: the near half, a tight curve; left turn: the far half, a wide curve, like a real car).
+const turnR = d => laneW * (d === "R" ? 0.9 : 1.5);                    // the radius of the curve (px)
+const turnEndOff = (j, d) => (d === "R" ? 1 : -1) * j.sh / 4;           // the target lane of the side street, from j.y
+// the turn starts when the target lane is one radius ahead of the jeep (a straight-on junction: at its centre)
+const juncTriggerY = j => j.instr === "S" || !j[j.instr] ? playerY : playerY - turnR(j.instr) - turnEndOff(j, j.instr);
 // turning into the side street: the old street rotates away, the new street fades in
 function startTurn(j, dir) {
   const old = G.world;
   G.secKind = G.secKind === "city" ? "country" : "city";
   G.world = newWorld(G.secKind, limitFor(G.secKind, G.level), playerY - H * 0.55);
-  G.turn = { dir, t: 0, px: laneX(G.x), jy: j.y, ox: 0, oy: 0, old };
+  G.turn = { dir, t: 0, px: laneX(G.x), jy: playerY, r: turnR(dir > 0 ? "R" : "L"), ox: 0, oy: 0, old, tail: 0 };
   G.assist = null; showAssist();
-  G.cars = []; G.items = [];
+  G.cars = []; G.items = []; G.skids = []; G.pedHaz = null;
   G.secAt = G.meters + sectionLen();
   G.nextJ = G.meters + junctionGap(G.level);
   vibrate(40);
@@ -2458,8 +2601,9 @@ function updateTurn(dt) {
   const T = G.turn;
   T.t += dt;
   const th = turnAngle(T);
-  const sp = Math.max(G.v, 18) * pxPerKmh * dt;
-  T.ox += sp * Math.sin(th); T.oy += sp * Math.cos(th);
+  // on the curve: exactly on the circle; after it: straight down the side street
+  if (T.t >= TURN_ROT) T.tail += Math.max(G.v, 18) * pxPerKmh * dt;
+  T.ox = T.r * (1 - Math.cos(th)) + T.tail; T.oy = T.r * Math.sin(th);
   if (T.t >= TURN_END) {
     G.turn = null;
     sig.L = sig.R = false; syncStalks();         // the lever snaps back after a turn, like a real car
@@ -2471,12 +2615,15 @@ const turnAngle = T => (1 - Math.cos(Math.PI * Math.min(1, T.t / TURN_ROT))) / 2
 // cars ahead stop at a red light (and the cars behind them too)
 function trafficLights() {
   const red = G.world.feats.find(f => f.type === "junc" && f.light && f.light.red);
+  // pedestrians crossing (or about to): the cars before them wait too
+  const peds = G.world.feats.filter(f => (f.type === "zebra" || f.type === "dart") && f.peds.some(p => p.state === "walk" || p.state === "wait"));
   const sorted = G.cars.slice().sort((a, b) => a.y - b.y);   // farthest first
   for (const c of sorted) {
     let wait = false;
-    if (red && !c.hit) {
-      const s = carSize(c), d = c.y - s.h / 2 - (red.y + red.slOff);
-      wait = d > -4 && d < carH * 0.6;
+    if ((red || peds.length) && !c.hit) {
+      const s = carSize(c);
+      if (red) { const d = c.y - s.h / 2 - (red.y + red.slOff); wait = d > -4 && d < carH * 0.6; }
+      for (const f of peds) { const d = c.y - s.h / 2 - (f.y + pedHalf(f)); if (d > -4 && d < carH * 0.9) wait = true; }
       if (!wait) wait = sorted.some(o => o !== c && o.wait && Math.abs(o.x - c.x) < 0.6 && o.y < c.y &&
         (c.y - s.h / 2) - (o.y + carSize(o).h / 2) < carH * 0.45);
     }
@@ -2484,6 +2631,178 @@ function trafficLights() {
     else if (c.wait) c.v = c.vKeep || c.v;
     c.wait = wait;
   }
+}
+
+/* ================= Rain (v0.10): a lower safe limit, a slippery road, the wipers matter ================= */
+const BRAKE_KMHS = 90;       // how fast the brake slows the jeep (km/h per second; in rain × RULES.RAIN_BRAKE)
+const rainOn = () => !!(G.rain && G.rain.on);
+// the safe limit right now: the sign, or in rain the sign − RULES.RAIN_LIMIT_DROP (never below RULES.RAIN_LIMIT_MIN)
+const effLimit = () => { const l = G.limit || 50; return rainOn() ? Math.min(l, Math.max(RULES.RAIN_LIMIT_MIN, l - RULES.RAIN_LIMIT_DROP)) : l; };
+// the limit the speed rule uses: just after the rain starts there are RULES.RAIN_GRACE seconds to slow down
+const ruleLimit = () => rainOn() && G.rain.age < RULES.RAIN_GRACE ? G.limit : effLimit();
+const randIn = r => rand(r[0], r[1]);
+function newRain() {
+  const m = settings.rain;
+  const R = { on: false, perm: m === "on", never: m === "off", age: 0, len: 0, next: Infinity, k: G.rain ? G.rain.k || 0 : 0, off: 0, remindAt: -99, thanked: false };
+  if (m === "auto" && Math.random() < RULES.RAIN_CHANCE) R.next = randIn(RULES.RAIN_FIRST);
+  if (m === "on") R.next = 0;
+  return R;
+}
+function startRain(quiet) {
+  const R = G.rain;
+  R.on = true; R.age = 0; R.len = randIn(RULES.RAIN_LEN); R.off = 0; R.thanked = false; R.remindAt = -99;
+  G.overT = 0; G.slowShown = false;
+  if (!quiet) { showAlert(`🌧️ התחיל לרדת גשם! <small>בגשם נוסעים לאט: עד ${effLimit()} קמ״ש</small>`, "info"); noiseBurst(1.2, .12, "fx"); }
+}
+function stopRain(quiet) {
+  const R = G.rain;
+  R.on = false; R.next = R.never ? Infinity : G.playT + randIn(RULES.RAIN_GAP);
+  G.overT = 0;
+  if (!quiet) showAlert("☀️ הגשם נגמר! <small>אפשר לחזור למהירות שבשלט</small>", "info");
+}
+function rainTick(dt) {
+  const R = G.rain;
+  if (!R) return;
+  if (R.on) {
+    R.age += dt;
+    if (!R.perm && R.age >= R.len) stopRain();
+    else if (!wipe) {                                   // a kind reminder, never a penalty
+      R.off += dt;
+      if (R.off >= RULES.RAIN_WIPER_REMIND && G.time - R.remindAt > 12) {
+        R.remindAt = G.time;
+        showAlert("🌧️ יורד גשם! מדליקים מגבים? <small>מרימים את ידית המגבים ⬆️</small>", "info");
+      }
+    } else {
+      if (R.off >= RULES.RAIN_WIPER_REMIND && !R.thanked) { R.thanked = true; showAlert("👍 מגבים פועלים! <small>עכשיו רואים טוב</small>", true); }
+      R.off = 0;
+    }
+  } else if (!R.never && G.playT >= R.next) startRain();
+  R.k += ((R.on ? 1 : 0) - R.k) * Math.min(1, dt * 0.8);   // the sky darkens / clears slowly
+}
+// ⚙️ הגדרות › גשם: works right away, also in the middle of a drive
+function applyRainMode() {
+  const R = G.rain;
+  if (!R || G.mode !== "play") return;
+  const m = settings.rain;
+  R.perm = m === "on"; R.never = m === "off";
+  if (m === "on" && !R.on) startRain();
+  else if (m === "off" && R.on) stopRain(true);
+  else if (m === "off") R.next = Infinity;
+  else if (m === "auto") { if (R.on) R.len = R.age + randIn(RULES.RAIN_LEN); else R.next = G.playT + randIn(RULES.RAIN_FIRST); }
+}
+function syncRainUI() {
+  $("setRainAuto").classList.toggle("on", settings.rain === "auto");
+  $("setRainOn").classList.toggle("on", settings.rain === "on");
+  $("setRainOff").classList.toggle("on", settings.rain === "off");
+}
+for (const [id, m] of [["setRainAuto", "auto"], ["setRainOn", "on"], ["setRainOff", "off"]]) {
+  $(id).onclick = () => { sfx.click(); $(id).blur(); settings.rain = m; saveSettings(); syncRainUI(); applyRainMode(); };
+}
+
+/* ================= Pedestrians (v0.10): stop for them at the crossing. The jeep NEVER touches anyone ================= */
+const PEOPLE = ["🧒", "👧", "👦", "👩", "🧑", "👴", "👵", "👨"];
+const pedSize = () => clamp(carW * 0.85, 18, 40);
+const zebraH = () => clamp(laneW * 0.6, 24, 52);
+// half the height of the crossing zone (px): the stripes and every person (their step up/down + the shadow) fit inside
+const pedHalf = f => Math.max((f.zh || 0) / 2, pedSize() * 0.62) + (f.zh || 0) * 0.2 + 4;
+const jeepFront = () => playerY - carH * 0.6;                             // the front of the bull bar, with room
+const pedDist = f => (jeepFront() - (f.y + pedHalf(f))) / PX_PER_M();      // meters from the bull bar to the zone
+const PED_DART_DIST = 24;    // meters: the child steps out this far ahead (visible on the screen, avoidable at the limit)
+const brakeMS2 = () => BRAKE_KMHS / 3.6 * (rainOn() ? RULES.RAIN_BRAKE : 1);   // the normal brake, m/s²
+function pedGap() { return (RULES.START_TIME - RULES.PED_FIRST_AFTER) / Math.max(1, RULES.PED_EVENTS_PER_DRIVE) * rand(0.8, 1.2); }
+// a crossing (or a child running after a ball) far enough from any junction; kind/people/force are for tests
+function spawnPedEvent(kind, people, force) {
+  const S = G.world;
+  if (!S || G.turn) return false;
+  if (!force && (G.assist || S.feats.some(f => (f.type === "junc" && !f.decided) || ((f.type === "zebra" || f.type === "dart") && !f.over)))) return false;
+  if (!kind) kind = Math.random() < RULES.PED_CROSSWALK_SHARE ? "zebra" : "dart";
+  if (kind === "dart" && effLimit() > RULES.PED_DART_MAX_LIMIT) kind = "zebra";
+  const P = PX_PER_M();
+  if (kind === "zebra") {
+    const signY = -H * 0.12;                                    // the warning sign comes in from the top of the screen
+    const f = { type: "zebra", y: signY - RULES.PED_SIGN_DIST * P, zh: zebraH(), peds: [] };
+    const ppl = people === undefined ? Math.random() < RULES.PED_PEOPLE_SHARE : !!people;
+    if (ppl) {
+      const side = Math.random() < 0.5 ? -1 : 1, n = 1 + Math.floor(Math.random() * 3);
+      for (let i = 0; i < n; i++) f.peds.push({ x: side < 0 ? -0.35 - i * 0.28 : 3.35 + i * 0.28, dir: -side, sp: rand(0.85, 1.1), state: "wait",
+        delay: i * 0.45, dy: (i % 2 ? 1 : -1) * 0.18 * (i ? 1 : 0), em: pick(PEOPLE), ph: Math.random() * 6 });
+    }
+    S.feats.push({ type: "pedsign", y: signY, z: f }, f);
+  } else {
+    const side = Math.random() < 0.5 ? -1 : 1;
+    const f = { type: "dart", y: -H * 0.2, zh: 0, peds: [{ x: side < 0 ? -0.3 : 3.3, dir: -side, sp: 1.5, state: "idle", delay: 0, dy: 0, em: pick(["🧒", "👧", "👦"]), ph: 0, ball: true }] };
+    S.feats.push(f);
+  }
+  // the next junction comes well after it (never a crossing inside a junction)
+  G.nextJ = Math.max(G.nextJ, G.meters + 80 + JUNC_EARLY);
+  return true;
+}
+function pedTick(dt) {
+  G.pedHaz = null;
+  const S = G.world;
+  if (!S) return;
+  if (G.mode === "play" && !G.turn && G.playT >= G.pedNext && G.pedN < RULES.PED_EVENTS_PER_DRIVE + 1) {
+    if (spawnPedEvent()) { G.pedN++; G.pedNext = G.playT + pedGap(); } else G.pedNext = G.playT + 2;
+  }
+  const front = jeepFront();
+  let best = null, bestD = Infinity;
+  for (const f of S.feats) {
+    if (f.type === "pedsign") {
+      if (!f.shown && f.y > 10 && G.mode === "play") { f.shown = true; showAlert("⚠️ מעבר חצייה! <small>מאטים ומסתכלים אם יש הולכי רגל 🚸</small>", "info"); }
+      continue;
+    }
+    if (f.type !== "zebra" && f.type !== "dart") continue;
+    const d = pedDist(f), half = pedHalf(f);
+    const behind = f.y - half > playerY + carH * 0.6;             // the whole zone is behind the jeep
+    const carOn = G.cars.some(c => { const h = carSize(c).h / 2; return c.y - h < f.y + half - 6 && c.y + h > f.y - half + 6; });   // a car waiting before the zone is not "on" it
+    if (!f.go && !carOn && G.mode === "play") {
+      if (f.type === "zebra" && f.peds.length && (behind || (d >= 0 && (d <= RULES.PED_WALK_DIST || (Math.abs(G.v) < 1 && d < 30))))) f.go = G.time;
+      if (f.type === "dart" && d >= 8 && d <= PED_DART_DIST) {
+        f.go = G.time;
+        showAlert("🏃 זהירות! ילד רץ לכביש <small>לוחצים 🛑 ברקס ועוצרים</small>");
+        sfx.chime();
+      }
+    }
+    let active = false;
+    for (const p of f.peds) {
+      p.ph += dt * 8;
+      if ((p.state === "wait" || p.state === "idle") && f.go !== undefined && G.time - f.go >= p.delay) p.state = "walk";
+      if (p.state === "walk" || p.state === "off") {
+        p.x += p.dir * p.sp * dt;
+        if (p.state === "walk" && (p.dir > 0 ? p.x > 3.3 : p.x < -0.3)) p.state = "off";      // safe on the other sidewalk
+        if (p.state === "off" && (p.x > 5 || p.x < -2)) p.state = "gone";
+      }
+      if (p.state === "walk" || (p.state === "wait" && f.type === "zebra")) active = true;
+    }
+    f.over = !active && (f.peds.every(p => p.state === "off" || p.state === "gone") || !f.peds.length || behind);
+    if (active && d >= -0.5 && d < bestD) { bestD = d; best = f; }
+    if (f.over && f.stopped && !f.thanked) { f.thanked = true; }
+  }
+  if (best) G.pedHaz = { f: best, gapM: bestD - RULES.PED_STOP_GAP };
+  if (G.emerg && (!G.pedHaz || G.pedHaz.f !== G.emerg.f)) G.emerg = null;        // they crossed: the jeep may go
+  const Hz = G.pedHaz;
+  if (!Hz || G.mode !== "play") return;
+  const f = Hz.f, ms = Math.max(0, G.v) / 3.6, sd = ms * ms / (2 * brakeMS2());
+  const braking = brakeTouch || brakeKey;
+  if (!f.emergDone && !f.stopped && G.v > 8 && (braking ? sd >= Hz.gapM - 0.3 : sd + RULES.PED_EMERG_MARGIN >= Hz.gapM)) {
+    f.emergDone = true; G.emerg = { f, t: G.time }; G.pedPen++;
+    addSkids(carH * 0.25);
+    sfx.screech(); vibrate([160, 60, 160]);
+    showAlert("🛑 בלימת חירום! <small>צריך לעצור להולכי רגל</small>");
+    penalty(RULES.PED_PENALTY);
+    turboT = 0;
+  } else if (!f.stopped && !f.emergDone && Math.abs(G.v) < 1 && bestD < 30) {
+    f.stopped = true; G.pedGood++; G.coins++; sfx.coin();
+    if (!addTime(RULES.PED_STOP_BONUS, "🚸 עצרת להולכי רגל! כל הכבוד")) showAlert("🚸 עצרת להולכי רגל! <small>כל הכבוד</small>", true);
+    else showAlert("🚸 עצרת להולכי רגל! <small>כל הכבוד · מחכים שיעברו</small>", true);
+  }
+}
+// skid marks: dark tyre lines that stay on the road and scroll with it
+function addSkids(len) {
+  if (!G.skids) G.skids = [];
+  const cx = laneX(G.x), tw = carW * 0.42;
+  for (const sx of [-tw, tw]) for (const ty of [carH * 0.1, carH * 0.38]) G.skids.push({ x: cx + sx, y: playerY + ty - len, h: len });
+  if (G.skids.length > 400) G.skids.splice(0, G.skids.length - 400);
 }
 
 /* --- drawing the world --- */
@@ -2714,6 +3033,7 @@ function drawWorld(S, ext, night) {
     for (let y = y0 - period + mod(off - y0, period); y < y1; y += period) ctx.fillRect(x, y, 5, dash);
   }
   for (const f of S.feats) if (f.type === "junc") drawJunction(S, f, ext, x0, x1);
+  for (const f of S.feats) if (f.type === "zebra") drawZebra(f);
   if (night) {
     ctx.fillStyle = topKind(S) === "city" ? "rgba(10,15,40,.32)" : "rgba(10,15,40,.22)";
     ctx.fillRect(x0 - 20, y0 - 20, x1 - x0 + 40, y1 - y0 + 40);
@@ -2725,7 +3045,9 @@ function drawSigns(S) {
   for (const f of S.feats) {
     if (f.type === "limit") drawLimitSign(f);
     else if (f.type === "dir") drawDirSign(f);
-    else drawJuncSigns(f);
+    else if (f.type === "pedsign") drawPedSign(f);
+    else if (f.type === "zebra") drawZebraSigns(f);
+    else if (f.type === "junc") drawJuncSigns(f);
   }
 }
 // signs, gantries and traffic lights are tall, so they are drawn over the cars
@@ -3146,6 +3468,131 @@ function drawAssistArrows() {
   }
   ctx.restore();
 }
+// v0.10 turns: a clear path through the junction + painted arrows in the turning lane
+function drawTurnGuide() {
+  if (G.mode !== "play" || G.turn || !G.world) return;
+  const j = nextJunction();
+  if (!j || j.instr === "S" || !j[j.instr]) return;
+  const d = juncDist(j);
+  if (d <= 0 || d > RULES.TURN_ASSIST_DIST + 20 || j.y < -H) return;
+  const sd = j.instr === "R" ? 1 : -1, lx = laneX(sd > 0 ? 2.5 : 0.5);
+  ctx.save();
+  ctx.globalAlpha = 0.5;
+  for (let i = 0; i < 3; i++) {                      // road arrows like the real lane markings
+    const ay = j.y + j.slOff + carH * (0.5 + i * 1.4);
+    if (ay > -40 && ay < H + 40) arrowIcon(j.instr, lx, ay, clamp(laneW * 0.55, 18, 50));
+  }
+  const R = turnR(j.instr), endY = j.y + turnEndOff(j, j.instr), y0 = Math.min(H + 10, playerY + carH * 0.2);
+  const ex = sd > 0 ? roadX + roadW + Math.max(30, sideW * 0.8) : roadX - Math.max(30, sideW * 0.8);
+  if (endY + R < y0) {
+    ctx.globalAlpha = 0.75 + 0.2 * Math.sin(G.time * 5);
+    ctx.strokeStyle = "#7dd3fc"; ctx.lineWidth = clamp(laneW * 0.09, 4, 8); ctx.lineCap = "round"; ctx.lineJoin = "round";
+    ctx.setLineDash([ctx.lineWidth * 2.2, ctx.lineWidth * 1.6]); ctx.lineDashOffset = -G.time * 40;
+    ctx.beginPath(); ctx.moveTo(lx, y0); ctx.lineTo(lx, endY + R);
+    ctx.quadraticCurveTo(lx, endY, lx + sd * R, endY); ctx.lineTo(ex, endY); ctx.stroke();
+    ctx.setLineDash([]);
+    const ah = ctx.lineWidth * 2.4;                  // the arrow head at the end of the path
+    ctx.fillStyle = "#7dd3fc"; ctx.beginPath();
+    ctx.moveTo(ex + sd * ah, endY); ctx.lineTo(ex - sd * ah * 0.4, endY - ah); ctx.lineTo(ex - sd * ah * 0.4, endY + ah); ctx.closePath(); ctx.fill();
+  }
+  ctx.restore();
+}
+// rain on the road: a darker sky, a shiny wet road with puddles
+function drawWetRoad() {
+  const k = G.rain ? G.rain.k : 0;
+  if (k < 0.02) return;
+  ctx.save();
+  ctx.fillStyle = `rgba(16,24,44,${0.3 * k})`; ctx.fillRect(-20, -20, W + 40, H + 40);
+  if (!G.turn && G.world) {
+    ctx.beginPath(); ctx.rect(roadX, 0, roadW, H); ctx.clip();
+    ctx.fillStyle = `rgba(150,190,240,${0.08 * k})`; ctx.fillRect(roadX, 0, roadW, H);
+    const S = G.world;
+    stripes(S, -60, H + 60, 70, y => {
+      const n = Math.round((y - S.off) / 70), h1 = hsh(n * 3.1), h2 = hsh(n * 7.7);
+      ctx.globalAlpha = k;
+      if (h1 < 0.55) { ctx.fillStyle = "rgba(170,205,255,.22)"; ctx.beginPath(); ctx.ellipse(roadX + roadW * (0.1 + h2 * 0.8), y, laneW * (0.18 + h1 * 0.3), 6 + h1 * 8, 0, 0, Math.PI * 2); ctx.fill(); }
+      ctx.fillStyle = "rgba(220,235,255,.10)"; ctx.fillRect(roadX + roadW * hsh(n * 1.3), y, 3, 40);
+    });
+  }
+  ctx.restore();
+}
+function drawSkids() {
+  if (!G.skids || !G.skids.length) return;
+  ctx.save(); ctx.fillStyle = "rgba(12,12,16,.6)";
+  const w = Math.max(3, carW * 0.16);
+  for (const k of G.skids) if (k.y < H + 20 && k.y + k.h > -20) ctx.fillRect(k.x - w / 2, k.y, w, k.h + 1);
+  ctx.restore();
+}
+function drawZebra(f) {
+  const half = f.zh / 2;
+  if (f.y - half > H + 20 || f.y + half < -20) return;
+  ctx.fillStyle = "#f3f4f6";
+  const sw = Math.max(8, laneW * 0.16), step = sw * 1.9;
+  for (let x = roadX + 8; x < roadX + roadW - 8; x += step) ctx.fillRect(x, f.y - half, sw, f.zh);
+}
+// the warning sign: a red triangle with a walking person, on both sides of the road
+function pedFigure(cx, cy, s, col) {
+  ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = Math.max(1.5, s * 0.12); ctx.lineCap = "round";
+  circle(cx + s * 0.05, cy - s * 0.42, s * 0.13, col);
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - s * 0.27); ctx.lineTo(cx - s * 0.05, cy + s * 0.08);
+  ctx.moveTo(cx - s * 0.05, cy + s * 0.08); ctx.lineTo(cx - s * 0.25, cy + s * 0.42);
+  ctx.moveTo(cx - s * 0.05, cy + s * 0.08); ctx.lineTo(cx + s * 0.2, cy + s * 0.42);
+  ctx.moveTo(cx - s * 0.02, cy - s * 0.18); ctx.lineTo(cx - s * 0.25, cy);
+  ctx.moveTo(cx - s * 0.02, cy - s * 0.18); ctx.lineTo(cx + s * 0.22, cy - s * 0.02);
+  ctx.stroke(); ctx.lineCap = "butt";
+}
+function drawPedSign(f) {
+  if (f.y < -50 || f.y > H + 50) return;
+  const r = signR() * 1.1;
+  for (const sd of [1, -1]) {
+    const cx = sd > 0 ? Math.min(W - r - 2, roadX + roadW + CURB + r * 0.8) : Math.max(r + 2, roadX - CURB - r * 0.8);
+    ctx.fillStyle = "#4b5563"; ctx.fillRect(cx - 2, f.y, 4, r);
+    ctx.beginPath(); ctx.moveTo(cx, f.y - r); ctx.lineTo(cx + r, f.y + r * 0.75); ctx.lineTo(cx - r, f.y + r * 0.75); ctx.closePath();
+    ctx.fillStyle = "#e11d48"; ctx.fill();
+    ctx.beginPath(); ctx.moveTo(cx, f.y - r * 0.62); ctx.lineTo(cx + r * 0.68, f.y + r * 0.55); ctx.lineTo(cx - r * 0.68, f.y + r * 0.55); ctx.closePath();
+    ctx.fillStyle = "#fff"; ctx.fill();
+    pedFigure(cx, f.y + r * 0.08, r * 0.7, "#111");
+  }
+}
+// at the crossing itself: the blue square crossing sign on both sides
+function drawZebraSigns(f) {
+  const half = f.zh / 2;
+  if (f.y < -60 || f.y > H + 60) return;
+  const r = signR() * 0.9;
+  for (const sd of [1, -1]) {
+    const cx = sd > 0 ? Math.min(W - r - 2, roadX + roadW + CURB + r + 2) : Math.max(r + 2, roadX - CURB - r - 2), cy = f.y + half + r + 4;
+    rr(cx - r + 2, cy - r + 3, r * 2, r * 2, 5); ctx.fillStyle = "#00000044"; ctx.fill();
+    rr(cx - r, cy - r, r * 2, r * 2, 5); ctx.fillStyle = "#1d4ed8"; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = "#fff"; ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx, cy - r * 0.75); ctx.lineTo(cx + r * 0.75, cy + r * 0.6); ctx.lineTo(cx - r * 0.75, cy + r * 0.6); ctx.closePath(); ctx.fillStyle = "#fff"; ctx.fill();
+    pedFigure(cx, cy + r * 0.1, r * 0.75, "#111");
+  }
+}
+// cute people (emoji), with a little walking bounce; a ball rolls ahead of the running child
+function drawPeds() {
+  if (!G.world) return;
+  const s = pedSize();
+  ctx.save();
+  ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.font = `${s}px "Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji",sans-serif`;
+  for (const f of G.world.feats) {
+    if (f.type !== "zebra" && f.type !== "dart") continue;
+    for (const p of f.peds) {
+      if (p.state === "gone") continue;
+      const x = laneX(p.x), y = f.y + p.dy * (f.zh || s);
+      if (y < -s || y > H + s) continue;
+      const moving = p.state === "walk" || p.state === "off", bob = moving ? Math.abs(Math.sin(p.ph)) * s * 0.12 : 0;
+      ctx.globalAlpha = 0.35; ctx.fillStyle = "#000"; ctx.beginPath(); ctx.ellipse(x, y + s * 0.42, s * 0.32, s * 0.12, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.fillText(p.em, x, y - bob);
+      if (p.ball) {
+        const bx = laneX(p.x + p.dir * (moving ? 0.55 : 0.25)), bs = s * 0.5;
+        ctx.save(); ctx.font = `${bs}px "Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji",sans-serif`;
+        ctx.translate(bx, y + s * 0.25); ctx.rotate(p.ph * 0.6 * p.dir); ctx.fillText("⚽", 0, 0); ctx.restore();
+      }
+    }
+  }
+  ctx.restore();
+}
 function drawToast() {
   if (toastT <= 0 || !toastText) return;
   const fs = clamp(W * 0.045, 13, 20);
@@ -3165,16 +3612,27 @@ function drawToast() {
 // rain on the glass + a big wiper sweeping it away
 const drops = [];
 let wiperA = 0, wiperPrev = 0;
+// v0.10: the rain comes from the weather (G.rain), the wipers only clear the glass
 function drawRain(dt) {
-  if (!wipe) { drops.length = 0; return; }
+  const k = G.rain ? G.rain.k : 0, raining = rainOn();
+  if (k < 0.02 && !wipe && !drops.length) return;
   ctx.save();
-  ctx.strokeStyle = "#cfe8ff55"; ctx.lineWidth = 1.5; ctx.beginPath();
-  for (let i = 0; i < 40; i++) {
-    const rx = (i * 97.3 + G.time * 40) % W, ry = (i * 53.7 + G.time * 700) % H;
-    ctx.moveTo(rx, ry); ctx.lineTo(rx - 3, ry + 14);
+  if (k > 0.02) {                                   // rain streaks
+    ctx.strokeStyle = `rgba(207,232,255,${0.55 * k})`; ctx.lineWidth = 1.6; ctx.beginPath();
+    const n = Math.round(110 * k);
+    for (let i = 0; i < n; i++) {
+      const rx = (i * 97.3 + G.time * 60) % (W + 40) - 20, ry = (i * 53.7 + G.time * 900) % (H + 30) - 15;
+      ctx.moveTo(rx, ry); ctx.lineTo(rx - 5, ry + 20);
+    }
+    ctx.stroke();
   }
-  ctx.stroke();
-  if (drops.length < 70 && Math.random() < dt * 40) drops.push({ x: Math.random() * W, y: Math.random() * H * 0.95, r: rand(2, 4.5) });
+  // drops gather on the glass in rain; with the wipers off there are more and more of them
+  if (raining && drops.length < (wipe ? 60 : 160) && Math.random() < dt * 45 * k) drops.push({ x: Math.random() * W, y: Math.random() * H * 0.95, r: rand(2, 5), a: 1 });
+  if (!raining) for (let i = drops.length - 1; i >= 0; i--) { drops[i].a -= dt * 0.35; if (drops[i].a <= 0) drops.splice(i, 1); }
+  if (!wipe) {
+    for (const d of drops) { ctx.globalAlpha = d.a; circle(d.x, d.y, d.r, "#dbeafe66"); circle(d.x - d.r * 0.3, d.y - d.r * 0.3, d.r * 0.35, "#ffffffaa"); }
+    ctx.restore(); return;
+  }
   const pvx = W / 2, pvy = H + 12, len = Math.hypot(W / 2, H) + 10;
   wiperPrev = wiperA;
   wiperA = Math.sin(G.time * 2.6) * 1.2;
@@ -3183,7 +3641,8 @@ function drawRain(dt) {
     const d = drops[i], a = Math.atan2(d.x - pvx, pvy - d.y);
     if (a >= lo - 0.03 && a <= hi + 0.03) drops.splice(i, 1);
   }
-  for (const d of drops) { circle(d.x, d.y, d.r, "#dbeafe66"); circle(d.x - d.r * 0.3, d.y - d.r * 0.3, d.r * 0.35, "#ffffffaa"); }
+  for (const d of drops) { ctx.globalAlpha = d.a; circle(d.x, d.y, d.r, "#dbeafe66"); circle(d.x - d.r * 0.3, d.y - d.r * 0.3, d.r * 0.35, "#ffffffaa"); }
+  ctx.globalAlpha = 1;
   ctx.translate(pvx, pvy); ctx.rotate(wiperA);
   ctx.lineCap = "round";
   ctx.strokeStyle = "#11131acc"; ctx.lineWidth = 7;
@@ -3200,10 +3659,14 @@ function draw(dt) {
     ctx.translate(rand(-m, m), rand(-m, m));
   }
   drawScene(lights || high);
+  drawWetRoad();
+  drawSkids();
+  drawTurnGuide();
   for (const it of G.items) it.kind === "coin" ? drawCoin(it) : drawFuelCan(it);
   drawHeadlights();
   drawFogLights();
   drawTraffic();
+  drawPeds();
   drawOverhead();
   drawSpeedFx(dt);
   drawAssistArrows();
@@ -3235,6 +3698,7 @@ function updateHint() {
   if (G.mode === "play") {
     if (gear === "P" || gear === "N") text = "בחר הילוך D 👆";
     else if (G.world && G.world.feats.some(f => f.type === "junc" && f.light && f.light.red && f.light.waitT > 0)) text = "";
+    else if (G.pedHaz && G.pedHaz.gapM < 30 && Math.abs(G.v) < 3) text = "🚸 מחכים שהולכי הרגל יעברו";
     else if (Math.abs(G.v) < 3 && !(gasTouch || gasKey)) text = "לחץ על גז ⚡";
     else if (fuel <= 0) text = "אסוף דלק ⛽";
   }
@@ -3250,10 +3714,17 @@ function updateDashboard() {
   $("wTurbo").classList.toggle("on", turboT > 0); $("wTurbo").classList.toggle("cool", turboT <= 0 && turboCD > 0);
   $("wLights").classList.toggle("on", lights); $("wCam").classList.toggle("on", cam); $("wMusic").classList.toggle("on", musicOn);
   $("speed").textContent = Math.round(sp);
-  const lim = String(G.limit || 50), warn = G.mode === "play" && !!G.speedWarn;
+  const lim = String(G.limit || 50), warn = G.mode === "play" && !!G.speedWarn, wet = rainOn();
   if ($("limit").textContent !== lim) $("limit").textContent = lim;
   $("speed").classList.toggle("warn", warn);
-  $("limit").classList.toggle("warn", warn || (G.limFlash || 0) > 0);
+  $("limit").classList.toggle("warn", !wet && (warn || (G.limFlash || 0) > 0));
+  $("rainLim").hidden = $("rainBadge").hidden = !wet;
+  if (wet) {
+    const rl = String(effLimit());
+    if ($("rainLimN").textContent !== rl) { $("rainLimN").textContent = rl; $("rainBadgeN").textContent = rl; }
+    $("rainLim").classList.toggle("warn", warn || (G.limFlash || 0) > 0);
+    $("rainBadge").classList.toggle("warn", warn);
+  }
   $("rpm").style.width = Math.min(100, (gas ? 30 : 8) + sp * 0.7) + "%";
   $("fuel").style.width = fuel + "%";
   $("fuel").style.background = fuel < 20 ? "var(--red)" : "var(--green)";
